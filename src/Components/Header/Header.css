@@ -1,4 +1,15 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 99;
+  background-color: white;
+}
+
 .header__title {
   text-align: left;
-  margin-left: 2rem;
+  font-size: 1.375rem;
+  margin: 1rem 2rem;
 }
