@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import "./Header.css";
-import Card from "@mui/material/Card";
 import DialogAddClass from "../DialogAddClass/DialogAddClass";
+import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
-import { Add } from "@mui/icons-material";
 
 const Header = () => {
   const [isOpenDialog, setIsOpenDialog] = useState(false);
@@ -20,10 +19,14 @@ const Header = () => {
     <Card className="header">
       <h3 className="header__title">Class Room</h3>
       <Button
-        sx={{ borderRadius: "50%", marginRight: "1rem" }}
+        sx={{
+          borderRadius: "50%",
+          marginRight: "1rem",
+          fontSize: "35px",
+        }}
         onClick={handleOpenDialog}
       >
-        <Add sx={{ fontSize: 40 }} />
+        +
       </Button>
       <DialogAddClass
         handleCloseDialog={handleCloseDialog}
