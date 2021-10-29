@@ -13,9 +13,11 @@ const DialogAddClass = ({ handleCloseDialog, isOpenDialog }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post("http://localhost:8080/", { name }).then(() => {
-      window.location.reload();
-    });
+    await axios
+      .post("https://btcn03-classroom-backend.herokuapp.com/", { name })
+      .then(() => {
+        window.location.reload();
+      });
   };
 
   const handleChange = (e) => {

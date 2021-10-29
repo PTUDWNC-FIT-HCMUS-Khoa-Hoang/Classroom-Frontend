@@ -14,7 +14,7 @@ const ClassList = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/")
+      .get("https://btcn03-classroom-backend.herokuapp.com/")
       .then((res) => {
         setClasses(res.data);
         setIsLoading(false);
