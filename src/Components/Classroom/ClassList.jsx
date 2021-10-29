@@ -12,18 +12,18 @@ const ClassList = () => {
   const [classes, setClasses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    axios
-      .get("https://btcn03-classroom-backend.herokuapp.com/")
-      .then((res) => {
-        setClasses(res.data);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        setError(err);
-      });
-  }, []);
+  //   useEffect(() => {
+  //     axios
+  //       .get("https://btcn03-classroom-backend.herokuapp.com/")
+  //       .then((res) => {
+  //         setClasses(res.data);
+  //         setIsLoading(false);
+  //       })
+  //       .catch((err) => {
+  //         setIsLoading(false);
+  //         setError(err);
+  //       });
+  //   }, []);
 
   return (
     <div className="class-list">
