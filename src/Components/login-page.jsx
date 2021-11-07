@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { useFormik } from "formik";
@@ -35,6 +35,8 @@ const useStyles = makeStyles({
 const Login = ({ isWrongAccount, userLogin }) => {
   const classes = useStyles();
 
+  const formikRef = useRef();
+
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -46,11 +48,19 @@ const Login = ({ isWrongAccount, userLogin }) => {
     },
   });
 
+  useEffect(() => {
+    formikRef.current?.setFieldValue("password", "");
+  }, []);
+
   return (
     <div className={classes.formWrapper}>
       <h1> Classrooms </h1>
       <h3 style={{ margin: 0 }}> Login by your account</h3>
-      <form className={classes.loginForm} onSubmit={formik.handleSubmit}>
+      <form
+        innerRef={formikRef}
+        className={classes.loginForm}
+        onSubmit={formik.handleSubmit}
+      >
         <TextField
           id="email"
           type="email"
