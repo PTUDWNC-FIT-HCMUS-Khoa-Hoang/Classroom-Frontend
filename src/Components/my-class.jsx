@@ -16,7 +16,7 @@ const useStyles = makeStyles({
   },
 });
 
-const MyClass = ({ name }) => {
+const MyClass = ({ title }) => {
   const classes = useStyles();
 
   return (
@@ -24,7 +24,7 @@ const MyClass = ({ name }) => {
       <div className={classes.card__header}>
         <CardContent>
           <Typography sx={{ fontSize: "1.375rem", color: "white" }}>
-            {name}
+            {title}
           </Typography>
         </CardContent>
       </div>

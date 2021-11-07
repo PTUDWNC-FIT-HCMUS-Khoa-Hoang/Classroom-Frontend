@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import DialogAddClass from "./DialogAddClass";
+import DialogAddClass from "./dialog-add-class";
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Avatar from "@mui/material/Avatar";
 import Popover from "@mui/material/Popover";
 import { makeStyles } from "@mui/styles";
+import { userLogout } from "../redux/user/user.action";
+import { connect } from "react-redux";
 
 const PopupOptionsWrapper = styled.div`
   display: flex;
@@ -20,9 +22,8 @@ const useStyles = makeStyles({
     alignItems: "center",
     position: "sticky",
     top: 0,
-    width: "100%",
+    minHeight: "70px",
     zIndex: 99,
-    backgroundColor: "white",
   },
   header__title: {
     textAlign: "left",
@@ -30,8 +31,7 @@ const useStyles = makeStyles({
     margin: "1rem 2rem",
   },
 });
-
-const Header = ({ user, logout }) => {
+const Header = ({ user, userLogout }) => {
   const classes = useStyles();
 
   const [isOpenDialog, setIsOpenDialog] = useState(false);
@@ -55,8 +55,10 @@ const Header = ({ user, logout }) => {
 
   const handleLogout = () => {
     setAnchorEl(null);
-    logout();
+    userLogout();
   };
+
+  const stringAvatar = (name) => name.split("")[0];
 
   const open = Boolean(anchorEl);
   const id = open ? "user-popover" : undefined;
@@ -85,7 +87,9 @@ const Header = ({ user, logout }) => {
             variant="outlined"
             onClick={handleClickAvatar}
           >
-            <Avatar sx={{ cursor: "pointer" }}>H</Avatar>
+            <Avatar sx={{ cursor: "pointer" }}>
+              {stringAvatar(user.fullname)}
+            </Avatar>
           </IconButton>
           <Popover
             id={id}
@@ -107,4 +111,8 @@ const Header = ({ user, logout }) => {
   );
 };
 
-export default Header;
+const mapDispatch = (dispatch) => ({
+  userLogout: () => dispatch(userLogout()),
+});
+
+export default connect(null, mapDispatch)(Header);

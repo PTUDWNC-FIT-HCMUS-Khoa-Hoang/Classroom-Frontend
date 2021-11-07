@@ -1,9 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { useFormik } from "formik";
 import { makeStyles } from "@mui/styles";
-import axios from "axios";
+import { connect } from "react-redux";
+import userLogin from "../redux/user/user.action";
+import { createStructuredSelector } from "reselect";
+import {
+  selectIsWrongAccount,
+  selectIsLoading,
+} from "../redux/user/user.selector";
+import WithSpinner from "./with-spinner";
 
 const useStyles = makeStyles({
   loginForm: {
@@ -20,11 +27,12 @@ const useStyles = makeStyles({
   inputField: {
     marginTop: "1rem",
   },
+  wrongAccountMessage: {
+    color: "red",
+  },
 });
 
-const Login = ({ setToken, setUser }) => {
-  const [isWrongAccount, setIsWrongAccount] = useState(false);
-
+const Login = ({ isWrongAccount, userLogin }) => {
   const classes = useStyles();
 
   const formik = useFormik({
@@ -32,20 +40,9 @@ const Login = ({ setToken, setUser }) => {
       email: "",
       password: "",
     },
-    onSubmit: (values, { resetForm }) => {
-      axios
-        .post("/users/login", { ...values })
-        .then(({ data }) => {
-          console.log(data);
-          setToken(data.token);
-          setUser(data.user);
-          sessionStorage.setItem("user", JSON.stringify(data.user));
-        })
-        .catch((err) => {
-          const email = values.email;
-          resetForm({ values: { email, password: "" } });
-          setIsWrongAccount(true);
-        });
+    onSubmit: (values) => {
+      userLogin(values.email, values.password);
+      values.password = "";
     },
   });
 
@@ -80,11 +77,22 @@ const Login = ({ setToken, setUser }) => {
           Login
         </Button>
         {isWrongAccount && (
-          <p>The user name or password that you've entered is incorrect!</p>
+          <p className={classes.wrongAccountMessage}>
+            The user name or password that you've entered is incorrect!
+          </p>
         )}
       </form>
     </div>
   );
 };
 
-export default Login;
+const mapState = createStructuredSelector({
+  isWrongAccount: selectIsWrongAccount,
+  isLoading: selectIsLoading,
+});
+
+const mapDispatch = (dispatch) => ({
+  userLogin: (email, password) => dispatch(userLogin(email, password)),
+});
+
+export default connect(mapState, mapDispatch)(WithSpinner(Login));

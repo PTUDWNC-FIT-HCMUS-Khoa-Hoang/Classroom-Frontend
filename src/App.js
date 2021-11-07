@@ -1,11 +1,13 @@
 import { Switch, Route, BrowserRouter, Redirect } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { makeStyles } from "@mui/styles";
-import ClassList from "./Components/ClassList";
-import Header from "./Components/Header";
-import useToken from "./Components/UseToken";
-import LoginPage from "./Components/LoginPage";
-import PrivateRoute from "./Utils/PrivateRoute";
+import ClassList from "./components/class-list";
+import Header from "./components/header";
+import LoginPage from "./components/login-page";
+import PrivateRoute from "./utils/private-route";
+import { createStructuredSelector } from "reselect";
+import { selectUser } from "./redux/user/user.selector";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles({
   root: {
@@ -16,30 +18,8 @@ const useStyles = makeStyles({
   },
 });
 
-const App = () => {
+const App = ({ user, isLoading }) => {
   const classes = useStyles();
-
-  const { token, setToken } = useToken();
-  const [user, setUser] = useState(JSON.parse(sessionStorage.getItem("user")));
-
-  const saveUser = (user) => {
-    setUser(user);
-    sessionStorage.setItem("user", user);
-  };
-
-  const removeUser = () => {
-    setUser(null);
-    sessionStorage.removeItem("user");
-  };
-
-  const removeToken = () => {
-    setToken(null);
-  };
-
-  const logout = () => {
-    removeUser();
-    removeToken();
-  };
 
   useEffect(() => {
     document.title = "Classroom";
@@ -47,14 +27,14 @@ const App = () => {
 
   return (
     <div className={classes.root}>
-      <Header user={user} removeToken={removeToken} logout={logout} />
+      <Header user={user} />
       <BrowserRouter>
         <Switch>
           <Route
             path="/login"
             render={() =>
               !user ? (
-                <LoginPage setUser={saveUser} setToken={setToken} />
+                <LoginPage user={user} isLoading={isLoading} />
               ) : (
                 <Redirect to="/classrooms" />
               )
@@ -64,8 +44,6 @@ const App = () => {
             path="/classrooms"
             component={ClassList}
             authed={user}
-            token={token}
-            user={user}
           />
           <Route path="/" render={() => <Redirect to="/classrooms" />} />
         </Switch>
@@ -74,4 +52,8 @@ const App = () => {
   );
 };
 
-export default App;
+const mapState = createStructuredSelector({
+  user: selectUser,
+});
+
+export default connect(mapState)(App);
