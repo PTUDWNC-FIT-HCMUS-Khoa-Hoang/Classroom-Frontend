@@ -6,18 +6,15 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import DialogTitle from "@mui/material/DialogTitle";
-import "./DialogAddClass.css";
 
 const DialogAddClass = ({ handleCloseDialog, isOpenDialog }) => {
   const [name, setName] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios
-      .post("https://btcn03-classroom-backend.herokuapp.com/", { name })
-      .then(() => {
-        window.location.reload();
-      });
+    await axios.post("/", { name }).then(() => {
+      window.location.reload();
+    });
   };
 
   const handleChange = (e) => {
