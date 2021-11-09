@@ -27,6 +27,14 @@ export const fetchClassrooms = (user, token) => {
   };
 };
 
+//-------------------------------------------------------
+
+export const clearClassrooms = () => ({
+  type: ClassroomActionTypes.CLEAR_CLASSROOMS,
+});
+
+//-------------------------------------------------------
+
 export const createAClassroomRequest = () => ({
   type: ClassroomActionTypes.CREATE_A_CLASSROOM_REQUEST,
 });
@@ -49,3 +57,31 @@ export const createAClassroom = (user, title, token) => {
       .catch((error) => dispatch(createAClassroomFailure(error)));
   };
 };
+
+//-------------------------------------------------------
+
+export const fetchAClassroomRequest = () => ({
+  type: ClassroomActionTypes.FETCH_A_CLASSROOM_REQUEST,
+});
+
+export const fetchAClassroomSuccess = (classroom) => ({
+  type: ClassroomActionTypes.FETCH_A_CLASSROOM_SUCCESS,
+  payload: classroom,
+});
+
+export const fetchAClassroomFailure = (error) => ({
+  type: ClassroomActionTypes.FETCH_A_CLASSROOM_FAILURE,
+  payload: error,
+});
+
+export const fetchAClassroom = () => {
+  return (dispatch) => {
+    dispatch(fetchAClassroomRequest());
+    dispatch(fetchAClassroomSuccess({ title: "OOP" }));
+    // dispatch(fetchAClassroomFailure());
+  };
+};
+
+export const closeClassroom = () => ({
+  type: ClassroomActionTypes.CLOSE_CLASSROOM,
+});

@@ -16,3 +16,8 @@ export const selectError = createSelector(
   [selectorClassroom],
   (classroom) => classroom.error
 );
+
+export const selectIsOpenAClassroom = createSelector(
+  [selectorClassroom],
+  (classroom) => classroom.isOpenAClassroom
+);

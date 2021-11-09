@@ -15,3 +15,10 @@ export const selectIsLoading = createSelector(
 );
 
 export const selectToken = createSelector([sUser], (user) => user.token);
+
+export const selectIsInvalidEmail = createSelector(
+  [sUser],
+  (user) => user.isInvalidEmail
+);
+
+export const selectError = createSelector([sUser], (user) => user.error);

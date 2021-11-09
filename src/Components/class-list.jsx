@@ -3,30 +3,26 @@ import { makeStyles } from "@mui/styles";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import MyClass from "./my-class";
+import WithSpinner from "./with-spinner";
 import { fetchClassrooms } from "../redux/classroom/classroom.actions";
 import { createStructuredSelector } from "reselect";
 import {
   selectClassroom,
-  selectIsFetching,
   selectError,
 } from "../redux/classroom/classroom.selector";
 import { connect } from "react-redux";
 import { selectUser, selectToken } from "../redux/user/user.selector";
-import WithSpinner from "./with-spinner";
 
 const useStyles = makeStyles({
   classList: {
     display: "flex",
     height: "100%",
-    flexDirection: "column",
-    alignItems: "flex-start",
     marginLeft: "1rem",
   },
   classList__body: {
     display: "flex",
-    flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "start",
+    justifyContent: "flex-start",
   },
   spinner: {
     alignSelf: "center",
@@ -40,7 +36,7 @@ const ClassList = ({ token, user, fetchClassrooms, error, classrooms }) => {
 
   useEffect(() => {
     fetchClassrooms(user, token);
-  }, []);
+  }, [fetchClassrooms, token, user]);
 
   return (
     <div className={classes.classList}>
@@ -63,7 +59,6 @@ const mapState = createStructuredSelector({
   classrooms: selectClassroom,
   user: selectUser,
   token: selectToken,
-  isFetching: selectIsFetching,
   error: selectError,
 });
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
@@ -9,6 +9,12 @@ import { createAClassroom } from "../redux/classroom/classroom.actions";
 import { selectUser, selectToken } from "../redux/user/user.selector";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+
+const schema = Yup.object().shape({
+  title: Yup.string().required("Vui lòng nhập tên môn học"),
+});
 
 const DialogAddClass = ({
   handleCloseDialog,
@@ -17,37 +23,44 @@ const DialogAddClass = ({
   token,
   createAClassroom,
 }) => {
-  const [title, setTittle] = useState("");
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    createAClassroom(user, title, token);
-    handleCloseDialog();
-  };
-
-  const handleChange = (e) => {
-    setTittle(e.target.value);
-  };
+  const formik = useFormik({
+    initialValues: {
+      title: "",
+    },
+    validationSchema: schema,
+    onSubmit: (values) => {
+      if (values.title === "") {
+        return;
+      }
+      createAClassroom(user, values.title, token);
+      handleCloseDialog();
+    },
+  });
 
   return (
     <Dialog open={isOpenDialog} onClose={handleCloseDialog} fullWidth>
       <DialogTitle>Tạo lớp học</DialogTitle>
-      <DialogContent>
-        <TextField
-          autoFocus
-          margin="dense"
-          id="title"
-          label="Tên lớp học"
-          type="text"
-          fullWidth
-          variant="standard"
-          onChange={handleChange}
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleCloseDialog}>Huỷ</Button>
-        <Button onClick={handleSubmit}>Tạo</Button>
-      </DialogActions>
+      <form onSubmit={formik.handleSubmit}>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="title"
+            label="Tên lớp học"
+            type="text"
+            fullWidth
+            variant="standard"
+            onChange={formik.handleChange}
+            value={formik.values.title}
+            error={formik.touched.title && Boolean(formik.errors.title)}
+            helperText={formik.touched.title && formik.errors.title}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Huỷ</Button>
+          <Button type="submit">Tạo</Button>
+        </DialogActions>
+      </form>
     </Dialog>
   );
 };

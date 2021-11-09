@@ -6,6 +6,12 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Avatar from "@mui/material/Avatar";
 import Popover from "@mui/material/Popover";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Link from "@mui/material/Link";
+import { createStructuredSelector } from "reselect";
+import { selectIsOpenAClassroom } from "../redux/classroom/classroom.selector";
+import { Box } from "@mui/system";
 import { makeStyles } from "@mui/styles";
 import { userLogout } from "../redux/user/user.action";
 import { connect } from "react-redux";
@@ -29,11 +35,17 @@ const useStyles = makeStyles({
     textAlign: "left",
     fontSize: "1.375rem",
     margin: "1rem 2rem",
+    cursor: "pointer",
   },
 });
-const Header = ({ user, userLogout }) => {
+const Header = ({
+  user,
+  userLogout,
+  activeTab,
+  handleChangeTab,
+  isOpenAClassroom,
+}) => {
   const classes = useStyles();
-
   const [isOpenDialog, setIsOpenDialog] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -65,7 +77,45 @@ const Header = ({ user, userLogout }) => {
 
   return (
     <Card className={classes.header}>
-      <h3 className={classes.header__title}>Class Room</h3>
+      <Link
+        href="/classrooms"
+        sx={{
+          textAlign: "left",
+          fontSize: "28px",
+          margin: "1rem 2rem",
+          textDecoration: "none",
+          fontWeight: "bold",
+        }}
+      >
+        Classroom
+      </Link>
+      {isOpenAClassroom && (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            margin: "5px 0px",
+            paddingRight: "2rem",
+            fontSize: "1rem",
+          }}
+        >
+          <Tabs
+            value={activeTab}
+            onChange={handleChangeTab}
+            aria-label="basic tabs example"
+            centered
+          >
+            <Tab
+              sx={{ fontSize: "17px", fontWeight: "600" }}
+              label="Bảng tin"
+            />
+            <Tab
+              sx={{ fontSize: "17px", fontWeight: "600" }}
+              label="Mọi người"
+            />
+          </Tabs>
+        </Box>
+      )}
       {user && (
         <div>
           <IconButton
@@ -111,8 +161,12 @@ const Header = ({ user, userLogout }) => {
   );
 };
 
+const mapState = createStructuredSelector({
+  isOpenAClassroom: selectIsOpenAClassroom,
+});
+
 const mapDispatch = (dispatch) => ({
   userLogout: () => dispatch(userLogout()),
 });
 
-export default connect(null, mapDispatch)(Header);
+export default connect(mapState, mapDispatch)(Header);

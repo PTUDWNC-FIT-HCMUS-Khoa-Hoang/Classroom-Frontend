@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const userLoginService = (email, password) => {
+export const userLoginService = (email, password) => {
   return new Promise((resolve, reject) => {
     axios
       .post("/users/login", { email, password })
@@ -9,4 +9,11 @@ const userLoginService = (email, password) => {
   });
 };
 
-export default userLoginService;
+export const userRegisterService = (email, password, fullname) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .post("/users/register", { email, password, fullname })
+      .then((response) => resolve(response.data))
+      .catch((error) => reject(error));
+  });
+};

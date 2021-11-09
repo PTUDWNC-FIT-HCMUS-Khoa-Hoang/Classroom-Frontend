@@ -14,7 +14,7 @@ import storage from "redux-persist/lib/storage";
 const userPersistConfig = {
   key: "user",
   storage,
-  blacklist: ["isLoading", "error", "isWrongAccount"],
+  whitelist: ["user", "token"],
 };
 
 const rootReducer = combineReducers({
