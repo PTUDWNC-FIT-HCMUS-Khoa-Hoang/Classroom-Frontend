@@ -18,7 +18,7 @@ const Classroom = ({ activeTab, fetchAClassroom, closeClassroom }) => {
     return () => {
       closeClassroom();
     };
-  }, []);
+  }, [closeClassroom, fetchAClassroom]);
 
   return (
     <Box>
