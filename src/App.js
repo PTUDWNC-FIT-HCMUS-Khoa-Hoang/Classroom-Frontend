@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { makeStyles } from "@mui/styles";
 import ClassList from "./components/class-list";
 import Classroom from "./components/class-details";
+import UserDetail from "./components/user-detail";
 import Header from "./components/header";
 import LoginPage from "./components/login-page";
 import RegisterPage from "./components/register-page";
@@ -66,6 +67,7 @@ const App = ({ user }) => {
             activeTab={activeTab}
             authed={user}
           />
+          <PrivateRoute path="/user" component={UserDetail} authed={user} />
           <Route path="/" render={() => <Redirect to="/classrooms" />} />
         </Switch>
       </BrowserRouter>

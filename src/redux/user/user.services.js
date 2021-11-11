@@ -17,3 +17,9 @@ export const userRegisterService = (email, password, fullname) => {
       .catch((error) => reject(error));
   });
 };
+
+export const fetchAUser = async (userId, token) => {
+  return await axios.get(`/users/other/${userId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};

@@ -102,7 +102,7 @@ const RegisterPage = ({ userRegister, isInvalidEmail, error }) => {
       fullnameRef.current.classList.add(classes.shake);
       canSubmit = false;
     }
-    if (formik.values.email === "") {
+    if (formik.values.email === "" || Boolean(formik.errors.email)) {
       emailRef.current.classList.add(classes.shake);
       canSubmit = false;
     }
@@ -123,9 +123,19 @@ const RegisterPage = ({ userRegister, isInvalidEmail, error }) => {
       passwordConfirmRef.current.classList.add(classes.shake);
       canSubmit = false;
     }
-    if (!canSubmit) {
+
+    formik.handleSubmit();
+
+    if (
+      !canSubmit ||
+      Boolean(formik.errors.fullname) ||
+      Boolean(formik.errors.email) ||
+      Boolean(formik.errors.password) ||
+      Boolean(formik.errors.passwordConfirm)
+    ) {
       return;
     }
+
     userRegister(
       formik.values.email,
       formik.values.password,

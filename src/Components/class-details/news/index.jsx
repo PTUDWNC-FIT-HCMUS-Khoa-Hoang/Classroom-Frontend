@@ -3,7 +3,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import { Box } from "@mui/system";
 
-const News = () => {
+const News = ({ classroom }) => {
   return (
     <Box sx={{ display: "flex", justifyContent: "center" }}>
       <Box sx={{ width: "75%" }}>
@@ -23,7 +23,7 @@ const News = () => {
               textAlign: "left",
             }}
           >
-            Bảng tin
+            {classroom?.title}
           </CardContent>
         </Card>
         <Box sx={{ display: "flex", mt: 2, flexDirection: "flex-start" }}>

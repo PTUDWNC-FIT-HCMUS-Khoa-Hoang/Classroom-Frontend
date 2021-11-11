@@ -84,7 +84,7 @@ const Login = ({ isWrongAccount, userLogin, error }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (formik.values.email === "") {
+    if (formik.values.email === "" || Boolean(formik.errors.email)) {
       emailRef.current.classList.add(classes.shake);
     }
     if (formik.values.password === "") {

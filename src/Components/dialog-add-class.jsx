@@ -3,8 +3,8 @@ import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import Button from "@mui/material/Button";
 import DialogTitle from "@mui/material/DialogTitle";
+import Button from "@mui/material/Button";
 import { createAClassroom } from "../redux/classroom/classroom.actions";
 import { selectUser, selectToken } from "../redux/user/user.selector";
 import { connect } from "react-redux";
@@ -28,10 +28,11 @@ const DialogAddClass = ({
       title: "",
     },
     validationSchema: schema,
-    onSubmit: (values) => {
+    onSubmit: (values, { resetForm }) => {
       if (values.title === "") {
         return;
       }
+      resetForm();
       createAClassroom(user, values.title, token);
       handleCloseDialog();
     },

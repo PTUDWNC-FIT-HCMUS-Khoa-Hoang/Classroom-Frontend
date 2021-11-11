@@ -29,13 +29,21 @@ const useStyles = makeStyles({
     position: "sticky",
     top: 0,
     minHeight: "70px",
-    zIndex: 99,
+    zIndex: 999,
   },
   header__title: {
     textAlign: "left",
     fontSize: "1.375rem",
     margin: "1rem 2rem",
     cursor: "pointer",
+  },
+  userOptions: {
+    display: "flex",
+    padding: "10px",
+    minWidth: "300px",
+  },
+  userOptions__userDetail: {
+    textDecoration: "none",
   },
 });
 const Header = ({
@@ -118,26 +126,29 @@ const Header = ({
       )}
       {user && (
         <div>
-          <IconButton
-            sx={{
-              marginRight: "1rem",
-              fontSize: "35px",
-              width: "60px",
-            }}
-            onClick={handleOpenDialog}
-          >
-            +
-          </IconButton>
+          {!isOpenAClassroom && (
+            <IconButton
+              sx={{
+                marginRight: "1rem",
+                fontSize: "35px",
+                width: "60px",
+              }}
+              onClick={handleOpenDialog}
+            >
+              +
+            </IconButton>
+          )}
           <DialogAddClass
             handleCloseDialog={handleCloseDialog}
             isOpenDialog={isOpenDialog}
           />
+
           <IconButton
             aria-describedby={id}
             variant="outlined"
             onClick={handleClickAvatar}
           >
-            <Avatar sx={{ cursor: "pointer" }}>
+            <Avatar sx={{ cursor: "pointer", fontWeight: "bold" }}>
               {stringAvatar(user.fullname)}
             </Avatar>
           </IconButton>
@@ -151,8 +162,24 @@ const Header = ({
               horizontal: "right",
             }}
           >
-            <PopupOptionsWrapper>
-              <Button onClick={handleLogout}>Logout</Button>
+            <PopupOptionsWrapper className={classes.userOptions}>
+              <Avatar
+                sx={{
+                  width: "80px",
+                  height: "80px",
+                  margin: "auto",
+                  marginBottom: "20px",
+                  fontWeight: "bold",
+                }}
+              >
+                {stringAvatar(user.fullname)}
+              </Avatar>
+              <Button href="/user" sx={{ mt: 1, mb: 1, fontWeight: "700" }}>
+                Thông tin cá nhân
+              </Button>
+              <Button sx={{ fontWeight: "700" }} onClick={handleLogout}>
+                Đăng xuất
+              </Button>
             </PopupOptionsWrapper>
           </Popover>
         </div>

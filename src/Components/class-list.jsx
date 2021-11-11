@@ -2,14 +2,14 @@ import React, { useEffect } from "react";
 import { makeStyles } from "@mui/styles";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import MyClass from "./my-class";
+import ClassPreview from "./class-preview";
 import WithSpinner from "./with-spinner";
-import { fetchClassrooms } from "../redux/classroom/classroom.actions";
+import { fetchClassrooms } from "../redux/classrooms/classrooms.actions";
 import { createStructuredSelector } from "reselect";
 import {
-  selectClassroom,
+  selectClassrooms,
   selectError,
-} from "../redux/classroom/classroom.selector";
+} from "../redux/classrooms/classrooms.selector";
 import { connect } from "react-redux";
 import { selectUser, selectToken } from "../redux/user/user.selector";
 
@@ -35,18 +35,19 @@ const ClassList = ({ token, user, fetchClassrooms, error, classrooms }) => {
   const classes = useStyles();
 
   useEffect(() => {
-    fetchClassrooms(user, token);
-  }, [fetchClassrooms, token, user]);
-
+    if (classrooms === null) {
+      fetchClassrooms(user, token);
+    }
+  }, [classrooms, fetchClassrooms, token, user]);
   return (
     <div className={classes.classList}>
       {error ? (
         <p>Some error</p>
       ) : (
         <List className={classes.classList__body}>
-          {classrooms?.map((item) => (
+          {classrooms?.map((item, index) => (
             <ListItem key={item._id} sx={{ width: "auto" }}>
-              <MyClass {...item} />
+              <ClassPreview {...item} index={index} user={user} token={token} />
             </ListItem>
           ))}
         </List>
@@ -56,7 +57,7 @@ const ClassList = ({ token, user, fetchClassrooms, error, classrooms }) => {
 };
 
 const mapState = createStructuredSelector({
-  classrooms: selectClassroom,
+  classrooms: selectClassrooms,
   user: selectUser,
   token: selectToken,
   error: selectError,

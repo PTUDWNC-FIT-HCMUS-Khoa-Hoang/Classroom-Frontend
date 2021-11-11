@@ -2,12 +2,20 @@ import React from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import { connect } from "react-redux";
 import { selectIsLoading } from "../redux/user/user.selector";
-import { selectIsFetching } from "../redux/classroom/classroom.selector";
+import { selectIsFetchingClassrooms } from "../redux/classrooms/classrooms.selector";
+import { selectIsCreatingAClassroom } from "../redux/classroom/classroom.selector";
 import { createStructuredSelector } from "reselect";
 
 const WithSpinner = (WrappedComponent) => {
-  const Spinner = ({ isLoading, isFetching, ...otherProps }) => {
-    const isProcessing = isLoading || isFetching;
+  const Spinner = ({
+    isLoading,
+    isFetchingClassrooms,
+    isCreatingAClassroom,
+    ...otherProps
+  }) => {
+    console.log(isCreatingAClassroom);
+    const isProcessing =
+      isLoading || isFetchingClassrooms || isCreatingAClassroom;
     return (
       <>
         {isProcessing && (
@@ -34,7 +42,8 @@ const WithSpinner = (WrappedComponent) => {
 
 const mapState = createStructuredSelector({
   isLoading: selectIsLoading,
-  isFetching: selectIsFetching,
+  isFetchingClassrooms: selectIsFetchingClassrooms,
+  isCreatingAClassroom: selectIsCreatingAClassroom,
 });
 
 export default WithSpinner;

@@ -1,6 +1,9 @@
 import UserActionTypes from "./user.types";
 import { userLoginService, userRegisterService } from "./user.services";
-import { clearClassrooms } from "../classroom/classroom.actions";
+import {
+  clearClassrooms,
+  fetchClassroomsFailure,
+} from "../classrooms/classrooms.actions";
 
 export const emailLoginRequest = () => ({
   type: UserActionTypes.EMAIL_LOGIN_REQUEST,
@@ -35,6 +38,7 @@ export const userLogout = () => {
   return (dispatch) => {
     dispatch(logout());
     dispatch(clearClassrooms());
+    dispatch(fetchClassroomsFailure(null));
   };
 };
 
@@ -62,3 +66,19 @@ export const userRegister = (email, password, fullname) => {
       .catch((error) => dispatch(registerFailure(error)));
   };
 };
+
+//----------------------------------------------------------------------//
+
+export const fetchAUserRequest = () => ({
+  type: UserActionTypes.FETCH_A_USER_REQUEST,
+});
+
+export const fetchAUserSuccess = (user) => ({
+  type: UserActionTypes.FETCH_A_USER_SUCCESS,
+  payload: user,
+});
+
+export const fetchAUserFailure = (error) => ({
+  type: UserActionTypes.FETCH_A_USER_FAILURE,
+  payload: error,
+});

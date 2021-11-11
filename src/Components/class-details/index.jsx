@@ -9,32 +9,44 @@ import {
 import { Box } from "@mui/system";
 import { useEffect } from "react";
 import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
+import { selectAClassroom } from "../../redux/classroom/classroom.selector";
+import { useParams } from "react-router";
 
-const Classroom = ({ activeTab, fetchAClassroom, closeClassroom }) => {
-  console.log(activeTab);
+const Classroom = ({
+  activeTab,
+  fetchAClassroom,
+  closeClassroom,
+  classroom,
+}) => {
+  const { id } = useParams();
   useEffect(() => {
-    fetchAClassroom();
+    fetchAClassroom(id);
 
     return () => {
       closeClassroom();
     };
-  }, [closeClassroom, fetchAClassroom]);
+  }, [closeClassroom, fetchAClassroom, id]);
 
   return (
     <Box>
       <TabPanel value={activeTab} index={0}>
-        <News />
+        <News classroom={classroom} />
       </TabPanel>
       <TabPanel value={activeTab} index={1}>
-        <Participants />
+        <Participants classroom={classroom} />
       </TabPanel>
     </Box>
   );
 };
 
 const mapDispatch = (dispatch) => ({
-  fetchAClassroom: () => dispatch(fetchAClassroom()),
+  fetchAClassroom: (index) => dispatch(fetchAClassroom(index)),
   closeClassroom: () => dispatch(closeClassroom()),
 });
 
-export default connect(null, mapDispatch)(Classroom);
+const mapState = createStructuredSelector({
+  classroom: selectAClassroom,
+});
+
+export default connect(mapState, mapDispatch)(Classroom);
