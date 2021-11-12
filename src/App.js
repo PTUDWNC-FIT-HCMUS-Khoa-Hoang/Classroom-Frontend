@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { makeStyles } from "@mui/styles";
 import ClassList from "./components/class-list";
 import Classroom from "./components/class-details";
-import UserDetail from "./components/user-detail";
+import userDetails from "./components/user-details/index";
 import Header from "./components/header";
 import LoginPage from "./components/login-page";
 import RegisterPage from "./components/register-page";
@@ -36,12 +36,12 @@ const App = ({ user }) => {
 
   return (
     <div className={classes.root}>
-      <Header
-        user={user}
-        activeTab={activeTab}
-        handleChangeTab={handleChangeTab}
-      />
       <BrowserRouter>
+        <Header
+          user={user}
+          activeTab={activeTab}
+          handleChangeTab={handleChangeTab}
+        />
         <Switch>
           <Route
             path="/login"
@@ -67,7 +67,7 @@ const App = ({ user }) => {
             activeTab={activeTab}
             authed={user}
           />
-          <PrivateRoute path="/user" component={UserDetail} authed={user} />
+          <PrivateRoute path="/user" component={userDetails} authed={user} />
           <Route path="/" render={() => <Redirect to="/classrooms" />} />
         </Switch>
       </BrowserRouter>

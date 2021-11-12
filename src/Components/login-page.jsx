@@ -6,8 +6,8 @@ import { createStructuredSelector } from "reselect";
 import { selectIsWrongAccount, selectError } from "../redux/user/user.selector";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
@@ -94,7 +94,11 @@ const Login = ({ isWrongAccount, userLogin, error }) => {
   };
 
   return (
-    <Card className={classes.formWrapper} sx={{ boxShadow: 3 }}>
+    <Card
+      className={classes.formWrapper}
+      sx={{ boxShadow: 2 }}
+      variant="outlined"
+    >
       <CardContent className={classes.formContent}>
         <Typography variant="h4">Chào mừng đến với </Typography>
         <Typography variant="h2">Classroom</Typography>

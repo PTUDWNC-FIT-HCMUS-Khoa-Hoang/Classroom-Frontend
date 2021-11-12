@@ -1,7 +1,7 @@
 import React from "react";
 import News from "./news";
 import Participants from "./participants";
-import TabPanel from "./tab-panel";
+import TabPanel from "../../utils/tab-panel";
 import {
   fetchAClassroom,
   closeClassroom,

@@ -5,15 +5,12 @@ import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { selectUser, selectToken } from "../redux/user/user.selector";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-const UserDetail = ({ user }) => {
+const UserInfo = ({ user }) => {
   const schema = Yup.object().shape({
-    fullname: Yup.string().required("Vui lòng nhập tên"),
+    fullname: Yup.string().required("Vui lòng nhập họ tên"),
   });
 
   const formik = useFormik({
@@ -31,9 +28,9 @@ const UserDetail = ({ user }) => {
     <div style={{ display: "flex", justifyContent: "center" }}>
       <Card
         sx={{
-          width: "70%",
-          mt: 5,
+          width: "100%",
           boxShadow: 2,
+          m: 3,
         }}
         variant="outlined"
       >
@@ -61,6 +58,8 @@ const UserDetail = ({ user }) => {
               label="Họ tên"
               value={formik.values.fullname}
               onChange={formik.handleChange}
+              error={formik.touched.fullname && Boolean(formik.errors.fullname)}
+              helperText={formik.touched.fullname && formik.errors.fullname}
             />
             <TextField
               sx={{ mt: 1 }}
@@ -72,15 +71,7 @@ const UserDetail = ({ user }) => {
             />
           </CardContent>
           <CardActions sx={{ justifyContent: "right" }}>
-            <Button
-              type="submit"
-              disabled={
-                formik.values.fullname === user.fullname &&
-                formik.values.id === ""
-              }
-            >
-              Lưu
-            </Button>
+            <Button type="submit">Lưu</Button>
           </CardActions>
         </form>
       </Card>
@@ -88,9 +79,4 @@ const UserDetail = ({ user }) => {
   );
 };
 
-const mapState = createStructuredSelector({
-  user: selectUser,
-  token: selectToken,
-});
-
-export default connect(mapState)(UserDetail);
+export default UserInfo;

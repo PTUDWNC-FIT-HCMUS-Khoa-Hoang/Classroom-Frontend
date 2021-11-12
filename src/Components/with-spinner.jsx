@@ -13,7 +13,6 @@ const WithSpinner = (WrappedComponent) => {
     isCreatingAClassroom,
     ...otherProps
   }) => {
-    console.log(isCreatingAClassroom);
     const isProcessing =
       isLoading || isFetchingClassrooms || isCreatingAClassroom;
     return (

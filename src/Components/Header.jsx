@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import DialogAddClass from "./dialog-add-class";
+import DialogJoinClass from "./dialog-join-class";
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
@@ -8,7 +9,7 @@ import Avatar from "@mui/material/Avatar";
 import Popover from "@mui/material/Popover";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import Link from "@mui/material/Link";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import { createStructuredSelector } from "reselect";
 import { selectIsOpenAClassroom } from "../redux/classroom/classroom.selector";
 import { Box } from "@mui/system";
@@ -40,10 +41,14 @@ const useStyles = makeStyles({
   userOptions: {
     display: "flex",
     padding: "10px",
-    minWidth: "300px",
+    minWidth: "250px",
   },
   userOptions__userDetail: {
     textDecoration: "none",
+  },
+  addOptions: {
+    display: "flex",
+    minWidth: "100px",
   },
 });
 const Header = ({
@@ -54,45 +59,75 @@ const Header = ({
   isOpenAClassroom,
 }) => {
   const classes = useStyles();
-  const [isOpenDialog, setIsOpenDialog] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
 
-  const handleCloseDialog = () => {
-    setIsOpenDialog(false);
+  const [isOpenCreateClassDialog, setIsOpenCreateClassDialog] = useState(false);
+  const [isOpenJoinClassDialog, setIsOpenJoinClassDialog] = useState(false);
+  const [anchorElUserOptions, setAnchorElUserOptions] = useState(null);
+  const [anchorElAddOptions, setAnchorElAddOptions] = useState(null);
+
+  const handleCloseCreateClassDialog = () => {
+    setIsOpenCreateClassDialog(false);
   };
 
-  const handleOpenDialog = () => {
-    setIsOpenDialog(true);
+  const handleOpenCreateClassDialog = () => {
+    handleCloseAddOptions();
+    setIsOpenCreateClassDialog(true);
+  };
+
+  const handleCloseJoinClassDialog = () => {
+    setIsOpenJoinClassDialog(false);
+  };
+
+  const handleOpenJoinClassDialog = () => {
+    handleCloseAddOptions();
+    setIsOpenJoinClassDialog(true);
   };
 
   const handleClickAvatar = (event) => {
-    setAnchorEl(event.currentTarget);
+    setAnchorElUserOptions(event.currentTarget);
   };
 
-  const handleCloseUserOption = () => {
-    setAnchorEl(null);
+  const handleCloseUserOptions = () => {
+    setAnchorElUserOptions(null);
+  };
+
+  const handleClickAdd = (event) => {
+    setAnchorElAddOptions(event.currentTarget);
+  };
+
+  const handleCloseAddOptions = () => {
+    setAnchorElAddOptions(null);
   };
 
   const handleLogout = () => {
-    setAnchorEl(null);
+    setAnchorElUserOptions(null);
     userLogout();
   };
 
   const stringAvatar = (name) => name.split("")[0];
 
-  const open = Boolean(anchorEl);
-  const id = open ? "user-popover" : undefined;
+  const openUserOptions = Boolean(anchorElUserOptions);
+  const idUserOptions = openUserOptions ? "user-popover" : undefined;
+
+  const openAddOptions = Boolean(anchorElAddOptions);
+  const idAddOptions = openAddOptions ? "user-popover" : undefined;
+
+  const history = useHistory();
+  const location = useLocation();
+
+  const isOnHomePage = location.pathname === "/classrooms";
 
   return (
     <Card className={classes.header}>
       <Link
-        href="/classrooms"
-        sx={{
+        to="/classrooms"
+        style={{
           textAlign: "left",
           fontSize: "28px",
           margin: "1rem 2rem",
           textDecoration: "none",
           fontWeight: "bold",
+          color: "cornflowerblue",
         }}
       >
         Classroom
@@ -103,7 +138,7 @@ const Header = ({
             display: "flex",
             justifyContent: "center",
             margin: "5px 0px",
-            paddingRight: "2rem",
+            paddingRight: "7rem",
             fontSize: "1rem",
           }}
         >
@@ -126,25 +161,55 @@ const Header = ({
       )}
       {user && (
         <div>
-          {!isOpenAClassroom && (
+          {isOnHomePage && (
             <IconButton
               sx={{
                 marginRight: "1rem",
                 fontSize: "35px",
                 width: "60px",
               }}
-              onClick={handleOpenDialog}
+              onClick={handleClickAdd}
             >
               +
             </IconButton>
           )}
+
+          <Popover
+            id={idAddOptions}
+            anchorEl={anchorElAddOptions}
+            open={openAddOptions}
+            onClose={handleCloseAddOptions}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "right",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+          >
+            <PopupOptionsWrapper className={classes.addOptions}>
+              <Button sx={{ m: 1 }} onClick={handleOpenJoinClassDialog}>
+                Tham gia lớp học
+              </Button>
+              <Button sx={{ mb: 1 }} onClick={handleOpenCreateClassDialog}>
+                Tạo lớp học
+              </Button>
+            </PopupOptionsWrapper>
+          </Popover>
+
+          <DialogJoinClass
+            handleCloseDialog={handleCloseJoinClassDialog}
+            isOpenDialog={isOpenJoinClassDialog}
+          />
+
           <DialogAddClass
-            handleCloseDialog={handleCloseDialog}
-            isOpenDialog={isOpenDialog}
+            handleCloseDialog={handleCloseCreateClassDialog}
+            isOpenDialog={isOpenCreateClassDialog}
           />
 
           <IconButton
-            aria-describedby={id}
+            aria-describedby={idUserOptions}
             variant="outlined"
             onClick={handleClickAvatar}
           >
@@ -153,10 +218,10 @@ const Header = ({
             </Avatar>
           </IconButton>
           <Popover
-            id={id}
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleCloseUserOption}
+            id={idUserOptions}
+            anchorEl={anchorElUserOptions}
+            open={openUserOptions}
+            onClose={handleCloseUserOptions}
             anchorOrigin={{
               vertical: "bottom",
               horizontal: "right",
@@ -174,7 +239,13 @@ const Header = ({
               >
                 {stringAvatar(user.fullname)}
               </Avatar>
-              <Button href="/user" sx={{ mt: 1, mb: 1, fontWeight: "700" }}>
+              <Button
+                onClick={() => {
+                  handleCloseUserOptions();
+                  history.push("/user");
+                }}
+                sx={{ mt: 1, mb: 1, fontWeight: "700" }}
+              >
                 Thông tin cá nhân
               </Button>
               <Button sx={{ fontWeight: "700" }} onClick={handleLogout}>

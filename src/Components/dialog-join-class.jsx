@@ -5,7 +5,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
-import { createAClassroom } from "../redux/classroom/classroom.actions";
+import { Typography } from "@mui/material";
 import { selectUser, selectToken } from "../redux/user/user.selector";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
@@ -13,23 +13,16 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 
 const schema = Yup.object().shape({
-  title: Yup.string().required("Vui lòng nhập tên môn học"),
+  code: Yup.string(),
 });
 
-const DialogAddClass = ({
-  handleCloseDialog,
-  isOpenDialog,
-  user,
-  token,
-  createAClassroom,
-}) => {
+const DialogJoinClass = ({ handleCloseDialog, isOpenDialog, user, token }) => {
   const formik = useFormik({
     initialValues: {
-      title: "",
+      code: "",
     },
     validationSchema: schema,
     onSubmit: (values) => {
-      createAClassroom(user, values.title, token);
       handleCloseDialog();
     },
   });
@@ -41,30 +34,34 @@ const DialogAddClass = ({
 
   return (
     <Dialog open={isOpenDialog} onClose={customHanldeCloseDialog} fullWidth>
-      <DialogTitle>Tạo lớp học</DialogTitle>
+      <DialogTitle>
+        Tham gia lớp học
+        <Typography variant="subtitle1">
+          Đề nghị giáo viên của bạn cung cấp mã lớp rồi nhập mã đó vào đây.
+        </Typography>
+      </DialogTitle>
       <form onSubmit={formik.handleSubmit}>
         <DialogContent>
           <TextField
             autoFocus
             margin="dense"
-            id="title"
-            label="Tên lớp học"
+            id="code"
+            label="Mã lớp học"
             type="text"
-            fullWidth
-            variant="standard"
+            variant="outlined"
             onChange={formik.handleChange}
-            value={formik.values.title}
-            error={formik.touched.title && Boolean(formik.errors.title)}
-            helperText={formik.touched.title && formik.errors.title}
+            value={formik.values.code}
+            error={formik.touched.code && Boolean(formik.errors.code)}
+            helperText={formik.touched.code && formik.errors.code}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={customHanldeCloseDialog}>Huỷ</Button>
           <Button
-            disabled={formik.values.title === "" ? true : false}
+            disabled={formik.values.code === "" ? true : false}
             type="submit"
           >
-            Tạo
+            Tham gia
           </Button>
         </DialogActions>
       </form>
@@ -77,9 +74,4 @@ const mapState = createStructuredSelector({
   token: selectToken,
 });
 
-const mapDispatch = (dispatch) => ({
-  createAClassroom: (user, title, token) =>
-    dispatch(createAClassroom(user, title, token)),
-});
-
-export default connect(mapState, mapDispatch)(DialogAddClass);
+export default connect(mapState)(DialogJoinClass);

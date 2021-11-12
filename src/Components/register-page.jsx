@@ -144,7 +144,11 @@ const RegisterPage = ({ userRegister, isInvalidEmail, error }) => {
   };
 
   return (
-    <Card className={classes.formWrapper} sx={{ boxShadow: 3 }}>
+    <Card
+      className={classes.formWrapper}
+      sx={{ boxShadow: 2 }}
+      variant="outlined"
+    >
       <CardContent className={classes.formContent}>
         <Typography variant="h4">Đăng ký tài khoản</Typography>
         <form className={classes.registerForm} onSubmit={handleSubmit}>
