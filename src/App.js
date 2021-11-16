@@ -1,12 +1,12 @@
 import { Switch, Route, BrowserRouter, Redirect } from "react-router-dom";
 import { useEffect } from "react";
 import { makeStyles } from "@mui/styles";
-import ClassroomList from "./components/classroom-list";
-import Classroom from "./components/class-details";
-import userDetails from "./components/user-details/index";
-import Header from "./components/header";
-import LoginPage from "./components/login-page";
-import RegisterPage from "./components/register-page";
+import ClassroomList from "./component/classroom-list";
+import Classroom from "./component/class-details";
+import userDetails from "./component/user-details/index";
+import Header from "./component/header";
+import LoginPage from "./component/login-page";
+import RegisterPage from "./component/register-page";
 import PrivateRoute from "./utils/private-route";
 import { createStructuredSelector } from "reselect";
 import { selectUser } from "./redux/user/user.selector";
