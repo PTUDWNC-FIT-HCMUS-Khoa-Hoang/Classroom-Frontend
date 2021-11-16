@@ -1,7 +1,7 @@
 import { Switch, Route, BrowserRouter, Redirect } from "react-router-dom";
 import { useEffect } from "react";
 import { makeStyles } from "@mui/styles";
-import ClassList from "./components/class-list.jsx";
+import ClassroomList from "./components/classroom-list";
 import Classroom from "./components/class-details";
 import userDetails from "./components/user-details/index";
 import Header from "./components/header";
@@ -57,7 +57,7 @@ const App = ({ user }) => {
           />
           <PrivateRoute
             path="/classrooms"
-            component={ClassList}
+            component={ClassroomList}
             authed={user}
             exact
           />

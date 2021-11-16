@@ -31,7 +31,7 @@ const useStyles = makeStyles({
   },
 });
 
-const ClassList = ({ user, fetchClassrooms, error, classrooms }) => {
+const ClassroomList = ({ user, fetchClassrooms, error, classrooms }) => {
   const classes = useStyles();
 
   useEffect(() => {
@@ -67,4 +67,4 @@ const mapDispatch = (dispatch) => ({
   fetchClassrooms: () => dispatch(fetchClassrooms()),
 });
 
-export default connect(mapState, mapDispatch)(WithSpinner(ClassList));
+export default connect(mapState, mapDispatch)(WithSpinner(ClassroomList));
