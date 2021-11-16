@@ -39,6 +39,7 @@ const ClassList = ({ user, fetchClassrooms, error, classrooms }) => {
       fetchClassrooms();
     }
   }, [classrooms, fetchClassrooms, user]);
+
   return (
     <div className={classes.classList}>
       {error ? (
