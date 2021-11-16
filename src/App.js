@@ -1,7 +1,7 @@
 import { Switch, Route, BrowserRouter, Redirect } from "react-router-dom";
 import { useEffect } from "react";
 import { makeStyles } from "@mui/styles";
-import ClassList from "./components/class-list";
+import ClassList from "./components/class-list.jsx";
 import Classroom from "./components/class-details";
 import userDetails from "./components/user-details/index";
 import Header from "./components/header";
