@@ -41,7 +41,7 @@ const Classroom = ({
 };
 
 const mapDispatch = (dispatch) => ({
-  fetchAClassroom: (index) => dispatch(fetchAClassroom(index)),
+  fetchAClassroom: (id) => dispatch(fetchAClassroom(id)),
   closeClassroom: () => dispatch(closeClassroom()),
 });
 

@@ -26,7 +26,7 @@ const useStyles = makeStyles({
   },
 });
 
-const ClassPreview = ({ title, match, index, ownerFullname, user }) => {
+const ClassPreview = ({ title, match, _id, ownerFullname, user }) => {
   const classes = useStyles();
   return (
     <Card className={classes.card}>
@@ -34,7 +34,7 @@ const ClassPreview = ({ title, match, index, ownerFullname, user }) => {
         <CardContent>
           <Link
             style={{ textDecoration: "none", color: "white" }}
-            to={`${match.path}/${index}`}
+            to={`${match.path}/${_id}`}
           >
             <Typography variant="span" className={classes.card__title}>
               {title}

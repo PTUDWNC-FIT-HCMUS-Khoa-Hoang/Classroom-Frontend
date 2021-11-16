@@ -1,5 +1,8 @@
 import ClassroomActionTypes from "./classroom.types";
-import { createAClassroomService } from "./classroom.services";
+import {
+  createAClassroomService,
+  fetchAClassroomService,
+} from "./classroom.services";
 import { fetchClassrooms } from "../classrooms/classrooms.actions";
 
 export const fetchAClassroomRequest = () => ({
@@ -16,24 +19,13 @@ export const fetchAClassroomFailure = (error) => ({
   payload: error,
 });
 
-export const fetchAClassroom = (index) => {
+export const fetchAClassroom = (id) => {
   return (dispatch, getState) => {
     dispatch(fetchAClassroomRequest());
-    dispatch(
-      fetchAClassroomSuccess(
-        getState().classrooms.classrooms[+index] || {
-          _id: "618ba6e971ce6f65fe0562ab",
-          title: "131123",
-          owner: "6188f087d3d5594b137dd8ed",
-          gradings: [],
-          createdAt: "2021-11-10T11:03:05.296Z",
-          updatedAt: "2021-11-10T11:03:05.296Z",
-          __v: 0,
-          ownerFullname: "1",
-        }
-      )
-    );
-    // dispatch(fetchAClassroomFailure());
+    const token = getState().user.token;
+    fetchAClassroomService(token, id)
+      .then((data) => dispatch(fetchAClassroomSuccess(data)))
+      .catch((error) => dispatch(fetchAClassroomFailure(error)));
   };
 };
 
@@ -54,12 +46,13 @@ export const createAClassroomFailure = (error) => ({
   payload: error,
 });
 
-export const createAClassroom = (user, title, token) => {
-  return (dispatch) => {
-    createAClassroomService(user, title, token)
+export const createAClassroom = (title) => {
+  return (dispatch, getState) => {
+    const token = getState().user.token;
+    createAClassroomService(title, token)
       .then(() => dispatch(createAClassroomRequest()))
       .then(() => dispatch(createAClassroomSuccess()))
-      .then(() => dispatch(fetchClassrooms(user, token)))
+      .then(() => dispatch(fetchClassrooms(token)))
       .catch((error) => dispatch(createAClassroomFailure(error)));
   };
 };

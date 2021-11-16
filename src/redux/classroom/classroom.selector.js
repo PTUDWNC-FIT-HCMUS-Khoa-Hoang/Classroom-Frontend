@@ -7,11 +7,6 @@ export const selectAClassroom = createSelector(
   (clasroom) => clasroom.classroom
 );
 
-export const selectIsOpenAClassroom = createSelector(
-  [selectorClassroom],
-  (clasroom) => clasroom.isOpenAClassroom
-);
-
 export const selectIsCreatingAClassroom = createSelector(
   [selectorClassroom],
   (classroom) => classroom.isCreatingAClassroom

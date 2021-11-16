@@ -11,7 +11,7 @@ import {
   selectError,
 } from "../redux/classrooms/classrooms.selector";
 import { connect } from "react-redux";
-import { selectUser, selectToken } from "../redux/user/user.selector";
+import { selectUser } from "../redux/user/user.selector";
 
 const useStyles = makeStyles({
   classList: {
@@ -31,23 +31,23 @@ const useStyles = makeStyles({
   },
 });
 
-const ClassList = ({ token, user, fetchClassrooms, error, classrooms }) => {
+const ClassList = ({ user, fetchClassrooms, error, classrooms }) => {
   const classes = useStyles();
 
   useEffect(() => {
     if (classrooms === null) {
-      fetchClassrooms(user, token);
+      fetchClassrooms();
     }
-  }, [classrooms, fetchClassrooms, token, user]);
+  }, [classrooms, fetchClassrooms, user]);
   return (
     <div className={classes.classList}>
       {error ? (
         <p>Some error</p>
       ) : (
         <List className={classes.classList__body}>
-          {classrooms?.map((item, index) => (
+          {classrooms?.map((item) => (
             <ListItem key={item._id} sx={{ width: "auto" }}>
-              <ClassPreview {...item} index={index} user={user} token={token} />
+              <ClassPreview {...item} user={user} />
             </ListItem>
           ))}
         </List>
@@ -59,12 +59,11 @@ const ClassList = ({ token, user, fetchClassrooms, error, classrooms }) => {
 const mapState = createStructuredSelector({
   classrooms: selectClassrooms,
   user: selectUser,
-  token: selectToken,
   error: selectError,
 });
 
 const mapDispatch = (dispatch) => ({
-  fetchClassrooms: (user, token) => dispatch(fetchClassrooms(user, token)),
+  fetchClassrooms: () => dispatch(fetchClassrooms()),
 });
 
 export default connect(mapState, mapDispatch)(WithSpinner(ClassList));

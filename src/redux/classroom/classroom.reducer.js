@@ -2,7 +2,6 @@ import ClassroomActionTypes from "./classroom.types";
 
 const INITIAL_STATE = {
   classroom: null,
-  isOpenAClassroom: false,
   isCreatingAClassroom: false,
   classroomError: false,
   isFetchingAClassroom: false,
@@ -29,7 +28,6 @@ const classroomReducer = (state = INITIAL_STATE, { type, payload }) => {
     case ClassroomActionTypes.FETCH_A_CLASSROOM_REQUEST:
       return {
         ...state,
-        isOpenAClassroom: true,
         isFetchingAClassroom: true,
       };
     case ClassroomActionTypes.FETCH_A_CLASSROOM_SUCCESS:

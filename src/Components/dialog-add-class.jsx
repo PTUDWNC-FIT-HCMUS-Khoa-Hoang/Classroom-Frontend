@@ -19,8 +19,6 @@ const schema = Yup.object().shape({
 const DialogAddClass = ({
   handleCloseDialog,
   isOpenDialog,
-  user,
-  token,
   createAClassroom,
 }) => {
   const formik = useFormik({
@@ -28,8 +26,9 @@ const DialogAddClass = ({
       title: "",
     },
     validationSchema: schema,
-    onSubmit: (values) => {
-      createAClassroom(user, values.title, token);
+    onSubmit: (values, { resetForm }) => {
+      createAClassroom(values.title);
+      resetForm();
       handleCloseDialog();
     },
   });

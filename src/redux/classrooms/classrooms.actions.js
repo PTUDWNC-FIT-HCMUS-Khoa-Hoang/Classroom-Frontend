@@ -1,8 +1,5 @@
 import ClassroomsActionTypes from "./classrooms.types";
-import {
-  fetchClassroomsService,
-  findOwnerFullname,
-} from "./classrooms.services";
+import { fetchClassroomsService } from "./classrooms.services";
 
 export const fetchClassroomsRequest = () => ({
   type: ClassroomsActionTypes.FETCH_CLASSROOMS_REQUEST,
@@ -18,15 +15,12 @@ export const fetchClassroomsFailure = (error) => ({
   payload: error,
 });
 
-export const fetchClassrooms = (user, token) => {
-  return (dispatch) => {
+export const fetchClassrooms = () => {
+  return (dispatch, getState) => {
+    const token = getState().user.token;
     dispatch(fetchClassroomsRequest());
-    fetchClassroomsService(user, token)
-      .then((data) => {
-        Promise.all(findOwnerFullname(data, token))
-          .then((res) => dispatch(fetchClassroomsSuccess(res)))
-          .catch((error) => dispatch(fetchClassroomsFailure(error)));
-      })
+    fetchClassroomsService(token)
+      .then((data) => dispatch(fetchClassroomsSuccess(data)))
       .catch((error) => dispatch(fetchClassroomsFailure(error)));
   };
 };

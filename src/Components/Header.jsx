@@ -10,8 +10,6 @@ import Popover from "@mui/material/Popover";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { Link, useHistory, useLocation } from "react-router-dom";
-import { createStructuredSelector } from "reselect";
-import { selectIsOpenAClassroom } from "../redux/classroom/classroom.selector";
 import { Box } from "@mui/system";
 import { makeStyles } from "@mui/styles";
 import { userLogout } from "../redux/user/user.action";
@@ -51,13 +49,7 @@ const useStyles = makeStyles({
     minWidth: "100px",
   },
 });
-const Header = ({
-  user,
-  userLogout,
-  activeTab,
-  handleChangeTab,
-  isOpenAClassroom,
-}) => {
+const Header = ({ user, userLogout, activeTab, handleChangeTab }) => {
   const classes = useStyles();
 
   const [isOpenCreateClassDialog, setIsOpenCreateClassDialog] = useState(false);
@@ -116,6 +108,7 @@ const Header = ({
   const location = useLocation();
 
   const isOnHomePage = location.pathname === "/classrooms";
+  const isOpenAClassroom = location.pathname.includes("/classrooms/");
 
   return (
     <Card className={classes.header}>
@@ -259,12 +252,8 @@ const Header = ({
   );
 };
 
-const mapState = createStructuredSelector({
-  isOpenAClassroom: selectIsOpenAClassroom,
-});
-
 const mapDispatch = (dispatch) => ({
   userLogout: () => dispatch(userLogout()),
 });
 
-export default connect(mapState, mapDispatch)(Header);
+export default connect(null, mapDispatch)(Header);
