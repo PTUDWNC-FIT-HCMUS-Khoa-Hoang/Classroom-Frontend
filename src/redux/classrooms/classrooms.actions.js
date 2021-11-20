@@ -56,9 +56,12 @@ export const joinByInvitationCode = (invitationCode) => {
     joinByInvitationCodeService(invitationCode, token)
       .then(
         (data) =>
-          (window.location.href = `http://localhost:3000/classrooms/${data?.classroomId}`)
+          (window.location.href =
+            window.location.origin + `/classrooms/${data?.classroomId}`)
       )
       .then(() => dispatch(joinClassroomByInvitationCodeSuccess()))
       .catch((error) => dispatch(joinClassroomByInvitationCodeFailure(error)));
   };
 };
+
+//-------------------------------------------------------

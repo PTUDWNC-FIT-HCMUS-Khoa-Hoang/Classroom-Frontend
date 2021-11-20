@@ -16,7 +16,7 @@ import {
 } from "../../redux/classroom/classroom.selector";
 import { useParams } from "react-router";
 import WithSpinner from "../with-spinner";
-import { selectUser } from "../../redux/user/user.selector";
+import { selectUser, selectToken } from "../../redux/user/user.selector";
 
 const Classroom = ({
   activeTab,
@@ -25,6 +25,7 @@ const Classroom = ({
   classroom,
   participants,
   user,
+  token,
 }) => {
   const { id } = useParams();
   useEffect(() => {
@@ -54,6 +55,7 @@ const Classroom = ({
           user={user}
           invitationCode={classroom.invitationCode}
           classroomId={classroom._id}
+          token={token}
         />
       </TabPanel>
     </Box>
@@ -69,6 +71,7 @@ const mapState = createStructuredSelector({
   classroom: selectAClassroom,
   participants: selectParticipants,
   user: selectUser,
+  token: selectToken,
 });
 
 export default connect(mapState, mapDispatch)(WithSpinner(Classroom));

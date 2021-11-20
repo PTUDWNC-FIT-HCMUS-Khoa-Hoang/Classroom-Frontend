@@ -23,3 +23,16 @@ export const joinByInvitationCodeService = (code, token) => {
       .catch((error) => reject(error));
   });
 };
+
+export const createInvitationService = (data, token) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: "/invitation/classroom",
+      headers: { Authorization: `Bearer ${token}` },
+      data: data,
+    })
+      .then((response) => resolve(response))
+      .catch((error) => reject(error));
+  });
+};

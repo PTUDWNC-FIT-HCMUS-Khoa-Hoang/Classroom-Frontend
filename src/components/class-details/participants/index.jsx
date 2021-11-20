@@ -43,6 +43,7 @@ const Participants = ({
   owner,
   invitationCode,
   classroomId,
+  token,
 }) => {
   const [isOpenInviteTeacher, setIsOpenInviteTeacher] = useState(false);
   const [isOpenInviteStudent, setIsOpenInviteStudent] = useState(false);
@@ -101,6 +102,7 @@ const Participants = ({
             isOpenDialog={isOpenInviteTeacher}
             handleCloseDialog={handleCloseDialogInviteTeacher}
             dialogTitle="Mời giáo viên"
+            token={token}
           />
           <Divider
             sx={{ borderBottomWidth: "unset", borderColor: "cornflowerblue" }}
