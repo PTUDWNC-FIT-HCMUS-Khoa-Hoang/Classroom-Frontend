@@ -5,7 +5,8 @@ import TabPanel from "../../utils/tab-panel";
 import Card from "@mui/material/Card";
 import UserInfo from "./user-info";
 import UserPassword from "./user-password";
-import { selectUser, selectToken } from "../../redux/user/user.selector";
+import WithSpinner from "../with-spinner";
+import { selectUser } from "../../redux/user/user.selector";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { makeStyles } from "@mui/styles";
@@ -53,7 +54,6 @@ const UserDetails = ({ user }) => {
 
 const mapState = createStructuredSelector({
   user: selectUser,
-  token: selectToken,
 });
 
-export default connect(mapState)(UserDetails);
+export default connect(mapState)(WithSpinner(UserDetails));

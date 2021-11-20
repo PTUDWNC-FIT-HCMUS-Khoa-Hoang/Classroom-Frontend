@@ -1,12 +1,13 @@
 import { Switch, Route, BrowserRouter, Redirect } from "react-router-dom";
 import { useEffect } from "react";
 import { makeStyles } from "@mui/styles";
-import ClassroomList from "./component/classroom-list";
-import Classroom from "./component/class-details";
-import userDetails from "./component/user-details/index";
-import Header from "./component/header";
-import LoginPage from "./component/login-page";
-import RegisterPage from "./component/register-page";
+import ClassroomList from "./components/classroom-list";
+import Classroom from "./components/class-details";
+import userDetails from "./components/user-details/index";
+import Header from "./components/header";
+import LoginPage from "./components/login-page";
+import RegisterPage from "./components/register-page";
+import JoinClassroom from "./components/join-classroom";
 import PrivateRoute from "./utils/private-route";
 import { createStructuredSelector } from "reselect";
 import { selectUser } from "./redux/user/user.selector";
@@ -30,6 +31,7 @@ const App = ({ user }) => {
   const handleChangeTab = (e, newTab) => {
     setActiveTab(newTab);
   };
+
   useEffect(() => {
     document.title = "Classroom";
   }, []);
@@ -74,8 +76,8 @@ const App = ({ user }) => {
             authed={user}
           />
           <PrivateRoute
-            path="/join/:id"
-            component={userDetails}
+            path="/join/:invitationCode"
+            component={JoinClassroom}
             authed={user}
           />
           <Route path="/" render={() => <Redirect to="/classrooms" />} />

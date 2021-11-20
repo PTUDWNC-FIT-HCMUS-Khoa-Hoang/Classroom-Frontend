@@ -10,14 +10,21 @@ import { Box } from "@mui/system";
 import { useEffect } from "react";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
-import { selectAClassroom } from "../../redux/classroom/classroom.selector";
+import {
+  selectAClassroom,
+  selectParticipants,
+} from "../../redux/classroom/classroom.selector";
 import { useParams } from "react-router";
+import WithSpinner from "../with-spinner";
+import { selectUser } from "../../redux/user/user.selector";
 
 const Classroom = ({
   activeTab,
   fetchAClassroom,
   closeClassroom,
   classroom,
+  participants,
+  user,
 }) => {
   const { id } = useParams();
   useEffect(() => {
@@ -28,13 +35,26 @@ const Classroom = ({
     };
   }, [closeClassroom, fetchAClassroom, id]);
 
+  if (classroom === null) return null;
+  let isTeacher = user._id === classroom.owner._id;
+
+  participants.forEach((p) => {
+    if (p._id === user._id && p.role === "teacher") isTeacher = true;
+  });
+
   return (
     <Box>
       <TabPanel value={activeTab} index={0}>
-        <News classroom={classroom} />
+        <News classroom={classroom} isTeacher={isTeacher} />
       </TabPanel>
       <TabPanel value={activeTab} index={1}>
-        <Participants classroom={classroom} />
+        <Participants
+          participants={participants}
+          owner={classroom.owner}
+          user={user}
+          invitationCode={classroom.invitationCode}
+          classroomId={classroom._id}
+        />
       </TabPanel>
     </Box>
   );
@@ -47,6 +67,8 @@ const mapDispatch = (dispatch) => ({
 
 const mapState = createStructuredSelector({
   classroom: selectAClassroom,
+  participants: selectParticipants,
+  user: selectUser,
 });
 
-export default connect(mapState, mapDispatch)(Classroom);
+export default connect(mapState, mapDispatch)(WithSpinner(Classroom));

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
@@ -25,8 +25,15 @@ const useStyles = makeStyles({
   },
 });
 
-const DialogInvite = ({ isOpenDialog, dialogTitle, handleCloseDialog }) => {
+const DialogInvite = ({
+  isOpenDialog,
+  dialogTitle,
+  handleCloseDialog,
+  invitationCode,
+  classroomId,
+}) => {
   const classes = useStyles();
+  const linkEl = useRef(null);
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -36,16 +43,28 @@ const DialogInvite = ({ isOpenDialog, dialogTitle, handleCloseDialog }) => {
       resetForm();
     },
   });
+
+  const link =
+    "http://localhost:3000/join/" +
+    classroomId +
+    "?invitationCode=" +
+    invitationCode;
+  const clickToCopy = () => {
+    navigator.clipboard.writeText(link);
+  };
+
   return (
     <Dialog open={isOpenDialog} onClose={handleCloseDialog} fullWidth>
       <DialogTitle>{dialogTitle} </DialogTitle>
       <form onSubmit={formik.handleSubmit}>
         <DialogContent>
-          {dialogTitle === "Mời học viên" && (
+          {invitationCode && (
             <div className={classes.inviteLinkWrapper}>
               <Typography variant="subtitle">Đường liên kết mời</Typography>
               <div className={classes.inviteLinkWrapper__link}>
                 <Typography
+                  id="123"
+                  ref={linkEl}
                   variant="body1"
                   sx={{
                     mt: 1,
@@ -56,9 +75,9 @@ const DialogInvite = ({ isOpenDialog, dialogTitle, handleCloseDialog }) => {
                     opacity: "0.5",
                   }}
                 >
-                  https://classroom.google.com/c/NDI4MDE0MjM3NzM5?cjc=xx2flj4https://classroom.google.com/c/NDI4MDE0MjM3NzM5?cjc=xx2flj4
+                  {link}
                 </Typography>
-                <Button>
+                <Button onClick={clickToCopy}>
                   <ContentCopyIcon />
                 </Button>
               </div>

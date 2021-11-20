@@ -6,9 +6,11 @@ import CardActions from "@mui/material/CardActions";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { useFormik } from "formik";
+import { updateProfile } from "../../redux/user/user.action";
+import { connect } from "react-redux";
 import * as Yup from "yup";
 
-const UserInfo = ({ user }) => {
+const UserInfo = ({ user, updateProfile }) => {
   const schema = Yup.object().shape({
     fullname: Yup.string().required("Vui lòng nhập họ tên"),
   });
@@ -16,11 +18,11 @@ const UserInfo = ({ user }) => {
   const formik = useFormik({
     initialValues: {
       fullname: user.fullname,
-      id: "",
+      studentId: user.studentId,
     },
     validationSchema: schema,
     onSubmit: (values) => {
-      return;
+      updateProfile(values);
     },
   });
 
@@ -63,11 +65,11 @@ const UserInfo = ({ user }) => {
             />
             <TextField
               sx={{ mt: 1 }}
-              id="id"
-              name="id"
+              id="studentId"
+              name="studentId"
               label="Mã số sinh viên"
               onChange={formik.handleChange}
-              value={formik.values.id}
+              value={formik.values.studentId}
             />
           </CardContent>
           <CardActions sx={{ justifyContent: "right" }}>
@@ -79,4 +81,8 @@ const UserInfo = ({ user }) => {
   );
 };
 
-export default UserInfo;
+const mapDispatch = (dispatch) => ({
+  updateProfile: (data) => dispatch(updateProfile(data)),
+});
+
+export default connect(null, mapDispatch)(UserInfo);

@@ -24,3 +24,27 @@ export const fetchAClassroomService = (token, id) => {
       .catch((error) => reject(error));
   });
 };
+
+export const checkIfJoinedClassroom = (classroomId, token) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: `/join-classroom/check/${classroomId}`,
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((response) => resolve(response.data))
+      .catch((error) => reject(error));
+  });
+};
+
+export const acceptJoinClassroom = (invitationId, token) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: `/invitation/classroom/accept/${invitationId}`,
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((response) => resolve(response.data))
+      .catch((error) => reject(error));
+  });
+};

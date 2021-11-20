@@ -1,5 +1,8 @@
 import ClassroomsActionTypes from "./classrooms.types";
-import { fetchClassroomsService } from "./classrooms.services";
+import {
+  fetchClassroomsService,
+  joinByInvitationCodeService,
+} from "./classrooms.services";
 
 export const fetchClassroomsRequest = () => ({
   type: ClassroomsActionTypes.FETCH_CLASSROOMS_REQUEST,
@@ -32,3 +35,30 @@ export const clearClassrooms = () => ({
 });
 
 //-------------------------------------------------------
+
+export const joinClassroomByInvitationCodeRequest = () => ({
+  type: ClassroomsActionTypes.JOIN_CLASSROOM_BY_INVITAION_CODE_REQUEST,
+});
+
+export const joinClassroomByInvitationCodeSuccess = () => ({
+  type: ClassroomsActionTypes.JOIN_CLASSROOM_BY_INVITAION_CODE_SUCCESS,
+});
+
+export const joinClassroomByInvitationCodeFailure = (error) => ({
+  type: ClassroomsActionTypes.JOIN_CLASSROOM_BY_INVITAION_CODE_FAILURE,
+  payload: error,
+});
+
+export const joinByInvitationCode = (invitationCode) => {
+  return (dispatch, getState) => {
+    const token = getState().user.token;
+    dispatch(joinClassroomByInvitationCodeRequest());
+    joinByInvitationCodeService(invitationCode, token)
+      .then(
+        (data) =>
+          (window.location.href = `http://localhost:3000/classrooms/${data?.classroomId}`)
+      )
+      .then(() => dispatch(joinClassroomByInvitationCodeSuccess()))
+      .catch((error) => dispatch(joinClassroomByInvitationCodeFailure(error)));
+  };
+};

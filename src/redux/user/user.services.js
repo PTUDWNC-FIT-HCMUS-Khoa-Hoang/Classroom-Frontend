@@ -18,8 +18,15 @@ export const userRegisterService = (email, password, fullname) => {
   });
 };
 
-export const fetchAUser = async (userId, token) => {
-  return await axios.get(`/users/other/${userId}`, {
-    headers: { Authorization: `Bearer ${token}` },
+export const updateProfileService = (data, token) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "put",
+      url: "/users/me",
+      headers: { Authorization: `Bearer ${token}` },
+      data,
+    })
+      .then((response) => resolve(response.data))
+      .catch((error) => reject(error));
   });
 };

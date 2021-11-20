@@ -48,6 +48,9 @@ const useStyles = makeStyles({
     display: "flex",
     minWidth: "100px",
   },
+  optionWrapper: {
+    display: "flex",
+  },
 });
 const Header = ({ user, userLogout, activeTab, handleChangeTab }) => {
   const classes = useStyles();
@@ -153,7 +156,7 @@ const Header = ({ user, userLogout, activeTab, handleChangeTab }) => {
         </Box>
       )}
       {user && (
-        <div>
+        <div className={classes.optionWrapper}>
           {isOnHomePage && (
             <IconButton
               sx={{

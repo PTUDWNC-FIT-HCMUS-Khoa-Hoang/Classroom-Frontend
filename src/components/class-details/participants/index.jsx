@@ -2,9 +2,6 @@ import React, { useState } from "react";
 import Divider from "@mui/material/Divider";
 import { makeStyles } from "@mui/styles";
 import { Typography } from "@mui/material";
-import { createStructuredSelector } from "reselect";
-import { selectUser } from "../../../redux/user/user.selector";
-import { connect } from "react-redux";
 import { Button } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
@@ -18,37 +15,35 @@ const useStyles = makeStyles({
   content: {
     width: "60%",
   },
-  teacherWrapper: {
+  participantWrapper: {
     textAlign: "left",
     marginTop: "20px",
     marginBottom: "40px",
   },
-  teacherWrapper__header: {
+  participantWrapper__header: {
     display: "flex",
     justifyContent: "space-between",
   },
-  teacherWrapper__list: {
+  participantWrapper__list: {
     marginTop: "20px",
     marginLeft: "10px",
     display: "flex",
+    flexDirection: "column",
   },
-  studentWrapper: {
-    textAlign: "left",
-    marginTop: "20px",
-    marginBottom: "40px",
-  },
-  studentWrapper__header: {
+  pariticipantInfo: {
     display: "flex",
-    justifyContent: "space-between",
-  },
-  studentWrapper__list: {
-    marginTop: "20px",
-    marginLeft: "10px",
-    display: "flex",
+    flexDirection: "row",
+    margin: "5px 0",
   },
 });
 
-const Participants = ({ user, classroom }) => {
+const Participants = ({
+  user,
+  participants,
+  owner,
+  invitationCode,
+  classroomId,
+}) => {
   const [isOpenInviteTeacher, setIsOpenInviteTeacher] = useState(false);
   const [isOpenInviteStudent, setIsOpenInviteStudent] = useState(false);
 
@@ -70,18 +65,33 @@ const Participants = ({ user, classroom }) => {
     setIsOpenInviteTeacher(false);
   };
 
+  const teacherList = participants.filter(
+    (member) => member.role === "teacher"
+  );
+
+  let isTeacher = user._id === owner?._id;
+  teacherList.forEach((teacher) => {
+    if (teacher._id === user._id) {
+      isTeacher = true;
+    }
+  });
+
+  const studentList = participants.filter(
+    (member) => member.role === "student" && member._id !== user._id
+  );
+
   return (
     <div className={classes.root}>
       <div className={classes.content}>
-        <div className={classes.teacherWrapper}>
-          <div className={classes.teacherWrapper__header}>
+        <div className={classes.participantWrapper}>
+          <div className={classes.participantWrapper__header}>
             <Typography
               variant="h4"
               sx={{ pl: 2, m: 1, color: "cornflowerblue" }}
             >
               Giáo viên
             </Typography>
-            {user._id === classroom?.owner && (
+            {isTeacher && (
               <Button onClick={handleInviteTeacher}>
                 <PersonAddIcon sx={{ color: "cornflowerblue" }} />
               </Button>
@@ -95,25 +105,38 @@ const Participants = ({ user, classroom }) => {
           <Divider
             sx={{ borderBottomWidth: "unset", borderColor: "cornflowerblue" }}
           />
-          <div className={classes.teacherWrapper__list}>
-            <AccountCircleIcon
-              sx={{ mr: 2, fill: "cornflowerblue" }}
-              fontSize="large"
-            />
-            <Typography sx={{ fontSize: "18px", alignSelf: "center" }}>
-              {classroom?.owner}
-            </Typography>
+          <div className={classes.participantWrapper__list}>
+            <div className={classes.pariticipantInfo}>
+              <AccountCircleIcon
+                sx={{ mr: 2, fill: "cornflowerblue" }}
+                fontSize="large"
+              />
+              <Typography sx={{ fontSize: "18px", alignSelf: "center" }}>
+                {owner.fullname}
+              </Typography>
+            </div>
+            {teacherList.map((teacher) => (
+              <div key={teacher._id} className={classes.pariticipantInfo}>
+                <AccountCircleIcon
+                  sx={{ mr: 2, fill: "cornflowerblue" }}
+                  fontSize="large"
+                />
+                <Typography sx={{ fontSize: "18px", alignSelf: "center" }}>
+                  {teacher.fullname}
+                </Typography>
+              </div>
+            ))}
           </div>
         </div>
-        <div className={classes.studentWrapper}>
-          <div className={classes.studentWrapper__header}>
+        <div className={classes.participantWrapper}>
+          <div className={classes.participantWrapper__header}>
             <Typography
               variant="h4"
               sx={{ pl: 2, m: 1, color: "cornflowerblue" }}
             >
-              {user._id === classroom?.owner ? "Sinh viên" : "Bạn học"}
+              {isTeacher ? "Sinh viên" : "Bạn học"}
             </Typography>
-            {user._id === classroom?.owner && (
+            {isTeacher && (
               <Button onClick={handleInviteStudent}>
                 <PersonAddIcon sx={{ color: "cornflowerblue" }} />
               </Button>
@@ -122,19 +145,25 @@ const Participants = ({ user, classroom }) => {
           <DialogInvite
             isOpenDialog={isOpenInviteStudent}
             handleCloseDialog={handleCloseDialogInviteStudent}
+            invitationCode={invitationCode}
+            classroomId={classroomId}
             dialogTitle="Mời học viên"
           />
           <Divider
             sx={{ borderBottomWidth: "unset", borderColor: "cornflowerblue" }}
           />
-          <div className={classes.studentWrapper__list}>
-            <AccountCircleIcon
-              sx={{ mr: 2, fill: "cornflowerblue" }}
-              fontSize="large"
-            />
-            <Typography sx={{ fontSize: "18px", alignSelf: "center" }}>
-              {classroom?.owner}
-            </Typography>
+          <div className={classes.participantWrapper__list}>
+            {studentList.map((student) => (
+              <div key={student._id} className={classes.pariticipantInfo}>
+                <AccountCircleIcon
+                  sx={{ mr: 2, fill: "cornflowerblue" }}
+                  fontSize="large"
+                />
+                <Typography sx={{ fontSize: "18px", alignSelf: "center" }}>
+                  {student.fullname}
+                </Typography>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -142,8 +171,4 @@ const Participants = ({ user, classroom }) => {
   );
 };
 
-const mapState = createStructuredSelector({
-  user: selectUser,
-});
-
-export default connect(mapState)(Participants);
+export default Participants;

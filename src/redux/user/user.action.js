@@ -1,5 +1,9 @@
 import UserActionTypes from "./user.types";
-import { userLoginService, userRegisterService } from "./user.services";
+import {
+  userLoginService,
+  userRegisterService,
+  updateProfileService,
+} from "./user.services";
 import {
   clearClassrooms,
   fetchClassroomsFailure,
@@ -69,16 +73,24 @@ export const userRegister = (email, password, fullname) => {
 
 //----------------------------------------------------------------------//
 
-export const fetchAUserRequest = () => ({
-  type: UserActionTypes.FETCH_A_USER_REQUEST,
+export const updateProfileRequest = () => ({
+  type: UserActionTypes.UPDATE_PROFILE_REQUEST,
 });
-
-export const fetchAUserSuccess = (user) => ({
-  type: UserActionTypes.FETCH_A_USER_SUCCESS,
-  payload: user,
+export const updateProfileSuccess = (data) => ({
+  type: UserActionTypes.UPDATE_PROFILE_SUCCESS,
+  payload: data,
 });
-
-export const fetchAUserFailure = (error) => ({
-  type: UserActionTypes.FETCH_A_USER_FAILURE,
+export const updateProfileFailure = (error) => ({
+  type: UserActionTypes.UPDATE_PROFILE_FAILURE,
   payload: error,
 });
+
+export const updateProfile = (data) => {
+  return (dispatch, getState) => {
+    dispatch(updateProfileRequest());
+    const token = getState().user.token;
+    updateProfileService(data, token)
+      .then((data) => dispatch(updateProfileSuccess(data)))
+      .catch((error) => dispatch(updateProfileFailure(error)));
+  };
+};

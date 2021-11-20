@@ -8,7 +8,7 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { store, persistor } from "./redux/store";
 
-axios.defaults.baseURL = "https://khoatrn-classroom-v1.herokuapp.com";
+axios.defaults.baseURL = "https://aw-midterm-server.herokuapp.com";
 
 ReactDOM.render(
   <React.StrictMode>

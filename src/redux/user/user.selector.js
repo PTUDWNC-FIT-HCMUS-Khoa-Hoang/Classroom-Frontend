@@ -14,6 +14,11 @@ export const selectIsLoading = createSelector(
   (user) => user.isLoading
 );
 
+export const selectIsUpdating = createSelector(
+  [sUser],
+  (user) => user.isUpdating
+);
+
 export const selectToken = createSelector([sUser], (user) => user.token);
 
 export const selectIsInvalidEmail = createSelector(

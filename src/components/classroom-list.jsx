@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { makeStyles } from "@mui/styles";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import ClassPreview from "./class-preview";
+import ClassroomPreview from "./classroom-preview";
 import WithSpinner from "./with-spinner";
 import { fetchClassrooms } from "../redux/classrooms/classrooms.actions";
 import { createStructuredSelector } from "reselect";
@@ -40,15 +40,19 @@ const ClassroomList = ({ user, fetchClassrooms, error, classrooms }) => {
     }
   }, [classrooms, fetchClassrooms, user]);
 
+  if (classrooms === null) {
+    return null;
+  }
+
   return (
     <div className={classes.classList}>
       {error ? (
         <p>Some error</p>
       ) : (
         <List className={classes.classList__body}>
-          {classrooms?.map((item) => (
+          {classrooms.map((item) => (
             <ListItem key={item._id} sx={{ width: "auto" }}>
-              <ClassPreview {...item} user={user} />
+              <ClassroomPreview {...item} user={user} />
             </ListItem>
           ))}
         </List>

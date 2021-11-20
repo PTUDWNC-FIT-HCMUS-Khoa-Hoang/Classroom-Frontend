@@ -12,7 +12,17 @@ export const selectIsFetchingClassrooms = createSelector(
   (clasrooms) => clasrooms.isFetchingClassrooms
 );
 
+export const selectIsJoiningClassroom = createSelector(
+  [selectorClassrooms],
+  (clasrooms) => clasrooms.isJoining
+);
+
 export const selectError = createSelector(
   [selectorClassrooms],
   (clasrooms) => clasrooms.classroomError
+);
+
+export const selectJoinClassroomError = createSelector(
+  [selectorClassrooms],
+  (clasrooms) => clasrooms.joinClassroomErrorMessage
 );

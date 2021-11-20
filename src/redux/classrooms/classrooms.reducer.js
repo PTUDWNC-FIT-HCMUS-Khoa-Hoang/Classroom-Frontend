@@ -4,6 +4,8 @@ const INITIAL_STATE = {
   classrooms: null,
   classroomsError: null,
   isFetchingClassrooms: false,
+  isJoining: false,
+  joinClassroomErrorMessage: null,
 };
 
 const classroomsReducer = (state = INITIAL_STATE, { type, payload }) => {
@@ -29,6 +31,24 @@ const classroomsReducer = (state = INITIAL_STATE, { type, payload }) => {
       return {
         ...state,
         classrooms: null,
+      };
+    case ClassroomsActionTypes.JOIN_CLASSROOM_BY_INVITAION_CODE_REQUEST:
+      return {
+        ...state,
+        isJoining: true,
+        joinClassroomErrorMessage: null,
+      };
+    case ClassroomsActionTypes.JOIN_CLASSROOM_BY_INVITAION_CODE_SUCCESS:
+      return {
+        ...state,
+        isJoining: false,
+        joinClassroomErrorMessage: null,
+      };
+    case ClassroomsActionTypes.JOIN_CLASSROOM_BY_INVITAION_CODE_FAILURE:
+      return {
+        ...state,
+        isJoining: false,
+        joinClassroomErrorMessage: payload.response.data.message,
       };
     default:
       return state;

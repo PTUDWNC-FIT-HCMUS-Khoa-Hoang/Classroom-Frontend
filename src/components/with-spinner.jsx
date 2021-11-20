@@ -1,20 +1,34 @@
 import React from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import { connect } from "react-redux";
-import { selectIsLoading } from "../redux/user/user.selector";
-import { selectIsFetchingClassrooms } from "../redux/classrooms/classrooms.selector";
-import { selectIsCreatingAClassroom } from "../redux/classroom/classroom.selector";
+import { selectIsLoading, selectIsUpdating } from "../redux/user/user.selector";
+import {
+  selectIsFetchingClassrooms,
+  selectIsJoiningClassroom,
+} from "../redux/classrooms/classrooms.selector";
+import {
+  selectIsCreatingAClassroom,
+  selectIsFetchingAClassroom,
+} from "../redux/classroom/classroom.selector";
 import { createStructuredSelector } from "reselect";
 
 const WithSpinner = (WrappedComponent) => {
   const Spinner = ({
     isLoading,
     isFetchingClassrooms,
+    isFetchingAClassroom,
     isCreatingAClassroom,
+    isJoiningClassroom,
+    isUpdating,
     ...otherProps
   }) => {
     const isProcessing =
-      isLoading || isFetchingClassrooms || isCreatingAClassroom;
+      isLoading ||
+      isFetchingClassrooms ||
+      isCreatingAClassroom ||
+      isJoiningClassroom ||
+      isUpdating ||
+      isFetchingAClassroom;
     return (
       <>
         {isProcessing && (
@@ -42,7 +56,10 @@ const WithSpinner = (WrappedComponent) => {
 const mapState = createStructuredSelector({
   isLoading: selectIsLoading,
   isFetchingClassrooms: selectIsFetchingClassrooms,
+  isFetchingAClassroom: selectIsFetchingAClassroom,
+  isJoiningClassroom: selectIsJoiningClassroom,
   isCreatingAClassroom: selectIsCreatingAClassroom,
+  isUpdating: selectIsUpdating,
 });
 
 export default WithSpinner;

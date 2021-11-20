@@ -26,7 +26,7 @@ const useStyles = makeStyles({
   },
 });
 
-const ClassPreview = ({ title, match, _id, ownerFullname, user }) => {
+const ClassroomPreview = ({ title, match, _id, owner, user }) => {
   const classes = useStyles();
   return (
     <Card className={classes.card}>
@@ -39,8 +39,8 @@ const ClassPreview = ({ title, match, _id, ownerFullname, user }) => {
             <Typography variant="span" className={classes.card__title}>
               {title}
             </Typography>
-            {ownerFullname !== user.fullname && (
-              <Typography>{ownerFullname}</Typography>
+            {owner._id !== user._id && (
+              <Typography>{owner.fullname}</Typography>
             )}
           </Link>
         </CardContent>
@@ -49,4 +49,4 @@ const ClassPreview = ({ title, match, _id, ownerFullname, user }) => {
   );
 };
 
-export default withRouter(ClassPreview);
+export default withRouter(ClassroomPreview);
