@@ -1,5 +1,14 @@
 import axios from "axios";
 
+export const googleLoginService = (tokenId) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .post("/users/login/google", { tokenId })
+      .then((response) => resolve(response))
+      .catch((error) => reject(error));
+  });
+};
+
 export const userLoginService = (email, password) => {
   return new Promise((resolve, reject) => {
     axios

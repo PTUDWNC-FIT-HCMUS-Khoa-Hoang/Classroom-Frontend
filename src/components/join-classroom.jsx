@@ -50,8 +50,12 @@ const JoinClassroom = ({ token, joinByInvitationCode }) => {
         history.push(`/classrooms/${classroomId}`);
       })
       .catch((error) => {
-        //@TODO: check if exist classroom with invitation code
-        setClassroomTitle(error.response.data.classroom.title);
+        //TODO: check invitationCode and classroomId
+        if ("classroom" in error.response.data) {
+          setClassroomTitle(error.response.data.classroom.title);
+        } else {
+          setError("Không tồn tại lớp học");
+        }
         setIsChecking(false);
       });
   }, []);
@@ -80,7 +84,7 @@ const JoinClassroom = ({ token, joinByInvitationCode }) => {
       ) : (
         <>
           {error ? (
-            <h1>loi</h1>
+            <h1>{error}</h1>
           ) : (
             <Card variant="outlined" className={classes.formWrapper}>
               <CardContent className={classes.formContent}>

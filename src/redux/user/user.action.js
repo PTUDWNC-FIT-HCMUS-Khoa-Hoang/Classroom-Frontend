@@ -3,6 +3,7 @@ import {
   userLoginService,
   userRegisterService,
   updateProfileService,
+  googleLoginService,
 } from "./user.services";
 import {
   clearClassrooms,
@@ -29,6 +30,33 @@ export const userLogin = (email, password) => {
     userLoginService(email, password)
       .then((data) => dispatch(emailLoginSuccess(data.user, data.token)))
       .catch((error) => dispatch(emailLoginFailure(error)));
+  };
+};
+
+//----------------------------------------------------------------------//
+export const googleLoginRequest = () => ({
+  type: UserActionTypes.GOOGLE_LOGIN_REQUEST,
+});
+
+export const googleLoginSuccess = (user, token) => ({
+  type: UserActionTypes.GOOGLE_LOGIN_SUCCESS,
+  payload: { user, token },
+});
+
+export const googleLoginFailure = (error) => ({
+  type: UserActionTypes.GOOGLE_LOGIN_FAILURE,
+  payload: error,
+});
+
+export const googleLogin = (tokenId) => {
+  return (dispatch) => {
+    dispatch(googleLoginRequest());
+    googleLoginService(tokenId)
+      .then((data) => {
+        console.log(data);
+        dispatch(googleLoginSuccess());
+      })
+      .catch((error) => dispatch(googleLoginFailure(error)));
   };
 };
 

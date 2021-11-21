@@ -1,19 +1,30 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import FormHelperText from "@mui/material/FormHelperText";
 import { useFormik } from "formik";
 import { updateProfile } from "../../redux/user/user.action";
+import { selectUpdatingError } from "../../redux/user/user.selector";
+import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import * as Yup from "yup";
 
-const UserInfo = ({ user, updateProfile }) => {
-  const schema = Yup.object().shape({
-    fullname: Yup.string().required("Vui lòng nhập họ tên"),
-  });
+const schema = Yup.object().shape({
+  fullname: Yup.string().required("Vui lòng nhập họ tên"),
+});
+
+const UserInfo = ({ user, updateProfile, updatingError }) => {
+  const [helptext, setHelptext] = useState(null);
+
+  useEffect(() => {
+    if (updatingError) {
+      setHelptext("Có lỗi xảy ra, vui lòng thử lại sau");
+    }
+  }, [updatingError]);
 
   const formik = useFormik({
     initialValues: {
@@ -22,7 +33,11 @@ const UserInfo = ({ user, updateProfile }) => {
     },
     validationSchema: schema,
     onSubmit: (values) => {
-      updateProfile(values);
+      setHelptext("Cập nhật thành công");
+      updateProfile({
+        fullname: values.fullname,
+        studentId: user.studentId ? null : values.studentId,
+      });
     },
   });
 
@@ -70,7 +85,11 @@ const UserInfo = ({ user, updateProfile }) => {
               label="Mã số sinh viên"
               onChange={formik.handleChange}
               value={formik.values.studentId}
+              disabled={user.studentId}
             />
+            <FormHelperText sx={{ color: "green" }} error={updatingError}>
+              {helptext}
+            </FormHelperText>
           </CardContent>
           <CardActions sx={{ justifyContent: "right" }}>
             <Button type="submit">Lưu</Button>
@@ -81,8 +100,12 @@ const UserInfo = ({ user, updateProfile }) => {
   );
 };
 
+const mapState = createStructuredSelector({
+  updatingError: selectUpdatingError,
+});
+
 const mapDispatch = (dispatch) => ({
   updateProfile: (data) => dispatch(updateProfile(data)),
 });
 
-export default connect(null, mapDispatch)(UserInfo);
+export default connect(mapState, mapDispatch)(UserInfo);

@@ -71,11 +71,6 @@ const App = ({ user }) => {
           />
           <PrivateRoute path="/user" component={userDetails} authed={user} />
           <PrivateRoute
-            path="/invitation/:id"
-            component={userDetails}
-            authed={user}
-          />
-          <PrivateRoute
             path="/join/:invitationCode"
             component={JoinClassroom}
             authed={user}

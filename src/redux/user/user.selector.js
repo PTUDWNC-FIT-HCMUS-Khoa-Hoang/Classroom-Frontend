@@ -27,3 +27,8 @@ export const selectIsInvalidEmail = createSelector(
 );
 
 export const selectError = createSelector([sUser], (user) => user.error);
+
+export const selectUpdatingError = createSelector(
+  [sUser],
+  (user) => user.updatingError
+);

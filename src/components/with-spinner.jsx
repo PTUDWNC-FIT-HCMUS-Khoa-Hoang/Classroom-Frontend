@@ -44,7 +44,12 @@ const WithSpinner = (WrappedComponent) => {
             <CircularProgress style={{ alignSelf: "center", margin: "auto" }} />
           </div>
         )}
-        <div style={{ opacity: isProcessing ? "0.3" : "1", height: "100%" }}>
+        <div
+          style={{
+            opacity: isUpdating ? "0" : isProcessing ? "0.3" : "1",
+            height: "100%",
+          }}
+        >
           <WrappedComponent {...otherProps} />
         </div>
       </>

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { makeStyles } from "@mui/styles";
 import { connect } from "react-redux";
-import { userLogin } from "../redux/user/user.action";
+import { userLogin, googleLogin } from "../redux/user/user.action";
 import { createStructuredSelector } from "reselect";
 import { selectIsWrongAccount, selectError } from "../redux/user/user.selector";
 import { useFormik } from "formik";
@@ -13,6 +13,7 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
 import WithSpinner from "./with-spinner";
+import GoogleLogin from "react-google-login";
 
 const useStyles = makeStyles({
   loginForm: {
@@ -62,7 +63,7 @@ const loginSchema = Yup.object().shape({
   password: Yup.string().required("Vui lòng nhập mật khẩu"),
 });
 
-const Login = ({ isWrongAccount, userLogin, error }) => {
+const Login = ({ isWrongAccount, userLogin, error, googleLogin }) => {
   const classes = useStyles();
   const emailRef = useRef();
   const passwordRef = useRef();
@@ -92,7 +93,10 @@ const Login = ({ isWrongAccount, userLogin, error }) => {
     }
     formik.handleSubmit(e);
   };
-
+  const responseGoogle = (response) => {
+    console.log(response);
+    googleLogin(response.tokenId);
+  };
   return (
     <Card
       className={classes.formWrapper}
@@ -157,6 +161,13 @@ const Login = ({ isWrongAccount, userLogin, error }) => {
           <Button sx={{ mt: 1 }} variant="outlined" type="submit">
             Đăng nhập
           </Button>
+          <GoogleLogin
+            clientId="946914292240-hcpfcel2293a7vlasv66nt4jdv18j3dk.apps.googleusercontent.com"
+            buttonText="Login"
+            onSuccess={responseGoogle}
+            onFailure={responseGoogle}
+            cookiePolicy={"single_host_origin"}
+          />
           <Link href="/register" variant="body2" sx={{ mt: 2 }}>
             Bạn chưa có tài khoản? Nhấn vào đây để đăng ký
           </Link>
@@ -173,6 +184,7 @@ const mapState = createStructuredSelector({
 
 const mapDispatch = (dispatch) => ({
   userLogin: (email, password) => dispatch(userLogin(email, password)),
+  googleLogin: (tokenId) => dispatch(googleLogin(tokenId)),
 });
 
 export default WithSpinner(connect(mapState, mapDispatch)(Login));
