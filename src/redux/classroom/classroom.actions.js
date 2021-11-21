@@ -49,8 +49,8 @@ export const createAClassroomFailure = (error) => ({
 export const createAClassroom = (title) => {
   return (dispatch, getState) => {
     const token = getState().user.token;
+    dispatch(createAClassroomRequest());
     createAClassroomService(title, token)
-      .then(() => dispatch(createAClassroomRequest()))
       .then(() => dispatch(createAClassroomSuccess()))
       .then(() => dispatch(fetchClassrooms(token)))
       .catch((error) => dispatch(createAClassroomFailure(error)));

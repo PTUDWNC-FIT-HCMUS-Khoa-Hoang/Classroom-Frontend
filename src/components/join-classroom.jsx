@@ -6,7 +6,6 @@ import { useLocation, useHistory } from "react-router-dom";
 import { createStructuredSelector } from "reselect";
 import { selectToken } from "../redux/user/user.selector";
 import { connect } from "react-redux";
-import { fetchAClassroomService } from "../redux/classroom/classroom.services";
 import { joinByInvitationCode } from "../redux/classrooms/classrooms.actions";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
@@ -50,9 +49,9 @@ const JoinClassroom = ({ token, joinByInvitationCode }) => {
         setIsChecking(false);
         history.push(`/classrooms/${classroomId}`);
       })
-      .catch(() => {
+      .catch((error) => {
         //@TODO: check if exist classroom with invitation code
-        //@TODO: fetch classroom title
+        setClassroomTitle(error.response.data.classroom.title);
         setIsChecking(false);
       });
   }, []);
