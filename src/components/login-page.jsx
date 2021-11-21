@@ -38,6 +38,10 @@ const useStyles = makeStyles({
   messageField: {
     marginTop: "2px",
   },
+  googleLoginButton: {
+    marginTop: "8px",
+    justifyContent: "center",
+  },
   shake: {
     animation: "$shake 0.5s",
   },
@@ -94,9 +98,9 @@ const Login = ({ isWrongAccount, userLogin, error, googleLogin }) => {
     formik.handleSubmit(e);
   };
   const responseGoogle = (response) => {
-    console.log(response);
     googleLogin(response.tokenId);
   };
+
   return (
     <Card
       className={classes.formWrapper}
@@ -163,10 +167,11 @@ const Login = ({ isWrongAccount, userLogin, error, googleLogin }) => {
           </Button>
           <GoogleLogin
             clientId="946914292240-hcpfcel2293a7vlasv66nt4jdv18j3dk.apps.googleusercontent.com"
-            buttonText="Login"
+            buttonText="Đăng nhập bằng Google"
             onSuccess={responseGoogle}
             onFailure={responseGoogle}
             cookiePolicy={"single_host_origin"}
+            className={classes.googleLoginButton}
           />
           <Link href="/register" variant="body2" sx={{ mt: 2 }}>
             Bạn chưa có tài khoản? Nhấn vào đây để đăng ký

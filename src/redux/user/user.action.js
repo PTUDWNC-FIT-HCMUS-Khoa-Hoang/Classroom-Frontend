@@ -52,9 +52,8 @@ export const googleLogin = (tokenId) => {
   return (dispatch) => {
     dispatch(googleLoginRequest());
     googleLoginService(tokenId)
-      .then((data) => {
-        console.log(data);
-        dispatch(googleLoginSuccess());
+      .then(({ data }) => {
+        dispatch(googleLoginSuccess(data.user, data.token));
       })
       .catch((error) => dispatch(googleLoginFailure(error)));
   };

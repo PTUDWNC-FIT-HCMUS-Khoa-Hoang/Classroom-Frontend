@@ -68,9 +68,6 @@ const DialogInvite = ({
     },
   });
 
-  console.log(location);
-  console.log(window.location.origin);
-
   const link =
     window.location.origin +
     "/join/" +
