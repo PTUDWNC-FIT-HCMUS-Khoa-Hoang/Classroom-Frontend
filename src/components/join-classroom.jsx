@@ -58,6 +58,7 @@ const JoinClassroom = ({ token, joinByInvitationCode }) => {
         }
         setIsChecking(false);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onClick = () => {

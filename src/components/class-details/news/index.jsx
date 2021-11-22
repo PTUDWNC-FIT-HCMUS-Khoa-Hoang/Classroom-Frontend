@@ -30,7 +30,7 @@ const News = ({ classroom, isTeacher }) => {
           </CardContent>
         </Card>
         <Box sx={{ display: "flex", mt: 2, flexDirection: "flex-start" }}>
-          {
+          {isTeacher && (
             <Card
               sx={{
                 border: 1,
@@ -54,7 +54,7 @@ const News = ({ classroom, isTeacher }) => {
                 </Typography>
               </CardContent>
             </Card>
-          }
+          )}
           <Card
             sx={{
               border: 1,
