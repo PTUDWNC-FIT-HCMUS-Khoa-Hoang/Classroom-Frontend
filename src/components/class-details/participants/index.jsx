@@ -102,6 +102,7 @@ const Participants = ({
             isOpenDialog={isOpenInviteTeacher}
             handleCloseDialog={handleCloseDialogInviteTeacher}
             dialogTitle="Mời giáo viên"
+            classroomId={classroomId}
             token={token}
           />
           <Divider

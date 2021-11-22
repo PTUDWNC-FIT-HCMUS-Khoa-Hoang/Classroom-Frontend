@@ -14,7 +14,9 @@ import { makeStyles } from "@mui/styles";
 import { Button, Typography } from "@mui/material";
 
 const schema = Yup.object().shape({
-  email: Yup.string().required("Vui lòng nhập tên môn học"),
+  email: Yup.string()
+    .email("Email không hợp lệ")
+    .required("Vui lòng nhập email"),
 });
 
 const useStyles = makeStyles({
@@ -59,9 +61,9 @@ const DialogInvite = ({
           handleCloseDialog();
           resetForm();
         })
-        .catch((error) => {
+        .catch((err) => {
           setIsSending(false);
-          setError(error.data);
+          setError(err.response.data.message);
           resetForm();
         });
     },
@@ -92,61 +94,58 @@ const DialogInvite = ({
           <CircularProgress style={{ alignSelf: "center", margin: "auto" }} />
         </div>
       )}
-      {error ? (
-        <p>{error}</p>
-      ) : (
-        <div style={{ opacity: isSending ? "0.3" : "1" }}>
-          <DialogTitle>{dialogTitle} </DialogTitle>
-          <form onSubmit={formik.handleSubmit}>
-            <DialogContent>
-              {invitationCode && (
-                <div className={classes.inviteLinkWrapper}>
-                  <Typography variant="subtitle">Đường liên kết mời</Typography>
-                  <div className={classes.inviteLinkWrapper__link}>
-                    <Typography
-                      id="123"
-                      variant="body1"
-                      sx={{
-                        mt: 1,
-                        display: "inline-block",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        opacity: "0.5",
-                      }}
-                    >
-                      {link}
-                    </Typography>
-                    <Button onClick={clickToCopy}>
-                      <ContentCopyIcon />
-                    </Button>
-                  </div>
-                  <Divider sx={{ mt: 2 }} />
+      <div style={{ opacity: isSending ? "0.3" : "1" }}>
+        <DialogTitle>{dialogTitle} </DialogTitle>
+        <form onSubmit={formik.handleSubmit}>
+          <DialogContent>
+            {invitationCode && (
+              <div className={classes.inviteLinkWrapper}>
+                <Typography variant="subtitle">Đường liên kết mời</Typography>
+                <div className={classes.inviteLinkWrapper__link}>
+                  <Typography
+                    id="123"
+                    variant="body1"
+                    sx={{
+                      mt: 1,
+                      display: "inline-block",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                      opacity: "0.5",
+                    }}
+                  >
+                    {link}
+                  </Typography>
+                  <Button onClick={clickToCopy}>
+                    <ContentCopyIcon />
+                  </Button>
                 </div>
-              )}
-              <TextField
-                autoFocus
-                margin="dense"
-                id="email"
-                label="Nhập email"
-                type="email"
-                fullWidth
-                variant="standard"
-                onChange={formik.handleChange}
-                value={formik.values.email}
-                error={formik.touched.email && Boolean(formik.errors.email)}
-                helperText={formik.touched.email && formik.errors.email}
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleCloseDialog}>Huỷ</Button>
-              <Button type="submit" disabled={formik.values.email === ""}>
-                Mời
-              </Button>
-            </DialogActions>
-          </form>
-        </div>
-      )}
+                <Divider sx={{ mt: 2 }} />
+              </div>
+            )}
+            <TextField
+              autoFocus
+              margin="dense"
+              id="email"
+              label="Nhập email"
+              type="email"
+              fullWidth
+              variant="standard"
+              onChange={formik.handleChange}
+              value={formik.values.email}
+              error={formik.touched.email && Boolean(formik.errors.email)}
+              helperText={formik.touched.email && formik.errors.email}
+            />
+            <Typography sx={{ mt: 2, color: "red" }}>{error}</Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDialog}>Huỷ</Button>
+            <Button type="submit" disabled={formik.values.email === ""}>
+              Mời
+            </Button>
+          </DialogActions>
+        </form>
+      </div>
     </Dialog>
   );
 };
