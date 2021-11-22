@@ -89,14 +89,10 @@ const JoinClassroom = ({ token, joinByInvitationCode }) => {
             <Card variant="outlined" className={classes.formWrapper}>
               <CardContent className={classes.formContent}>
                 <Typography sx={{ marginBottom: 1 }} variant="h5">
-                  {invitationCode
-                    ? "Tham gia lớp học?"
-                    : "Làm đồng giảng viên?"}
+                  Tham gia lớp học?
                 </Typography>
                 <Typography variant="body1">
-                  Bạn được mời{" "}
-                  {invitationCode ? "tham gia " : "làm đồng giảng viên "} lớp
-                  học {classroomTitle}
+                  Bạn được mời tham gia lớp học {classroomTitle}
                 </Typography>
               </CardContent>
               <CardActions sx={{ justifyContent: "flex-end" }}>
