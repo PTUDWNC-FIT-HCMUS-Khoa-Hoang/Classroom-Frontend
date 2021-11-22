@@ -70,11 +70,7 @@ const App = ({ user }) => {
             authed={user}
           />
           <PrivateRoute path="/user" component={userDetails} authed={user} />
-          <PrivateRoute
-            path="/join/:invitationCode"
-            component={JoinClassroom}
-            authed={user}
-          />
+          <PrivateRoute path="/join" component={JoinClassroom} authed={user} />
           <Route path="/" render={() => <Redirect to="/classrooms" />} />
         </Switch>
       </BrowserRouter>

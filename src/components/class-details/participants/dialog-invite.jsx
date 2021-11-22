@@ -12,7 +12,6 @@ import { createInvitationService } from "../../../redux/classrooms/classrooms.se
 import { useFormik } from "formik";
 import { makeStyles } from "@mui/styles";
 import { Button, Typography } from "@mui/material";
-import { useLocation } from "react-router";
 
 const schema = Yup.object().shape({
   email: Yup.string().required("Vui lòng nhập tên môn học"),
@@ -37,7 +36,6 @@ const DialogInvite = ({
   token,
 }) => {
   const classes = useStyles();
-  const location = useLocation();
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState(null);
   const formik = useFormik({
@@ -47,6 +45,7 @@ const DialogInvite = ({
     validationSchema: schema,
     onSubmit: (values, { resetForm }) => {
       setIsSending(true);
+
       createInvitationService(
         {
           userEmail: values.email,
@@ -62,7 +61,7 @@ const DialogInvite = ({
         })
         .catch((error) => {
           setIsSending(false);
-          setError(error);
+          setError(error.data);
           resetForm();
         });
     },

@@ -37,6 +37,7 @@ const userReducer = (state = INITAL_STATE, { type, payload }) => {
       };
     case UserActionTypes.EMAIL_LOGIN_FAILURE:
     case UserActionTypes.GOOGLE_LOGIN_FAILURE:
+      // console.log(payload.response.data.message);
       if (payload.response.status === 400)
         return {
           ...INITAL_STATE,

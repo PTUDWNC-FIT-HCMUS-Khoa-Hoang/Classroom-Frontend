@@ -4,11 +4,13 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ClassroomPreview from "./classroom-preview";
 import WithSpinner from "./with-spinner";
+import Typography from "@mui/material/Typography";
 import { fetchClassrooms } from "../redux/classrooms/classrooms.actions";
 import { createStructuredSelector } from "reselect";
 import {
   selectClassrooms,
   selectError,
+  selectIsFetchingClassrooms,
 } from "../redux/classrooms/classrooms.selector";
 import { connect } from "react-redux";
 import { selectUser } from "../redux/user/user.selector";
@@ -31,7 +33,13 @@ const useStyles = makeStyles({
   },
 });
 
-const ClassroomList = ({ user, fetchClassrooms, error, classrooms }) => {
+const ClassroomList = ({
+  user,
+  fetchClassrooms,
+  error,
+  classrooms,
+  isFetching,
+}) => {
   const classes = useStyles();
 
   useEffect(() => {
@@ -44,10 +52,16 @@ const ClassroomList = ({ user, fetchClassrooms, error, classrooms }) => {
     return null;
   }
 
+  const isEmpty = classrooms.length === 0;
+
   return (
     <div className={classes.classList}>
       {error ? (
-        <p>Some error</p>
+        <p>Đang có lỗi</p>
+      ) : isEmpty && !isFetching ? (
+        <Typography sx={{ marginTop: "10rem", width: "100%" }} variant="h5">
+          Bạn chưa tham gia lớp nào
+        </Typography>
       ) : (
         <List className={classes.classList__body}>
           {classrooms.map((item) => (
@@ -65,6 +79,7 @@ const mapState = createStructuredSelector({
   classrooms: selectClassrooms,
   user: selectUser,
   error: selectError,
+  isFetching: selectIsFetchingClassrooms,
 });
 
 const mapDispatch = (dispatch) => ({

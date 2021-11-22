@@ -150,6 +150,7 @@ const Participants = ({
             invitationCode={invitationCode}
             classroomId={classroomId}
             dialogTitle="Mời học viên"
+            token={token}
           />
           <Divider
             sx={{ borderBottomWidth: "unset", borderColor: "cornflowerblue" }}

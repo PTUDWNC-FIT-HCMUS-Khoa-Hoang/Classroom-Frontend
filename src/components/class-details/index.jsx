@@ -28,6 +28,7 @@ const Classroom = ({
   token,
 }) => {
   const { id } = useParams();
+
   useEffect(() => {
     fetchAClassroom(id);
 

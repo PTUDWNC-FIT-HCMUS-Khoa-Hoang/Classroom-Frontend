@@ -169,7 +169,6 @@ const Login = ({ isWrongAccount, userLogin, error, googleLogin }) => {
             clientId="946914292240-hcpfcel2293a7vlasv66nt4jdv18j3dk.apps.googleusercontent.com"
             buttonText="Đăng nhập bằng Google"
             onSuccess={responseGoogle}
-            onFailure={responseGoogle}
             cookiePolicy={"single_host_origin"}
             className={classes.googleLoginButton}
           />
