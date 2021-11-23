@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography";
 import FormHelperText from "@mui/material/FormHelperText";
 import { useFormik } from "formik";
 import { updateProfile } from "../../redux/user/user.action";
-import { selectUpdatingError } from "../../redux/user/user.selector";
+import { selectError } from "../../redux/user/user.selector";
 import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import * as Yup from "yup";
@@ -17,14 +17,8 @@ const schema = Yup.object().shape({
   fullname: Yup.string().required("Vui lòng nhập họ tên"),
 });
 
-const UserInfo = ({ user, updateProfile, updatingError }) => {
+const UserInfo = ({ user, updateProfile, error }) => {
   const [helptext, setHelptext] = useState(null);
-
-  useEffect(() => {
-    if (updatingError) {
-      setHelptext("Có lỗi xảy ra, vui lòng thử lại sau");
-    }
-  }, [updatingError]);
 
   const formik = useFormik({
     initialValues: {
@@ -87,8 +81,8 @@ const UserInfo = ({ user, updateProfile, updatingError }) => {
               value={formik.values.studentId}
               disabled={user.studentId}
             />
-            <FormHelperText sx={{ color: "green" }} error={updatingError}>
-              {helptext}
+            <FormHelperText sx={{ color: "green" }} error={error}>
+              {error ? error : helptext}
             </FormHelperText>
           </CardContent>
           <CardActions sx={{ justifyContent: "right" }}>
@@ -101,7 +95,7 @@ const UserInfo = ({ user, updateProfile, updatingError }) => {
 };
 
 const mapState = createStructuredSelector({
-  updatingError: selectUpdatingError,
+  error: selectError,
 });
 
 const mapDispatch = (dispatch) => ({

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -7,28 +7,20 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import FormHelperText from "@mui/material/FormHelperText";
 import { updateProfile } from "../../redux/user/user.action";
-import { selectUpdatingError } from "../../redux/user/user.selector";
+import { selectError } from "../../redux/user/user.selector";
 import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-const UserPassword = ({ updateProfile, updatingError }) => {
+const UserPassword = ({ updateProfile, error }) => {
   const schema = Yup.object().shape({
     oldPassword: Yup.string().required("Vui lòng nhập"),
     newPassword: Yup.string().required("Vui lòng nhập"),
     newPasswordConfirm: Yup.string().required("Vui lòng nhập"),
   });
 
-  const [error, setError] = useState(null);
   const [helptext, setHelptext] = useState(null);
-
-  useEffect(() => {
-    if (updatingError) {
-      setError(updatingError);
-      setHelptext("Mật khẩu cũ không chính xác");
-    }
-  }, [updatingError]);
 
   const formik = useFormik({
     initialValues: {
@@ -38,7 +30,6 @@ const UserPassword = ({ updateProfile, updatingError }) => {
     },
     validationSchema: schema,
     onSubmit: (values, { resetForm }) => {
-      setError(null);
       setHelptext("Cập nhật thành công");
       updateProfile({
         currentPassword: values.oldPassword,
@@ -49,7 +40,6 @@ const UserPassword = ({ updateProfile, updatingError }) => {
   });
 
   const onChange = (e) => {
-    setError(null);
     setHelptext(null);
     formik.handleChange(e);
   };
@@ -129,7 +119,7 @@ const UserPassword = ({ updateProfile, updatingError }) => {
               }
             />
             <FormHelperText sx={{ color: "green" }} error={error}>
-              {helptext}
+              {error ? error : helptext}
             </FormHelperText>
           </CardContent>
           <CardActions sx={{ justifyContent: "right" }}>
@@ -142,7 +132,7 @@ const UserPassword = ({ updateProfile, updatingError }) => {
 };
 
 const mapState = createStructuredSelector({
-  updatingError: selectUpdatingError,
+  error: selectError,
 });
 
 const mapDispatch = (dispatch) => ({

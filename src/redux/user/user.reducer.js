@@ -7,7 +7,6 @@ const INITAL_STATE = {
   isInvalidEmail: false,
   isLoading: false,
   isUpdating: false,
-  updatingError: null,
 };
 
 const userReducer = (state = INITAL_STATE, { type, payload }) => {
@@ -61,22 +60,20 @@ const userReducer = (state = INITAL_STATE, { type, payload }) => {
       return {
         ...state,
         isUpdating: true,
-        updatingError: null,
+        error: null,
       };
     case UserActionTypes.UPDATE_PROFILE_SUCCESS:
       return {
         ...state,
         isUpdating: false,
         user: payload,
-
-        updatingError: null,
+        error: null,
       };
     case UserActionTypes.UPDATE_PROFILE_FAILURE:
       return {
         ...state,
         isUpdating: false,
-
-        updatingError: payload,
+        error: payload.response.data.message,
       };
     default:
       return state;
