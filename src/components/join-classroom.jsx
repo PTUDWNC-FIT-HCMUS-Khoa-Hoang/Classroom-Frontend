@@ -71,7 +71,7 @@ const JoinClassroom = ({ token, joinByInvitationCode }) => {
         })
         .catch((error) => {
           setIsAccepting(false);
-          setError(error);
+          setError(error.response.data.message);
         });
     } else {
       joinByInvitationCode(invitationCode);
