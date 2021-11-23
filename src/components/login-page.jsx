@@ -3,7 +3,7 @@ import { makeStyles } from "@mui/styles";
 import { connect } from "react-redux";
 import { userLogin, googleLogin } from "../redux/user/user.action";
 import { createStructuredSelector } from "reselect";
-import { selectIsWrongAccount, selectError } from "../redux/user/user.selector";
+import { selectError } from "../redux/user/user.selector";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Button from "@mui/material/Button";
@@ -159,7 +159,7 @@ const Login = ({ isWrongAccount, userLogin, error, googleLogin }) => {
               sx={{ mt: 2 }}
               className={classes.wrongAccountMessage}
             >
-              Server đang gặp chút trục trặc! Vui lòng quay lại sau
+              {error}
             </Typography>
           )}
           <Button sx={{ mt: 1 }} variant="outlined" type="submit">
@@ -182,7 +182,6 @@ const Login = ({ isWrongAccount, userLogin, error, googleLogin }) => {
 };
 
 const mapState = createStructuredSelector({
-  isWrongAccount: selectIsWrongAccount,
   error: selectError,
 });
 

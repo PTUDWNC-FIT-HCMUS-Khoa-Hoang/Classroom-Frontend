@@ -4,11 +4,6 @@ const sUser = (state) => state.user;
 
 export const selectUser = createSelector([sUser], (user) => user.user);
 
-export const selectIsWrongAccount = createSelector(
-  [sUser],
-  (user) => user.isWrongAccount
-);
-
 export const selectIsLoading = createSelector(
   [sUser],
   (user) => user.isLoading

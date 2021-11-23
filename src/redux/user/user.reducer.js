@@ -4,7 +4,6 @@ const INITAL_STATE = {
   token: null,
   user: null,
   error: null,
-  isWrongAccount: false,
   isInvalidEmail: false,
   isLoading: false,
   isUpdating: false,
@@ -37,18 +36,11 @@ const userReducer = (state = INITAL_STATE, { type, payload }) => {
       };
     case UserActionTypes.EMAIL_LOGIN_FAILURE:
     case UserActionTypes.GOOGLE_LOGIN_FAILURE:
-      // console.log(payload.response.data.message);
-      if (payload.response.status === 400)
-        return {
-          ...INITAL_STATE,
-          isWrongAccount: true,
-        };
-      else {
-        return {
-          ...INITAL_STATE,
-          error: payload,
-        };
-      }
+      return {
+        ...INITAL_STATE,
+        error: payload.response.data.message,
+      };
+
     case UserActionTypes.REGISTER_FAILURE:
       if (payload.response.status === 400)
         return {
@@ -69,7 +61,6 @@ const userReducer = (state = INITAL_STATE, { type, payload }) => {
       return {
         ...state,
         isUpdating: true,
-
         updatingError: null,
       };
     case UserActionTypes.UPDATE_PROFILE_SUCCESS:
