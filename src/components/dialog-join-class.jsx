@@ -6,30 +6,25 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
-import {
-  selectJoinClassroomError,
-  selectIsJoiningClassroom,
-} from "../redux/classrooms/classrooms.selector";
 import { joinByInvitationCode } from "../redux/classrooms/classrooms.actions";
 import { Typography } from "@mui/material";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useSelector, useDispatch } from "react-redux";
 
 const schema = Yup.object().shape({
   code: Yup.string(),
 });
 
-const DialogJoinClass = ({
-  handleCloseDialog,
-  isOpenDialog,
-  joinByInvitationCode,
-  joinClassroomErrorMessage,
-  isJoining,
-}) => {
+const DialogJoinClass = ({ handleCloseDialog, isOpenDialog }) => {
   const [isChange, setIsChange] = useState(false);
-
+  const joinClassroomErrorMessage = useSelector(
+    ({ classrooms }) => classrooms.joinClassroomErrorMessage
+  );
+  const isJoining = useSelector(({ classrooms }) => classrooms.isJoining);
+  const dispatch = useDispatch();
+  const dispatchJoinByInvitationCode = (inivitationCode) =>
+    dispatch(joinByInvitationCode(inivitationCode));
   const formik = useFormik({
     initialValues: {
       code: "",
@@ -45,7 +40,7 @@ const DialogJoinClass = ({
 
   const handleSubmit = () => {
     setIsChange(false);
-    joinByInvitationCode(formik.values.code);
+    dispatchJoinByInvitationCode(formik.values.code);
   };
 
   const handleChange = (e) => {
@@ -117,14 +112,4 @@ const DialogJoinClass = ({
   );
 };
 
-const mapState = createStructuredSelector({
-  joinClassroomErrorMessage: selectJoinClassroomError,
-  isJoining: selectIsJoiningClassroom,
-});
-
-const mapDispatch = (dispatch) => ({
-  joinByInvitationCode: (inivitationCode) =>
-    dispatch(joinByInvitationCode(inivitationCode)),
-});
-
-export default connect(mapState, mapDispatch)(DialogJoinClass);
+export default DialogJoinClass;

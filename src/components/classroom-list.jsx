@@ -6,14 +6,7 @@ import ClassroomPreview from "./classroom-preview";
 import WithSpinner from "./with-spinner";
 import Typography from "@mui/material/Typography";
 import { fetchClassrooms } from "../redux/classrooms/classrooms.actions";
-import { createStructuredSelector } from "reselect";
-import {
-  selectClassrooms,
-  selectError,
-  selectIsFetchingClassrooms,
-} from "../redux/classrooms/classrooms.selector";
-import { connect } from "react-redux";
-import { selectUser } from "../redux/user/user.selector";
+import { useSelector, useDispatch } from "react-redux";
 
 const useStyles = makeStyles({
   classList: {
@@ -33,20 +26,20 @@ const useStyles = makeStyles({
   },
 });
 
-const ClassroomList = ({
-  user,
-  fetchClassrooms,
-  error,
-  classrooms,
-  isFetching,
-}) => {
+const ClassroomList = () => {
   const classes = useStyles();
+  const user = useSelector(({ user }) => user.user);
+  const error = useSelector(({ classrooms }) => classrooms.error);
+  const classrooms = useSelector(({ classrooms }) => classrooms.classrooms);
+  const isFetching = useSelector(({ classrooms }) => classrooms.isFetching);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (classrooms === null) {
-      fetchClassrooms();
+      const dispatchFetchClassrooms = () => dispatch(fetchClassrooms());
+      dispatchFetchClassrooms();
     }
-  }, [classrooms, fetchClassrooms, user]);
+  }, [classrooms, dispatch, user]);
 
   if (classrooms === null) {
     return null;
@@ -75,15 +68,4 @@ const ClassroomList = ({
   );
 };
 
-const mapState = createStructuredSelector({
-  classrooms: selectClassrooms,
-  user: selectUser,
-  error: selectError,
-  isFetching: selectIsFetchingClassrooms,
-});
-
-const mapDispatch = (dispatch) => ({
-  fetchClassrooms: () => dispatch(fetchClassrooms()),
-});
-
-export default connect(mapState, mapDispatch)(WithSpinner(ClassroomList));
+export default WithSpinner(ClassroomList);

@@ -8,34 +8,26 @@ import {
 } from "../../redux/classroom/classroom.actions";
 import { Box } from "@mui/system";
 import { useEffect } from "react";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
-import {
-  selectAClassroom,
-  selectParticipants,
-} from "../../redux/classroom/classroom.selector";
 import { useParams } from "react-router";
 import WithSpinner from "../with-spinner";
-import { selectUser, selectToken } from "../../redux/user/user.selector";
+import { useSelector, useDispatch } from "react-redux";
 
-const Classroom = ({
-  activeTab,
-  fetchAClassroom,
-  closeClassroom,
-  classroom,
-  participants,
-  user,
-  token,
-}) => {
+const Classroom = ({ activeTab }) => {
   const { id } = useParams();
-
+  const user = useSelector(({ user }) => user.user);
+  const token = useSelector(({ user }) => user.token);
+  const participants = useSelector(({ classroom }) => classroom.participants);
+  const classroom = useSelector(({ classroom }) => classroom.classroom);
+  const dispatch = useDispatch();
   useEffect(() => {
-    fetchAClassroom(id);
+    const dispatchFetchAClassroom = (id) => dispatch(fetchAClassroom(id));
+    dispatchFetchAClassroom(id);
 
     return () => {
-      closeClassroom();
+      const dispatchCloseClassroom = () => dispatch(closeClassroom());
+      dispatchCloseClassroom();
     };
-  }, [closeClassroom, fetchAClassroom, id]);
+  }, [dispatch, id]);
 
   if (classroom === null) return null;
   let isTeacher = user._id === classroom.owner._id;
@@ -63,16 +55,4 @@ const Classroom = ({
   );
 };
 
-const mapDispatch = (dispatch) => ({
-  fetchAClassroom: (id) => dispatch(fetchAClassroom(id)),
-  closeClassroom: () => dispatch(closeClassroom()),
-});
-
-const mapState = createStructuredSelector({
-  classroom: selectAClassroom,
-  participants: selectParticipants,
-  user: selectUser,
-  token: selectToken,
-});
-
-export default connect(mapState, mapDispatch)(WithSpinner(Classroom));
+export default WithSpinner(Classroom);

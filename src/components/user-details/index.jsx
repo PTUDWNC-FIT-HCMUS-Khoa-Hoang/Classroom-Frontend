@@ -6,9 +6,8 @@ import Card from "@mui/material/Card";
 import UserInfo from "./user-info";
 import UserPassword from "./user-password";
 import WithSpinner from "../with-spinner";
-import { selectUser } from "../../redux/user/user.selector";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
+import { clearError } from "../../redux/user/user.action";
+import { useSelector, useDispatch } from "react-redux";
 import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles({
@@ -17,12 +16,15 @@ const useStyles = makeStyles({
   },
 });
 
-const UserDetails = ({ user }) => {
+const UserDetails = () => {
   const classes = useStyles();
-
+  const user = useSelector(({ user }) => user.user);
+  const dispatch = useDispatch();
+  const dispatchClearError = () => dispatch(clearError());
   const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
     setValue(newValue);
+    dispatchClearError();
   };
 
   return (
@@ -52,8 +54,4 @@ const UserDetails = ({ user }) => {
   );
 };
 
-const mapState = createStructuredSelector({
-  user: selectUser,
-});
-
-export default connect(mapState)(WithSpinner(UserDetails));
+export default WithSpinner(UserDetails);

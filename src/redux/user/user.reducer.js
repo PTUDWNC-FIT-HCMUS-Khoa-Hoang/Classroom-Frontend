@@ -75,6 +75,11 @@ const userReducer = (state = INITAL_STATE, { type, payload }) => {
         isUpdating: false,
         error: payload.response.data.message,
       };
+    case UserActionTypes.CLEAR_ERROR:
+      return {
+        ...state,
+        error: null,
+      };
     default:
       return state;
   }

@@ -8,18 +8,19 @@ import Typography from "@mui/material/Typography";
 import FormHelperText from "@mui/material/FormHelperText";
 import { useFormik } from "formik";
 import { updateProfile } from "../../redux/user/user.action";
-import { selectError } from "../../redux/user/user.selector";
-import { createStructuredSelector } from "reselect";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
 
 const schema = Yup.object().shape({
   fullname: Yup.string().required("Vui lòng nhập họ tên"),
 });
 
-const UserInfo = ({ user, updateProfile, error }) => {
+const UserInfo = () => {
   const [helptext, setHelptext] = useState(null);
-
+  const user = useSelector(({ user }) => user.user);
+  const error = useSelector(({ user }) => user.error);
+  const dispatch = useDispatch();
+  const dispatchUpdateProfile = (data) => dispatch(updateProfile(data));
   const formik = useFormik({
     initialValues: {
       fullname: user.fullname,
@@ -28,7 +29,7 @@ const UserInfo = ({ user, updateProfile, error }) => {
     validationSchema: schema,
     onSubmit: (values) => {
       setHelptext("Cập nhật thành công");
-      updateProfile({
+      dispatchUpdateProfile({
         fullname: values.fullname,
         studentId: user.studentId ? null : values.studentId,
       });
@@ -94,12 +95,4 @@ const UserInfo = ({ user, updateProfile, error }) => {
   );
 };
 
-const mapState = createStructuredSelector({
-  error: selectError,
-});
-
-const mapDispatch = (dispatch) => ({
-  updateProfile: (data) => dispatch(updateProfile(data)),
-});
-
-export default connect(mapState, mapDispatch)(UserInfo);
+export default UserInfo;

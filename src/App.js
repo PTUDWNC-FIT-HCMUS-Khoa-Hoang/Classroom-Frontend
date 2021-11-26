@@ -9,10 +9,8 @@ import LoginPage from "./components/login-page";
 import RegisterPage from "./components/register-page";
 import JoinClassroom from "./components/join-classroom";
 import PrivateRoute from "./utils/private-route";
-import { createStructuredSelector } from "reselect";
-import { selectUser } from "./redux/user/user.selector";
-import { connect } from "react-redux";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 
 const useStyles = makeStyles({
   root: {
@@ -23,8 +21,9 @@ const useStyles = makeStyles({
   },
 });
 
-const App = ({ user }) => {
+const App = () => {
   const classes = useStyles();
+  const user = useSelector(({ user }) => user.user);
 
   const [activeTab, setActiveTab] = useState(0);
 
@@ -78,8 +77,4 @@ const App = ({ user }) => {
   );
 };
 
-const mapState = createStructuredSelector({
-  user: selectUser,
-});
-
-export default connect(mapState)(App);
+export default App;

@@ -4,12 +4,12 @@ const selectorClassroom = (state) => state.classroom;
 
 export const selectAClassroom = createSelector(
   [selectorClassroom],
-  (clasroom) => clasroom.classroom
+  (classroom) => classroom.classroom
 );
 
 export const selectParticipants = createSelector(
   [selectorClassroom],
-  (clasroom) => clasroom.participants
+  (classroom) => classroom.participants
 );
 
 export const selectIsCreatingAClassroom = createSelector(
