@@ -3,9 +3,7 @@ import { makeStyles } from "@mui/styles";
 import { checkIfJoinedClassroom } from "../redux/classroom/classroom.services";
 import { acceptJoinClassroom } from "../redux/classroom/classroom.services";
 import { useLocation, useHistory } from "react-router-dom";
-import { createStructuredSelector } from "reselect";
-import { selectToken } from "../redux/user/user.selector";
-import { connect } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { joinByInvitationCode } from "../redux/classrooms/classrooms.actions";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
@@ -29,10 +27,14 @@ const useStyles = makeStyles({
   },
 });
 
-const JoinClassroom = ({ token, joinByInvitationCode }) => {
+const JoinClassroom = () => {
   const location = useLocation();
   const history = useHistory();
   const classes = useStyles();
+  const token = useSelector(({ user }) => user.token);
+  const dispatch = useDispatch();
+  const dispatchJoinByInvitationCode = (code) =>
+    dispatch(joinByInvitationCode(code));
   // const [isFetching, setIsFetching] = useState(true);
   const [isChecking, setIsChecking] = useState(true);
   const [classroomTitle, setClassroomTitle] = useState(null);
@@ -74,7 +76,7 @@ const JoinClassroom = ({ token, joinByInvitationCode }) => {
           setError(error.response.data.message);
         });
     } else {
-      joinByInvitationCode(invitationCode);
+      dispatchJoinByInvitationCode(invitationCode);
     }
   };
 
@@ -109,12 +111,4 @@ const JoinClassroom = ({ token, joinByInvitationCode }) => {
   );
 };
 
-const mapState = createStructuredSelector({
-  token: selectToken,
-});
-
-const mapDispatch = (dispatch) => ({
-  joinByInvitationCode: (code) => dispatch(joinByInvitationCode(code)),
-});
-
-export default connect(mapState, mapDispatch)(JoinClassroom);
+export default JoinClassroom;

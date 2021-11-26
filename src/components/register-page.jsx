@@ -10,9 +10,7 @@ import TextField from "@mui/material/TextField";
 import { Button } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { userRegister } from "../redux/user/user.action";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
-import { selectIsInvalidEmail, selectError } from "../redux/user/user.selector";
+import { useSelector, useDispatch } from "react-redux";
 
 const useStyles = makeStyles({
   registerForm: {
@@ -64,13 +62,18 @@ const registerSchema = Yup.object().shape({
   passwordConfirm: Yup.string().required("Vui lòng nhập xác nhận mật khẩu"),
 });
 
-const RegisterPage = ({ userRegister, isInvalidEmail, error }) => {
+const RegisterPage = () => {
   const classes = useStyles();
   const fullnameRef = useRef();
   const emailRef = useRef();
   const passwordRef = useRef();
   const passwordConfirmRef = useRef();
   const [isChange, setIsChange] = useState(false);
+  const error = useSelector(({ user }) => user.error);
+  const isInvalidEmail = useSelector(({ user }) => user.isInvalidEmail);
+  const dispatch = useDispatch();
+  const dispatchUserRegister = (email, password, fullname) =>
+    dispatch(userRegister(email, password, fullname));
 
   useEffect(() => {
     setIsChange(false);
@@ -136,7 +139,7 @@ const RegisterPage = ({ userRegister, isInvalidEmail, error }) => {
       return;
     }
 
-    userRegister(
+    dispatchUserRegister(
       formik.values.email,
       formik.values.password,
       formik.values.fullname
@@ -253,14 +256,4 @@ const RegisterPage = ({ userRegister, isInvalidEmail, error }) => {
   );
 };
 
-const mapState = createStructuredSelector({
-  isInvalidEmail: selectIsInvalidEmail,
-  error: selectError,
-});
-
-const mapDispatch = (dispatch) => ({
-  userRegister: (email, password, fullname) =>
-    dispatch(userRegister(email, password, fullname)),
-});
-
-export default connect(mapState, mapDispatch)(WithSpinner(RegisterPage));
+export default WithSpinner(RegisterPage);

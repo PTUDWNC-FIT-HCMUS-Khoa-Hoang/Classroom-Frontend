@@ -13,7 +13,7 @@ import { Link, useHistory, useLocation } from "react-router-dom";
 import { Box } from "@mui/system";
 import { makeStyles } from "@mui/styles";
 import { userLogout } from "../redux/user/user.action";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 
 const PopupOptionsWrapper = styled.div`
   display: flex;
@@ -52,9 +52,10 @@ const useStyles = makeStyles({
     display: "flex",
   },
 });
-const Header = ({ user, userLogout, activeTab, handleChangeTab }) => {
+const Header = ({ user, activeTab, handleChangeTab }) => {
   const classes = useStyles();
-
+  const dispatch = useDispatch();
+  const dispatchUserLogout = () => dispatch(userLogout());
   const [isOpenCreateClassDialog, setIsOpenCreateClassDialog] = useState(false);
   const [isOpenJoinClassDialog, setIsOpenJoinClassDialog] = useState(false);
   const [anchorElUserOptions, setAnchorElUserOptions] = useState(null);
@@ -96,7 +97,7 @@ const Header = ({ user, userLogout, activeTab, handleChangeTab }) => {
 
   const handleLogout = () => {
     setAnchorElUserOptions(null);
-    userLogout();
+    dispatchUserLogout();
   };
 
   const stringAvatar = (name) => name.split("")[0];
@@ -255,8 +256,4 @@ const Header = ({ user, userLogout, activeTab, handleChangeTab }) => {
   );
 };
 
-const mapDispatch = (dispatch) => ({
-  userLogout: () => dispatch(userLogout()),
-});
-
-export default connect(null, mapDispatch)(Header);
+export default Header;

@@ -75,6 +75,12 @@ export const userLogout = () => {
 
 //----------------------------------------------------------------------//
 
+export const clearError = () => ({
+  type: UserActionTypes.CLEAR_ERROR,
+});
+
+//----------------------------------------------------------------------//
+
 export const registerRequest = () => ({
   type: UserActionTypes.REGISTER_REQUEST,
 });

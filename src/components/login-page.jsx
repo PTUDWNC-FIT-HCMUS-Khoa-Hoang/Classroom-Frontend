@@ -1,9 +1,7 @@
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import { makeStyles } from "@mui/styles";
-import { connect } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { userLogin, googleLogin } from "../redux/user/user.action";
-import { createStructuredSelector } from "reselect";
-import { selectError } from "../redux/user/user.selector";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Button from "@mui/material/Button";
@@ -67,7 +65,12 @@ const loginSchema = Yup.object().shape({
   password: Yup.string().required("Vui lòng nhập mật khẩu"),
 });
 
-const Login = ({ isWrongAccount, userLogin, error, googleLogin }) => {
+const Login = () => {
+  const error = useSelector(({ user }) => user.error);
+  const dispatch = useDispatch();
+  const dispatchUserLogin = (email, password) =>
+    dispatch(userLogin(email, password));
+  const dispatchGoogleLogin = (tokenId) => dispatch(googleLogin(tokenId));
   const classes = useStyles();
   const emailRef = useRef();
   const passwordRef = useRef();
@@ -78,14 +81,9 @@ const Login = ({ isWrongAccount, userLogin, error, googleLogin }) => {
     },
     validationSchema: loginSchema,
     onSubmit: (values) => {
-      userLogin(values.email, values.password);
+      dispatchUserLogin(values.email, values.password);
     },
   });
-
-  useEffect(() => {
-    if (isWrongAccount === true) formik.setFieldValue("password", "");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isWrongAccount]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -98,7 +96,7 @@ const Login = ({ isWrongAccount, userLogin, error, googleLogin }) => {
     formik.handleSubmit(e);
   };
   const responseGoogle = (response) => {
-    googleLogin(response.tokenId);
+    dispatchGoogleLogin(response.tokenId);
   };
 
   return (
@@ -142,16 +140,6 @@ const Login = ({ isWrongAccount, userLogin, error, googleLogin }) => {
             helperText={formik.touched.password && formik.errors.password}
             onAnimationEnd={(e) => e.target.classList.remove(classes.shake)}
           />
-          {isWrongAccount && (
-            <Typography
-              variant="body2"
-              display="block"
-              sx={{ mt: 2 }}
-              className={classes.wrongAccountMessage}
-            >
-              Email hay Mật khẩu bạn nhập không đúng!
-            </Typography>
-          )}
           {error && (
             <Typography
               variant="body2"
@@ -181,13 +169,4 @@ const Login = ({ isWrongAccount, userLogin, error, googleLogin }) => {
   );
 };
 
-const mapState = createStructuredSelector({
-  error: selectError,
-});
-
-const mapDispatch = (dispatch) => ({
-  userLogin: (email, password) => dispatch(userLogin(email, password)),
-  googleLogin: (tokenId) => dispatch(googleLogin(tokenId)),
-});
-
-export default WithSpinner(connect(mapState, mapDispatch)(Login));
+export default WithSpinner(Login);

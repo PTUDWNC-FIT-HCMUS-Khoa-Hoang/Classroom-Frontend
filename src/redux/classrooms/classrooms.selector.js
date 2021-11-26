@@ -4,25 +4,25 @@ const selectorClassrooms = (state) => state.classrooms;
 
 export const selectClassrooms = createSelector(
   [selectorClassrooms],
-  (clasrooms) => clasrooms.classrooms
+  (classrooms) => classrooms.classrooms
 );
 
 export const selectIsFetchingClassrooms = createSelector(
   [selectorClassrooms],
-  (clasrooms) => clasrooms.isFetchingClassrooms
+  (classrooms) => classrooms.isFetchingClassrooms
 );
 
 export const selectIsJoiningClassroom = createSelector(
   [selectorClassrooms],
-  (clasrooms) => clasrooms.isJoining
+  (classrooms) => classrooms.isJoining
 );
 
 export const selectError = createSelector(
   [selectorClassrooms],
-  (clasrooms) => clasrooms.classroomError
+  (classrooms) => classrooms.classroomError
 );
 
 export const selectJoinClassroomError = createSelector(
   [selectorClassrooms],
-  (clasrooms) => clasrooms.joinClassroomErrorMessage
+  (classrooms) => classrooms.joinClassroomErrorMessage
 );
