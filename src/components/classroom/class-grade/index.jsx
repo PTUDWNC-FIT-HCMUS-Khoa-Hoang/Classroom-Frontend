@@ -11,6 +11,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CreateIcon from "@mui/icons-material/Create";
 import AddIcon from "@mui/icons-material/Add";
 import SaveIcon from "@mui/icons-material/Save";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import Typography from "@mui/material/Typography";
 import { useFormik } from "formik";
 import { useDispatch } from "react-redux";
 import * as Yup from "yup";
@@ -26,10 +28,10 @@ const useStyles = makeStyles({
   root: {
     display: "flex",
     justifyContent: "center",
-    marginTop: "16px",
+    margin: "16px 0",
   },
   wrapper: {
-    width: "80%",
+    width: "70%",
     backgroundColor: "lightgray",
     flexDirection: "column",
     display: "flex",
@@ -219,6 +221,13 @@ const GradeStructure = ({ gradeStructure }) => {
   return (
     <div className={classes.root}>
       <Card className={classes.wrapper}>
+        <Button
+          sx={{ alignSelf: "flex-start", ml: 3 }}
+          onClick={() => history.goBack()}
+        >
+          <ArrowBackIcon />
+          <Typography sx={{ ml: 1 }}>Quay lại chi tiết lớp học</Typography>
+        </Button>
         <CardContent>
           <DragDropContext className={classes.gradeList} onDragEnd={onDragEnd}>
             <Droppable droppableId="droppable">

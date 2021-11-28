@@ -3,7 +3,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import EditIcon from "@mui/icons-material/Edit";
-import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
 import { Box } from "@mui/system";
 import { useHistory, useLocation } from "react-router-dom";
 
@@ -34,7 +34,7 @@ const News = ({ classroom, isTeacher }) => {
           </CardContent>
         </Card>
         <Box sx={{ display: "flex", mt: 2 }}>
-          <Box sx={{ flex: 1, width: "100%", mr: 3 }}>
+          <Box sx={{ flex: 2, width: "100%", mr: 3 }}>
             {isTeacher && (
               <Card
                 sx={{
@@ -84,13 +84,13 @@ const News = ({ classroom, isTeacher }) => {
                     Cấu trúc điểm
                   </Typography>
                   {isTeacher && (
-                    <Button
+                    <IconButton
                       onClick={() => {
                         history.push(location.pathname + "/grade");
                       }}
                     >
                       <EditIcon />
-                    </Button>
+                    </IconButton>
                   )}
                 </Box>
                 {classroom.gradeStructure.map((item) => (
@@ -110,7 +110,7 @@ const News = ({ classroom, isTeacher }) => {
             sx={{
               border: 1,
               borderRadius: 4,
-              flex: 3,
+              flex: 5,
             }}
           >
             <CardContent
