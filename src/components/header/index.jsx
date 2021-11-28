@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import DialogAddClass from "./dialog-add-class";
-import DialogJoinClass from "./dialog-join-class";
+import DialogAddClass from "../dialog-add-class";
+import DialogJoinClass from "../dialog-join-class";
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
@@ -12,7 +12,7 @@ import Tab from "@mui/material/Tab";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { Box } from "@mui/system";
 import { makeStyles } from "@mui/styles";
-import { userLogout } from "../redux/user/user.action";
+import { userLogout } from "../../redux/user/user.action";
 import { useDispatch } from "react-redux";
 
 const PopupOptionsWrapper = styled.div`
@@ -112,8 +112,9 @@ const Header = ({ user, activeTab, handleChangeTab }) => {
   const location = useLocation();
 
   const isOnHomePage = location.pathname === "/classrooms";
-  const isOpenAClassroom = location.pathname.includes("/classrooms/");
-
+  const isOpenAClassroom =
+    location.pathname.includes("/classrooms/") &&
+    !location.pathname.includes("grade");
   return (
     <Card className={classes.header}>
       <Link

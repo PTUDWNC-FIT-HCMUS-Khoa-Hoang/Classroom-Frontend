@@ -2,6 +2,7 @@ import ClassroomActionTypes from "./classroom.types";
 import {
   createAClassroomService,
   fetchAClassroomService,
+  updateClassroomService,
 } from "./classroom.services";
 import { fetchClassrooms } from "../classrooms/classrooms.actions";
 
@@ -46,6 +47,19 @@ export const createAClassroomFailure = (error) => ({
   payload: error,
 });
 
+export const updateClassroomRequest = () => ({
+  type: ClassroomActionTypes.UPDATE_CLASSROOM_REQUEST,
+});
+
+export const updateClassroomSuccess = () => ({
+  type: ClassroomActionTypes.UPDATE_CLASSROOM_SUCCESS,
+});
+
+export const updateClassroomFailure = (error) => ({
+  type: ClassroomActionTypes.UPDATE_CLASSROOM_FAILURE,
+  payload: error,
+});
+
 export const createAClassroom = (title) => {
   return (dispatch, getState) => {
     const token = getState().user.token;
@@ -54,5 +68,17 @@ export const createAClassroom = (title) => {
       .then(() => dispatch(createAClassroomSuccess()))
       .then(() => dispatch(fetchClassrooms(token)))
       .catch((error) => dispatch(createAClassroomFailure(error)));
+  };
+};
+
+export const updateClassroom = (data) => {
+  return (dispatch, getState) => {
+    const token = getState().user.token;
+    const classroomId = getState().classroom.classroom._id;
+    dispatch(updateClassroomRequest());
+    updateClassroomService(data, classroomId, token)
+      .then(() => dispatch(updateClassroomSuccess()))
+      .then(() => dispatch(fetchAClassroom(classroomId)))
+      .catch((error) => dispatch(updateClassroomFailure(error)));
   };
 };

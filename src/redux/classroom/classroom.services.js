@@ -48,3 +48,16 @@ export const acceptJoinClassroom = (invitationId, token) => {
       .catch((error) => reject(error));
   });
 };
+
+export const updateClassroomService = (data, classroomId, token) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "put",
+      url: `/classrooms/${classroomId}`,
+      headers: { Authorization: `Bearer ${token}` },
+      data,
+    })
+      .then((response) => resolve(response.data))
+      .catch((error) => reject(error));
+  });
+};
