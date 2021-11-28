@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { makeStyles } from "@mui/styles";
 import { useSelector, useDispatch } from "react-redux";
-import { userLogin, googleLogin } from "../redux/user/user.action";
+import { userLogin, googleLogin } from "../../redux/user/user.action";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Button from "@mui/material/Button";
@@ -10,7 +10,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
-import WithSpinner from "./with-spinner";
+import WithSpinner from "../with-spinner";
 import GoogleLogin from "react-google-login";
 
 const useStyles = makeStyles({

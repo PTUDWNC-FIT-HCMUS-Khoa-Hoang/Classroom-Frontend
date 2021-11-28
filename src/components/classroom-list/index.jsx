@@ -2,10 +2,10 @@ import React, { useEffect } from "react";
 import { makeStyles } from "@mui/styles";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import ClassroomPreview from "./classroom-preview";
-import WithSpinner from "./with-spinner";
+import ClassroomPreview from "../classroom-preview";
+import WithSpinner from "../with-spinner";
 import Typography from "@mui/material/Typography";
-import { fetchClassrooms } from "../redux/classrooms/classrooms.actions";
+import { fetchClassrooms } from "../../redux/classrooms/classrooms.actions";
 import { useSelector, useDispatch } from "react-redux";
 
 const useStyles = makeStyles({

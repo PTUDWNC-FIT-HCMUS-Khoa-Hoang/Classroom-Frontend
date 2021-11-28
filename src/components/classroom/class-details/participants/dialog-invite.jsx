@@ -8,7 +8,7 @@ import Divider from "@mui/material/Divider";
 import * as Yup from "yup";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CircularProgress from "@mui/material/CircularProgress";
-import { createInvitationService } from "../../../redux/classrooms/classrooms.services";
+import { createInvitationService } from "../../../../redux/classrooms/classrooms.services";
 import { useFormik } from "formik";
 import { makeStyles } from "@mui/styles";
 import { Button, Typography } from "@mui/material";

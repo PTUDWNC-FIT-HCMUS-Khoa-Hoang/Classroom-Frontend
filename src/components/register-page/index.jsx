@@ -5,11 +5,11 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
-import WithSpinner from "./with-spinner";
+import WithSpinner from "../with-spinner";
 import TextField from "@mui/material/TextField";
 import { Button } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { userRegister } from "../redux/user/user.action";
+import { userRegister } from "../../redux/user/user.action";
 import { useSelector, useDispatch } from "react-redux";
 
 const useStyles = makeStyles({

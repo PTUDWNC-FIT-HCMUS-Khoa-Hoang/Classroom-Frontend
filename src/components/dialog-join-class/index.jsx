@@ -6,7 +6,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
-import { joinByInvitationCode } from "../redux/classrooms/classrooms.actions";
+import { joinByInvitationCode } from "../../redux/classrooms/classrooms.actions";
 import { Typography } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";

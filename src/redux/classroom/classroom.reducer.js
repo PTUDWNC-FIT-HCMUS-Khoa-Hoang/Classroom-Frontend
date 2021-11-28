@@ -4,8 +4,9 @@ const INITIAL_STATE = {
   classroom: null,
   participants: [],
   isCreatingAClassroom: false,
-  classroomError: false,
+  classroomError: null,
   isFetchingAClassroom: false,
+  isUpdating: false,
 };
 
 const classroomReducer = (state = INITIAL_STATE, { type, payload }) => {
@@ -42,6 +43,22 @@ const classroomReducer = (state = INITIAL_STATE, { type, payload }) => {
       return {
         ...state,
         isFetchingAClassroom: false,
+        classroomError: payload,
+      };
+    case ClassroomActionTypes.UPDATE_CLASSROOM_REQUEST:
+      return {
+        ...state,
+        isUpdating: true,
+      };
+    case ClassroomActionTypes.UPDATE_CLASSROOM_SUCCESS:
+      return {
+        ...state,
+        isUpdating: false,
+      };
+    case ClassroomActionTypes.UPDATE_CLASSROOM_FAILURE:
+      return {
+        ...state,
+        isUpdating: false,
         classroomError: payload,
       };
     case ClassroomActionTypes.CLOSE_CLASSROOM:

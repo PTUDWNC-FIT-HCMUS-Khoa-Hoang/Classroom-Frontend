@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles } from "@mui/styles";
-import { checkIfJoinedClassroom } from "../redux/classroom/classroom.services";
-import { acceptJoinClassroom } from "../redux/classroom/classroom.services";
+import { checkIfJoinedClassroom } from "../../redux/classroom/classroom.services";
+import { acceptJoinClassroom } from "../../redux/classroom/classroom.services";
 import { useLocation, useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { joinByInvitationCode } from "../redux/classrooms/classrooms.actions";
+import { joinByInvitationCode } from "../../redux/classrooms/classrooms.actions";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -27,7 +27,7 @@ const useStyles = makeStyles({
   },
 });
 
-const JoinClassroom = () => {
+const JoinClassroomPage = () => {
   const location = useLocation();
   const history = useHistory();
   const classes = useStyles();
@@ -111,4 +111,4 @@ const JoinClassroom = () => {
   );
 };
 
-export default JoinClassroom;
+export default JoinClassroomPage;
