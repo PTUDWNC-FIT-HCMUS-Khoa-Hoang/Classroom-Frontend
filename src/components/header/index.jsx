@@ -1,19 +1,21 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import DialogAddClass from "../dialog-add-class";
-import DialogJoinClass from "../dialog-join-class";
-import Card from "@mui/material/Card";
-import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
-import Avatar from "@mui/material/Avatar";
-import Popover from "@mui/material/Popover";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import { Link, useHistory, useLocation } from "react-router-dom";
-import { Box } from "@mui/system";
-import { makeStyles } from "@mui/styles";
-import { userLogout } from "../../redux/user/user.action";
-import { useDispatch } from "react-redux";
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import Popover from '@mui/material/Popover';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import { makeStyles } from '@mui/styles';
+import { Box } from '@mui/system';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { Link, useHistory, useLocation } from 'react-router-dom';
+import styled from 'styled-components';
+import { userLogout } from '../../redux/user/user.action';
+import DialogAddClass from '../dialog-add-class';
+import DialogJoinClass from '../dialog-join-class';
+import HeaderDrawer from '../header-drawer';
 
 const PopupOptionsWrapper = styled.div`
   display: flex;
@@ -22,34 +24,34 @@ const PopupOptionsWrapper = styled.div`
 
 const useStyles = makeStyles({
   header: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    position: "sticky",
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    position: 'sticky',
     top: 0,
-    minHeight: "70px",
+    minHeight: '70px',
     zIndex: 999,
   },
   header__title: {
-    textAlign: "left",
-    fontSize: "1.375rem",
-    margin: "1rem 2rem",
-    cursor: "pointer",
+    textAlign: 'left',
+    fontSize: '1.375rem',
+    margin: '1rem 2rem',
+    cursor: 'pointer',
   },
   userOptions: {
-    display: "flex",
-    padding: "10px",
-    minWidth: "250px",
+    display: 'flex',
+    padding: '10px',
+    minWidth: '250px',
   },
   userOptions__userDetail: {
-    textDecoration: "none",
+    textDecoration: 'none',
   },
   addOptions: {
-    display: "flex",
-    minWidth: "100px",
+    display: 'flex',
+    minWidth: '100px',
   },
   optionWrapper: {
-    display: "flex",
+    display: 'flex',
   },
 });
 const Header = ({ user, activeTab, handleChangeTab }) => {
@@ -100,44 +102,53 @@ const Header = ({ user, activeTab, handleChangeTab }) => {
     dispatchUserLogout();
   };
 
-  const stringAvatar = (name) => name.split("")[0];
+  const stringAvatar = (name) => name.split('')[0];
 
   const openUserOptions = Boolean(anchorElUserOptions);
-  const idUserOptions = openUserOptions ? "user-popover" : undefined;
+  const idUserOptions = openUserOptions ? 'user-popover' : undefined;
 
   const openAddOptions = Boolean(anchorElAddOptions);
-  const idAddOptions = openAddOptions ? "user-popover" : undefined;
+  const idAddOptions = openAddOptions ? 'user-popover' : undefined;
 
   const history = useHistory();
   const location = useLocation();
 
-  const isOnHomePage = location.pathname === "/classrooms";
+  const isOnHomePage = location.pathname === '/classrooms';
   const isOpenAClassroom =
-    location.pathname.includes("/classrooms/") &&
-    !location.pathname.includes("grade");
+    location.pathname.includes('/classrooms/') &&
+    !location.pathname.includes('grade');
   return (
     <Card className={classes.header}>
-      <Link
-        to="/classrooms"
+      <Grid
         style={{
-          textAlign: "left",
-          fontSize: "28px",
-          margin: "1rem 2rem",
-          textDecoration: "none",
-          fontWeight: "bold",
-          color: "cornflowerblue",
+          display: 'flex',
+          alignItems: 'center',
         }}
       >
-        Classroom
-      </Link>
+        <HeaderDrawer />
+        <Link
+          to="/classrooms"
+          style={{
+            textAlign: 'left',
+            fontSize: '28px',
+            margin: '1rem 2rem',
+            textDecoration: 'none',
+            fontWeight: 'bold',
+            color: 'cornflowerblue',
+          }}
+        >
+          Classroom
+        </Link>
+      </Grid>
+
       {isOpenAClassroom && (
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "center",
-            margin: "5px 0px",
-            paddingRight: "7rem",
-            fontSize: "1rem",
+            display: 'flex',
+            justifyContent: 'center',
+            margin: '5px 0px',
+            paddingRight: '7rem',
+            fontSize: '1rem',
           }}
         >
           <Tabs
@@ -147,11 +158,11 @@ const Header = ({ user, activeTab, handleChangeTab }) => {
             centered
           >
             <Tab
-              sx={{ fontSize: "17px", fontWeight: "600" }}
+              sx={{ fontSize: '17px', fontWeight: '600' }}
               label="Bảng tin"
             />
             <Tab
-              sx={{ fontSize: "17px", fontWeight: "600" }}
+              sx={{ fontSize: '17px', fontWeight: '600' }}
               label="Mọi người"
             />
           </Tabs>
@@ -162,9 +173,9 @@ const Header = ({ user, activeTab, handleChangeTab }) => {
           {isOnHomePage && (
             <IconButton
               sx={{
-                marginRight: "1rem",
-                fontSize: "35px",
-                width: "60px",
+                marginRight: '1rem',
+                fontSize: '35px',
+                width: '60px',
               }}
               onClick={handleClickAdd}
             >
@@ -178,12 +189,12 @@ const Header = ({ user, activeTab, handleChangeTab }) => {
             open={openAddOptions}
             onClose={handleCloseAddOptions}
             anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "right",
+              vertical: 'bottom',
+              horizontal: 'right',
             }}
             transformOrigin={{
-              vertical: "top",
-              horizontal: "right",
+              vertical: 'top',
+              horizontal: 'right',
             }}
           >
             <PopupOptionsWrapper className={classes.addOptions}>
@@ -211,7 +222,7 @@ const Header = ({ user, activeTab, handleChangeTab }) => {
             variant="outlined"
             onClick={handleClickAvatar}
           >
-            <Avatar sx={{ cursor: "pointer", fontWeight: "bold" }}>
+            <Avatar sx={{ cursor: 'pointer', fontWeight: 'bold' }}>
               {stringAvatar(user.fullname)}
             </Avatar>
           </IconButton>
@@ -221,18 +232,18 @@ const Header = ({ user, activeTab, handleChangeTab }) => {
             open={openUserOptions}
             onClose={handleCloseUserOptions}
             anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "right",
+              vertical: 'bottom',
+              horizontal: 'right',
             }}
           >
             <PopupOptionsWrapper className={classes.userOptions}>
               <Avatar
                 sx={{
-                  width: "80px",
-                  height: "80px",
-                  margin: "auto",
-                  marginBottom: "20px",
-                  fontWeight: "bold",
+                  width: '80px',
+                  height: '80px',
+                  margin: 'auto',
+                  marginBottom: '20px',
+                  fontWeight: 'bold',
                 }}
               >
                 {stringAvatar(user.fullname)}
@@ -240,13 +251,13 @@ const Header = ({ user, activeTab, handleChangeTab }) => {
               <Button
                 onClick={() => {
                   handleCloseUserOptions();
-                  history.push("/user");
+                  history.push('/user');
                 }}
-                sx={{ mt: 1, mb: 1, fontWeight: "700" }}
+                sx={{ mt: 1, mb: 1, fontWeight: '700' }}
               >
                 Thông tin cá nhân
               </Button>
-              <Button sx={{ fontWeight: "700" }} onClick={handleLogout}>
+              <Button sx={{ fontWeight: '700' }} onClick={handleLogout}>
                 Đăng xuất
               </Button>
             </PopupOptionsWrapper>
