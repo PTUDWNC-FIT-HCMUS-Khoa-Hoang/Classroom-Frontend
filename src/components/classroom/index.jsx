@@ -8,7 +8,7 @@ import {
 } from "../../redux/classroom/classroom.actions";
 import WithSpinner from "../with-spinner";
 import ClassDetails from "./class-details";
-import GradeStructure from "./class-grade";
+import GradeStructure from "./class-grade-structure";
 
 const ClassroomLayout = ({ activeTab, handleChangeTab }) => {
   const { id } = useParams();
@@ -42,7 +42,7 @@ const ClassroomLayout = ({ activeTab, handleChangeTab }) => {
   return (
     <Switch>
       <Route
-        path={`${match.url}/grade`}
+        path={`${match.url}/grade-structure`}
         render={() =>
           isTeacher ? (
             <GradeStructure gradeStructure={gradeStructure} />
