@@ -86,7 +86,7 @@ const News = ({ classroom, isTeacher }) => {
                   {isTeacher && (
                     <IconButton
                       onClick={() => {
-                        history.push(location.pathname + "/grade");
+                        history.push(location.pathname + "/grade-structure");
                       }}
                     >
                       <EditIcon />
