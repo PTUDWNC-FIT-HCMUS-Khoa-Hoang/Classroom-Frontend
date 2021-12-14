@@ -35,11 +35,9 @@ const ClassroomList = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (classrooms === null) {
-      const dispatchFetchClassrooms = () => dispatch(fetchClassrooms());
-      dispatchFetchClassrooms();
-    }
-  }, [classrooms, dispatch, user]);
+    const dispatchFetchClassrooms = () => dispatch(fetchClassrooms());
+    dispatchFetchClassrooms();
+  }, [dispatch]);
 
   if (classrooms === null) {
     return null;

@@ -21,6 +21,7 @@ const WithSpinner = (WrappedComponent) => {
     const isUpdatingClassroom = useSelector(
       ({ classroom }) => classroom.isUpdating
     );
+    const isUploading = useSelector(({ classroom }) => classroom.isUploading);
     const isProcessing =
       isLoading ||
       isFetchingClassrooms ||
@@ -28,6 +29,7 @@ const WithSpinner = (WrappedComponent) => {
       isJoiningClassroom ||
       isUpdating ||
       isUpdatingClassroom ||
+      isUploading ||
       isFetchingAClassroom;
     return (
       <>

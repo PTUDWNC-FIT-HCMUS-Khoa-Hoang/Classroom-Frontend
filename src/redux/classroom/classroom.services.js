@@ -61,3 +61,66 @@ export const updateClassroomService = (data, classroomId, token) => {
       .catch((error) => reject(error));
   });
 };
+
+export const downloadStudentListService = (classroomId, token) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: `/classrooms/student-list/csv/${classroomId}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "text/csv",
+      },
+    })
+      .then((response) => {
+        console.log(response);
+        resolve(response.data);
+      })
+      .catch((error) => reject(error));
+  });
+};
+export const uploadStudentListService = (classroomId, token, formData) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "put",
+      url: `/classrooms/student-list/csv/${classroomId}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+      data: formData,
+    })
+      .then((response) => resolve(response.data))
+      .catch((error) => reject(error));
+  });
+};
+
+// Grade detail
+
+export const updateAGrade = (
+  classroomId,
+  token,
+  studentId,
+  studentName,
+  gradeId,
+  grade
+) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "put",
+      url: `/classrooms/student-list/csv/${classroomId}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+      data: { classroomId, studentId, studentName, gradeId, grade },
+    })
+      .then((response) => {
+        console.log(response);
+        resolve(response.data);
+      })
+      .catch((error) => reject(error));
+  });
+};
+
+// export const getDataByGrade =
