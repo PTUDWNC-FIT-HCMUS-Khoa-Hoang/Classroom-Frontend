@@ -97,30 +97,76 @@ export const uploadStudentListService = (classroomId, token, formData) => {
 
 // Grade detail
 
-export const updateAGrade = (
+export const updateAGradeForAStudentService = (
   classroomId,
   token,
   studentId,
-  studentName,
   gradeId,
   grade
 ) => {
   return new Promise((resolve, reject) => {
     axios({
-      method: "put",
-      url: `/classrooms/student-list/csv/${classroomId}`,
+      method: "post",
+      url: `/grade-detail`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      data: { classroomId, studentId, gradeId, grade },
+    })
+      .then((response) => resolve(response.data))
+      .catch((error) => reject(error));
+  });
+};
+
+export const downloadAGradeColumnService = (classroomId, token, gradeId) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: `/grade-detail/csv/${classroomId}/${gradeId}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "text/csv",
+      },
+    })
+      .then((response) => resolve(response.data))
+      .catch((error) => reject(error));
+  });
+};
+
+export const uploadGradeForAnAssignmentService = (
+  classroomId,
+  gradeId,
+  token,
+  formData
+) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: `/grade-detail/csv/${classroomId}/${gradeId}`,
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",
       },
-      data: { classroomId, studentId, studentName, gradeId, grade },
+      data: formData,
+    })
+      .then((response) => resolve(response.data))
+      .catch((error) => reject(error));
+  });
+};
+
+export const downloadGradeBoardByClassroomService = (classroomId, token) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: `/grade-detail/${classroomId}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     })
       .then((response) => {
-        console.log(response);
+        console.log(response.data);
         resolve(response.data);
       })
       .catch((error) => reject(error));
   });
 };
-
-// export const getDataByGrade =

@@ -11,6 +11,8 @@ const INITIAL_STATE = {
   gradeStructure: [],
   isUploading: false,
   uploadingError: null,
+  isUpdatingGrade: false,
+  updateGradeError: null,
 };
 
 const classroomReducer = (state = INITIAL_STATE, { type, payload }) => {
@@ -72,17 +74,20 @@ const classroomReducer = (state = INITIAL_STATE, { type, payload }) => {
         ...INITIAL_STATE,
       };
     case ClassroomActionTypes.UPLOAD_STUDENT_LIST_REQUEST:
+    case ClassroomActionTypes.UPLOAD_GRADE_FOR_AN_ASSIGNMENT_REQUEST:
       return {
         ...state,
         isUploading: true,
       };
     case ClassroomActionTypes.UPLOAD_STUDENT_LIST_SUCCESS:
+    case ClassroomActionTypes.UPLOAD_GRADE_FOR_AN_ASSIGNMENT_SUCCESS:
       return {
         ...state,
         isUploading: false,
-        studentList: payload.studentList,
+        studentList: payload.studentList || state.studentList,
       };
     case ClassroomActionTypes.UPLOAD_STUDENT_LIST_FAILURE:
+    case ClassroomActionTypes.UPLOAD_GRADE_FOR_AN_ASSIGNMENT_FAILURE:
       return {
         ...state,
         isUploading: false,
