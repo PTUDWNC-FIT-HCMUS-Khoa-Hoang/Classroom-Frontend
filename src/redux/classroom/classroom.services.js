@@ -113,7 +113,10 @@ export const updateAGradeForAStudentService = (
       },
       data: { classroomId, studentId, gradeId, grade },
     })
-      .then((response) => resolve(response.data))
+      .then((response) => {
+        console.log("success");
+        resolve(response.data);
+      })
       .catch((error) => reject(error));
   });
 };
@@ -129,7 +132,10 @@ export const downloadAGradeColumnService = (classroomId, token, gradeId) => {
       },
     })
       .then((response) => resolve(response.data))
-      .catch((error) => reject(error));
+      .catch((error) => {
+        console.log(error.response.data.message);
+        reject(error);
+      });
   });
 };
 
@@ -150,11 +156,28 @@ export const uploadGradeForAnAssignmentService = (
       data: formData,
     })
       .then((response) => resolve(response.data))
-      .catch((error) => reject(error));
+      .catch((error) => {
+        console.log(error.response.data.message);
+        reject(error);
+      });
   });
 };
 
 export const downloadGradeBoardByClassroomService = (classroomId, token) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: `/grade-detail/csv/${classroomId}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => resolve(response.data))
+      .catch((error) => reject(error));
+  });
+};
+
+export const getGradesByClassroomService = (classroomId, token) => {
   return new Promise((resolve, reject) => {
     axios({
       method: "get",
@@ -164,7 +187,7 @@ export const downloadGradeBoardByClassroomService = (classroomId, token) => {
       },
     })
       .then((response) => {
-        console.log(response.data);
+        // console.log(response.data);
         resolve(response.data);
       })
       .catch((error) => reject(error));

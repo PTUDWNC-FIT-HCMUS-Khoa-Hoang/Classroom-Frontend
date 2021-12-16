@@ -13,6 +13,7 @@ const INITIAL_STATE = {
   uploadingError: null,
   isUpdatingGrade: false,
   updateGradeError: null,
+  gradesArray: [],
 };
 
 const classroomReducer = (state = INITIAL_STATE, { type, payload }) => {
@@ -92,6 +93,23 @@ const classroomReducer = (state = INITIAL_STATE, { type, payload }) => {
         ...state,
         isUploading: false,
         uploadingError: payload,
+      };
+    case ClassroomActionTypes.GET_GRADES_BY_CLASSROOM_REQUEST:
+      return {
+        ...state,
+        isFetchingAClassroom: true,
+      };
+    case ClassroomActionTypes.GET_GRADES_BY_CLASSROOM_FAILURE:
+      return {
+        ...state,
+        isFetchingAClassroom: false,
+        classroomError: payload,
+      };
+    case ClassroomActionTypes.GET_GRADES_BY_CLASSROOM_SUCCESS:
+      return {
+        ...state,
+        isFetchingAClassroom: false,
+        gradesArray: payload,
       };
     default:
       return state;

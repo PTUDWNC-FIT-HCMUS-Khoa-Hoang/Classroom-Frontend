@@ -5,6 +5,7 @@ import {
   updateClassroomService,
   uploadStudentListService,
   uploadGradeForAnAssignmentService,
+  getGradesByClassroomService,
 } from "./classroom.services";
 import { fetchClassrooms } from "../classrooms/classrooms.actions";
 
@@ -131,6 +132,32 @@ export const uploadGradeForAnAssignment = (formData, gradeId) => {
     dispatch(uploadGradeForAnAssignmentRequest());
     uploadGradeForAnAssignmentService(classroomId, gradeId, token, formData)
       .then((data) => dispatch(uploadGradeForAnAssignmentSuccess(data)))
+      .then(() => dispatch(getGradesByClassroom()))
       .catch((error) => dispatch(uploadGradeForAnAssignmentFailure(error)));
+  };
+};
+
+export const getGradesByClassroomRequest = () => ({
+  type: ClassroomActionTypes.GET_GRADES_BY_CLASSROOM_REQUEST,
+});
+
+export const getGradesByClassroomSuccess = (data) => ({
+  type: ClassroomActionTypes.GET_GRADES_BY_CLASSROOM_SUCCESS,
+  payload: data,
+});
+
+export const getGradesByClassroomFailure = (error) => ({
+  type: ClassroomActionTypes.GET_GRADES_BY_CLASSROOM_FAILURE,
+  payload: error,
+});
+
+export const getGradesByClassroom = () => {
+  return (dispatch, getState) => {
+    const token = getState().user.token;
+    const classroomId = getState().classroom.classroom._id;
+    dispatch(getGradesByClassroomRequest());
+    getGradesByClassroomService(classroomId, token)
+      .then((data) => dispatch(getGradesByClassroomSuccess(data)))
+      .catch((error) => dispatch(getGradesByClassroomFailure(error)));
   };
 };
