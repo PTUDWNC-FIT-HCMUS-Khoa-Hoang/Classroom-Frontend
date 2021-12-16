@@ -18,9 +18,14 @@ const userPersistConfig = {
   whitelist: ["user", "token"],
 };
 
+const classroomsPersistConfig = {
+  key: "classrooms",
+  storage,
+};
+
 const rootReducer = combineReducers({
   user: persistReducer(userPersistConfig, userReducer),
-  classrooms: classroomsReducer,
+  classrooms: persistReducer(classroomsPersistConfig, classroomsReducer),
   classroom: classroomReducer,
 });
 

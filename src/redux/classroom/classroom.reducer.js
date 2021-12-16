@@ -7,6 +7,12 @@ const INITIAL_STATE = {
   classroomError: null,
   isFetchingAClassroom: false,
   isUpdating: false,
+  studentList: [],
+  gradeStructure: [],
+  isUploading: false,
+  uploadingError: null,
+  isUpdatingGrade: false,
+  updateGradeError: null,
 };
 
 const classroomReducer = (state = INITIAL_STATE, { type, payload }) => {
@@ -38,6 +44,8 @@ const classroomReducer = (state = INITIAL_STATE, { type, payload }) => {
         isFetchingAClassroom: false,
         classroom: payload.classroom,
         participants: payload.participants,
+        studentList: payload.classroom.studentList,
+        gradeStructure: payload.classroom.gradeStructure,
       };
     case ClassroomActionTypes.FETCH_A_CLASSROOM_FAILURE:
       return {
@@ -64,6 +72,26 @@ const classroomReducer = (state = INITIAL_STATE, { type, payload }) => {
     case ClassroomActionTypes.CLOSE_CLASSROOM:
       return {
         ...INITIAL_STATE,
+      };
+    case ClassroomActionTypes.UPLOAD_STUDENT_LIST_REQUEST:
+    case ClassroomActionTypes.UPLOAD_GRADE_FOR_AN_ASSIGNMENT_REQUEST:
+      return {
+        ...state,
+        isUploading: true,
+      };
+    case ClassroomActionTypes.UPLOAD_STUDENT_LIST_SUCCESS:
+    case ClassroomActionTypes.UPLOAD_GRADE_FOR_AN_ASSIGNMENT_SUCCESS:
+      return {
+        ...state,
+        isUploading: false,
+        studentList: payload.studentList || state.studentList,
+      };
+    case ClassroomActionTypes.UPLOAD_STUDENT_LIST_FAILURE:
+    case ClassroomActionTypes.UPLOAD_GRADE_FOR_AN_ASSIGNMENT_FAILURE:
+      return {
+        ...state,
+        isUploading: false,
+        uploadingError: payload,
       };
     default:
       return state;

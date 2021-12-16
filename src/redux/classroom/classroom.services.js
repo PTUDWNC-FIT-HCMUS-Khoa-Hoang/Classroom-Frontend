@@ -61,3 +61,112 @@ export const updateClassroomService = (data, classroomId, token) => {
       .catch((error) => reject(error));
   });
 };
+
+export const downloadStudentListService = (classroomId, token) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: `/classrooms/student-list/csv/${classroomId}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "text/csv",
+      },
+    })
+      .then((response) => {
+        console.log(response);
+        resolve(response.data);
+      })
+      .catch((error) => reject(error));
+  });
+};
+export const uploadStudentListService = (classroomId, token, formData) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "put",
+      url: `/classrooms/student-list/csv/${classroomId}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+      data: formData,
+    })
+      .then((response) => resolve(response.data))
+      .catch((error) => reject(error));
+  });
+};
+
+// Grade detail
+
+export const updateAGradeForAStudentService = (
+  classroomId,
+  token,
+  studentId,
+  gradeId,
+  grade
+) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: `/grade-detail`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      data: { classroomId, studentId, gradeId, grade },
+    })
+      .then((response) => resolve(response.data))
+      .catch((error) => reject(error));
+  });
+};
+
+export const downloadAGradeColumnService = (classroomId, token, gradeId) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: `/grade-detail/csv/${classroomId}/${gradeId}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "text/csv",
+      },
+    })
+      .then((response) => resolve(response.data))
+      .catch((error) => reject(error));
+  });
+};
+
+export const uploadGradeForAnAssignmentService = (
+  classroomId,
+  gradeId,
+  token,
+  formData
+) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "post",
+      url: `/grade-detail/csv/${classroomId}/${gradeId}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+      data: formData,
+    })
+      .then((response) => resolve(response.data))
+      .catch((error) => reject(error));
+  });
+};
+
+export const downloadGradeBoardByClassroomService = (classroomId, token) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: `/grade-detail/${classroomId}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        console.log(response.data);
+        resolve(response.data);
+      })
+      .catch((error) => reject(error));
+  });
+};
