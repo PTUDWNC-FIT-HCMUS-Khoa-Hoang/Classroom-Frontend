@@ -107,7 +107,7 @@ export const updateAGradeForAStudentService = (
   return new Promise((resolve, reject) => {
     axios({
       method: "post",
-      url: `/grade-detail`,
+      url: "/grade-detail",
       headers: {
         Authorization: `Bearer ${token}`,
       },

@@ -312,7 +312,7 @@ const GradeManagement = () => {
 
     result[studentIndex].grades[assignIndex].isUpdating = true;
     result[studentIndex].grades[assignIndex].isChange = false;
-
+    console.log(studentId);
     setStudentArray(result);
     updateAGradeForAStudentService(
       classroomId,
@@ -515,7 +515,7 @@ const GradeManagement = () => {
                           handleBlurGradeCell(
                             studentIndex,
                             assignIndex,
-                            student._id,
+                            student.studentId,
                             grade._id
                           );
                         }}
