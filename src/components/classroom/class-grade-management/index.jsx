@@ -21,8 +21,8 @@ import { useRef } from "react";
 import {
   uploadStudentList,
   uploadGradeForAnAssignment,
+  getGradesByClassroom,
 } from "../../../redux/classroom/classroom.actions";
-import { useCallback } from "react";
 import { useEffect } from "react";
 import TextField from "@mui/material/TextField";
 
@@ -136,28 +136,10 @@ const GradeManagement = () => {
   const gradeStructure = useSelector(
     ({ classroom }) => classroom.gradeStructure
   );
-
-  const buildStudentArray = useCallback(
-    (studentList, gradeStructure) =>
-      studentList.map((student) => ({
-        ...student,
-        grades: gradeStructure.map(() => ({
-          grade: "",
-          isUpdating: false,
-          isChange: false,
-        })),
-      })),
-    []
-  );
-
-  useEffect(() => {
-    setStudentArray(buildStudentArray(studentList, gradeStructure));
-  }, [buildStudentArray, gradeStructure, studentList]);
+  const gradesArray = useSelector(({ classroom }) => classroom.gradesArray);
 
   const [studentOptionAnchorEl, setStudentOptionAnchorEl] = useState(null);
-  const [studentArray, setStudentArray] = useState(
-    buildStudentArray(studentList, gradeStructure)
-  );
+  const [studentArray, setStudentArray] = useState([]);
   const [focusedCellIndex, setFocusedCellIndex] = useState(
     defaultCellIndexState
   );
@@ -171,6 +153,39 @@ const GradeManagement = () => {
 
   const [assignmentIdToUpload, setAssignmentIdToUpload] = useState(null);
 
+  const [uploadGradeFileIndex, setUploadGradeFileIndex] = useState(null);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const dispatchGetGradesByClassroom = () => dispatch(getGradesByClassroom());
+    dispatchGetGradesByClassroom();
+  }, [dispatch]);
+
+  useEffect(() => {
+    const buildStudentArray = (studentList, gradeStructure, gradesArray) => {
+      const result = studentList.map((student) => ({
+        ...student,
+        grades: gradeStructure.map((gradeType) => ({
+          grade: gradesArray
+            ? gradesArray.find(
+                (gradeItem) =>
+                  gradeItem.studentId === student.studentId &&
+                  gradeType._id === gradeItem.gradeId
+              )?.grade
+            : "",
+          isUpdating: false,
+          isChange: false,
+        })),
+      }));
+      return result;
+    };
+
+    setStudentArray(
+      buildStudentArray(studentList, gradeStructure, gradesArray)
+    );
+  }, [gradeStructure, gradesArray, studentList]);
+
   const checkCanReturnAllAssign = (assignIndex) => {
     let result = true;
     studentArray.forEach((student) => {
@@ -180,10 +195,12 @@ const GradeManagement = () => {
   };
 
   const handleChangeGrade = (event, assignIndex, studentIndex) => {
-    const result = Array.from(studentArray);
-    result[studentIndex].grades[assignIndex].grade = event.target.value;
-    result[studentIndex].grades[assignIndex].isChange = true;
-    setStudentArray(result);
+    if (event) {
+      const result = Array.from(studentArray);
+      result[studentIndex].grades[assignIndex].grade = event.target.value;
+      result[studentIndex].grades[assignIndex].isChange = true;
+      setStudentArray(result);
+    }
 
     const canReturnAllResult = Array.from(canReturnAssign);
     if (checkCanReturnAllAssign(assignIndex)) {
@@ -226,13 +243,12 @@ const GradeManagement = () => {
   const inputStudentListRef = useRef(null);
   const inputGradeForAnAssignmentRef = useRef(null);
 
-  const dispatch = useDispatch();
   const dispatchUploadStudentList = (formData) =>
     dispatch(uploadStudentList(formData));
   const dispatchUploadGradeForAnAssignment = (formData, gradeId) =>
     dispatch(uploadGradeForAnAssignment(formData, gradeId));
 
-  const handleStudentListInputFileChange = (event) => {
+  const handleChangeStudentListInputFile = (event) => {
     const file = event.target.files[0];
     event.target.value = null;
     handleCloseStudentOption();
@@ -263,10 +279,10 @@ const GradeManagement = () => {
     download(blob, "grade.csv");
   };
 
-  const handleGradeForAssignmentFileChange = (event) => {
+  const handleChangeGradeForAssignmentFile = (event) => {
     const file = event.target.files[0];
     event.target.value = null;
-    handleCloseStudentOption();
+    handleCloseAssignAnchorEl(uploadGradeFileIndex);
     handleUploadGradeForAnAssignment(file);
   };
 
@@ -274,6 +290,7 @@ const GradeManagement = () => {
     const formData = new FormData();
     formData.append("csv", file);
     dispatchUploadGradeForAnAssignment(formData, assignmentIdToUpload);
+    handleChangeGrade(null, uploadGradeFileIndex, null);
   };
 
   const handleBlurGradeCell = (
@@ -286,11 +303,17 @@ const GradeManagement = () => {
       return;
     }
     const result = Array.from(studentArray);
+    const grade = result[studentIndex].grades[assignIndex].grade;
+
+    if (isNaN(grade)) {
+      handleChangeGrade({ target: { value: "" } }, assignIndex, studentIndex);
+      return;
+    }
+
     result[studentIndex].grades[assignIndex].isUpdating = true;
     result[studentIndex].grades[assignIndex].isChange = false;
 
     setStudentArray(result);
-    const grade = result[studentIndex].grades[assignIndex].grade;
     updateAGradeForAStudentService(
       classroomId,
       token,
@@ -303,7 +326,6 @@ const GradeManagement = () => {
       setStudentArray(result);
     });
   };
-
   const renderNoStudent = () => (
     <div>
       <Typography>Hiện tại bạn chưa có sinh viên nào</Typography>
@@ -327,14 +349,14 @@ const GradeManagement = () => {
         style={{ display: "none" }}
         ref={inputStudentListRef}
         accept="csv"
-        onChange={handleStudentListInputFileChange}
+        onChange={handleChangeStudentListInputFile}
       />
       <input
         type="file"
         style={{ display: "none" }}
         ref={inputGradeForAnAssignmentRef}
         accept="csv"
-        onChange={handleGradeForAssignmentFileChange}
+        onChange={handleChangeGradeForAssignmentFile}
       />
       {/* <div className={classes.action}>
         <IconButton size="large">
@@ -400,7 +422,7 @@ const GradeManagement = () => {
                 </th>
 
                 {gradeStructure.map((grade, index) => (
-                  <th>
+                  <th key={grade._id}>
                     <div className={classes.tableCell}>
                       <div className={classes.tableCell_info}>
                         {grade.title}
@@ -442,6 +464,7 @@ const GradeManagement = () => {
                           <MenuItem
                             onClick={() => {
                               setAssignmentIdToUpload(grade._id);
+                              setUploadGradeFileIndex(index);
                               inputGradeForAnAssignmentRef.current.click();
                             }}
                           >
@@ -462,7 +485,7 @@ const GradeManagement = () => {
             </thead>
             <tbody>
               {studentArray.map((student, studentIndex) => (
-                <tr>
+                <tr key={student._id}>
                   <td>
                     <div
                       className={classes.tableCell}
@@ -483,7 +506,7 @@ const GradeManagement = () => {
                   </td>
 
                   {gradeStructure.map((grade, assignIndex) => (
-                    <td>
+                    <td key={`${student._id}-${grade._id}`}>
                       <div
                         className={classes.tableCell}
                         onClick={() => onClickGrade(studentIndex, assignIndex)}
@@ -515,16 +538,18 @@ const GradeManagement = () => {
                             value={student.grades[assignIndex].grade}
                             helperText={
                               student.grades[assignIndex].isUpdating
-                                ? "Đang lưu"
+                                ? "Đang lưu..."
                                 : student.grades[assignIndex].grade &&
                                   (focusedCellIndex.studentIndex !==
                                     studentIndex ||
                                     focusedCellIndex.assignIndex !==
                                       assignIndex)
-                                ? "Đã lưu bản nháp"
+                                ? "Bản nháp"
                                 : ""
                             }
                             InputProps={{
+                              inputMode: "numeric",
+                              pattern: "[0-9]*",
                               endAdornment: (
                                 <InputAdornment position="end">
                                   /100
