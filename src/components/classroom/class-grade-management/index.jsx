@@ -3,8 +3,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { Button, MenuItem, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import IconButton from "@mui/material/IconButton";
-// import DownloadIcon from "@mui/icons-material/Download";
-// import FileUploadIcon from "@mui/icons-material/FileUpload";
+import DownloadIcon from "@mui/icons-material/Download";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import TableContainer from "@mui/material/TableContainer";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -15,6 +14,7 @@ import {
   downloadStudentListService,
   downloadAGradeColumnService,
   updateAGradeForAStudentService,
+  downloadGradeBoardByClassroomService,
 } from "../../../redux/classroom/classroom.services";
 import download from "downloadjs";
 import { useRef } from "react";
@@ -22,6 +22,7 @@ import {
   uploadStudentList,
   uploadGradeForAnAssignment,
   getGradesByClassroom,
+  updateClassroom,
 } from "../../../redux/classroom/classroom.actions";
 import { useEffect } from "react";
 import TextField from "@mui/material/TextField";
@@ -37,6 +38,7 @@ const useStyles = makeStyles({
   action: {
     display: "flex",
     justifyContent: "flex-end",
+    marginBottom: "10px",
   },
   table: {
     borderCollapse: "collapse",
@@ -155,43 +157,145 @@ const GradeManagement = () => {
 
   const [uploadGradeFileIndex, setUploadGradeFileIndex] = useState(null);
 
+  const [finalGrades, setFinalGrades] = useState(
+    Array.from(studentList).fill(null)
+  );
+
   const dispatch = useDispatch();
 
   useEffect(() => {
     const dispatchGetGradesByClassroom = () => dispatch(getGradesByClassroom());
     dispatchGetGradesByClassroom();
-  }, [dispatch]);
+    gradeStructure.forEach((_, index) => {
+      handleChangeGrade(null, index, null);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const buildStudentArray = (studentList, gradeStructure, gradesArray) => {
       const result = studentList.map((student) => ({
         ...student,
-        grades: gradeStructure.map((gradeType) => ({
-          grade: gradesArray
+        grades: gradeStructure.map((gradeType) => {
+          const gradeResult = gradesArray
             ? gradesArray.find(
                 (gradeItem) =>
                   gradeItem.studentId === student.studentId &&
                   gradeType._id === gradeItem.gradeId
               )?.grade
-            : "",
-          isUpdating: false,
-          isChange: false,
-        })),
+            : "";
+          return {
+            grade: gradeResult,
+            gradeTemp: gradeResult,
+            isUpdating: false,
+            isChange: false,
+          };
+        }),
       }));
       return result;
     };
 
-    setStudentArray(
-      buildStudentArray(studentList, gradeStructure, gradesArray)
+    gradeStructure.forEach((_, index) => {
+      handleChangeGrade(null, index, null);
+    });
+
+    const buildCanReturnAll = () => {
+      const result = Array.from(canReturnAssign);
+      gradeStructure.forEach((gradeStrItem, index) => {
+        let temp = true;
+        gradesArray.forEach((gradeItem) => {
+          if (gradeStrItem._id === gradeItem.gradeId) {
+            if (!gradeItem.grade) temp = false;
+          }
+        });
+        result[index] = temp;
+      });
+      return result;
+    };
+
+    const studentArrayResult = buildStudentArray(
+      studentList,
+      gradeStructure,
+      gradesArray
     );
+
+    const maxGradeReducer = (preValue, curValue) => preValue + curValue.grade;
+
+    const maxGrade = gradeStructure.reduce(maxGradeReducer, 0);
+
+    const calculateFinalGradeReducer = (preValue, curValue, index) => {
+      const grade = curValue.grade;
+      return preValue + (grade / 100) * gradeStructure[index].grade;
+    };
+
+    const calculateFinalGrades = (studentArrayResult) => {
+      const result = Array.from(finalGrades).fill(0);
+      studentArrayResult.forEach((student, index) => {
+        const temp =
+          (student.grades.reduce(calculateFinalGradeReducer, 0) / maxGrade) *
+          10;
+        if (temp) {
+          result[index] = Math.round(temp) !== temp ? temp.toFixed(2) : temp;
+        }
+      });
+
+      return result;
+    };
+    setFinalGrades(calculateFinalGrades(studentArrayResult));
+
+    setStudentArray(studentArrayResult);
+    setCanReturnAssign(buildCanReturnAll());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gradeStructure, gradesArray, studentList]);
+
+  useEffect(() => {
+    const maxGradeReducer = (preValue, curValue) => preValue + curValue.grade;
+
+    const maxGrade = gradeStructure.reduce(maxGradeReducer, 0);
+
+    const calculateFinalGradeReducer = (preValue, curValue, index) => {
+      const grade = curValue.grade;
+      return preValue + (grade / 100) * gradeStructure[index].grade;
+    };
+
+    const calculateFinalGrades = (studentArrayResult) => {
+      const result = Array.from(finalGrades).fill(0);
+      studentArrayResult.forEach((student, index) => {
+        const temp =
+          (student.grades.reduce(calculateFinalGradeReducer, 0) / maxGrade) *
+          10;
+        if (temp) {
+          result[index] = Math.round(temp) !== temp ? temp.toFixed(2) : temp;
+        }
+      });
+
+      return result;
+    };
+    setFinalGrades(calculateFinalGrades(studentArray));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [studentArray]);
 
   const checkCanReturnAllAssign = (assignIndex) => {
     let result = true;
     studentArray.forEach((student) => {
-      result = result && !!student.grades[assignIndex].grade;
+      result =
+        result &&
+        !!student.grades[assignIndex].grade &&
+        !student.grades[assignIndex].isUpdating;
     });
+
     return result;
+  };
+
+  const changeCanReturnAll = (assignIndex) => {
+    const canReturnAllResult = Array.from(canReturnAssign);
+    if (checkCanReturnAllAssign(assignIndex)) {
+      canReturnAllResult[assignIndex] = true;
+      setCanReturnAssign(canReturnAllResult);
+    } else if (canReturnAllResult[assignIndex]) {
+      canReturnAllResult[assignIndex] = false;
+      setCanReturnAssign(canReturnAllResult);
+    }
   };
 
   const handleChangeGrade = (event, assignIndex, studentIndex) => {
@@ -200,15 +304,6 @@ const GradeManagement = () => {
       result[studentIndex].grades[assignIndex].grade = event.target.value;
       result[studentIndex].grades[assignIndex].isChange = true;
       setStudentArray(result);
-    }
-
-    const canReturnAllResult = Array.from(canReturnAssign);
-    if (checkCanReturnAllAssign(assignIndex)) {
-      canReturnAllResult[assignIndex] = true;
-      setCanReturnAssign(canReturnAllResult);
-    } else if (canReturnAllResult[assignIndex]) {
-      canReturnAllResult[assignIndex] = false;
-      setCanReturnAssign(canReturnAllResult);
     }
   };
 
@@ -253,6 +348,14 @@ const GradeManagement = () => {
     event.target.value = null;
     handleCloseStudentOption();
     handleUploadStudentListFile(file);
+  };
+
+  const handleDownloadGradeBoard = async () => {
+    const res = await downloadGradeBoardByClassroomService(classroomId, token);
+    const blob = new Blob([res], {
+      type: "text/csv",
+    });
+    download(blob, "grade-board.csv");
   };
 
   const handleUploadStudentListFile = (file) => {
@@ -306,13 +409,18 @@ const GradeManagement = () => {
     const grade = result[studentIndex].grades[assignIndex].grade;
 
     if (isNaN(grade)) {
-      handleChangeGrade({ target: { value: "" } }, assignIndex, studentIndex);
+      handleChangeGrade(
+        {
+          target: { value: result[studentIndex].grades[assignIndex].gradeTemp },
+        },
+        assignIndex,
+        studentIndex
+      );
       return;
     }
 
     result[studentIndex].grades[assignIndex].isUpdating = true;
     result[studentIndex].grades[assignIndex].isChange = false;
-    console.log(studentId);
     setStudentArray(result);
     updateAGradeForAStudentService(
       classroomId,
@@ -323,9 +431,21 @@ const GradeManagement = () => {
     ).then(() => {
       const result = Array.from(studentArray);
       result[studentIndex].grades[assignIndex].isUpdating = false;
+      result[studentIndex].grades[assignIndex].gradeTemp = grade;
+      changeCanReturnAll(assignIndex);
       setStudentArray(result);
     });
   };
+
+  const dispatchReturnAll = (data) => dispatch(updateClassroom(data));
+
+  const handleReturnAGrade = (gradeIndex) => {
+    handleCloseAssignAnchorEl(gradeIndex);
+    const result = Array.from(gradeStructure);
+    result[gradeIndex].isFinalized = true;
+    dispatchReturnAll({ gradeStructure: result });
+  };
+
   const renderNoStudent = () => (
     <div>
       <Typography>Hiện tại bạn chưa có sinh viên nào</Typography>
@@ -358,89 +478,43 @@ const GradeManagement = () => {
         accept="csv"
         onChange={handleChangeGradeForAssignmentFile}
       />
-      {/* <div className={classes.action}>
-        <IconButton size="large">
-          <DownloadIcon sx={{ fontSize: 35 }} />
-        </IconButton>
-
-        <IconButton size="large">
-          <FileUploadIcon sx={{ fontSize: 35 }} />
-        </IconButton>
-      </div> */}
       {studentArray.length === 0 ? (
         renderNoStudent()
       ) : (
-        <TableContainer>
-          <table className={classes.table} id="customers">
-            <thead>
-              <tr>
-                <th>
-                  <div
-                    style={{ width: `${2 * WIDTH_CELL}px` }}
-                    className={classes.tableCell}
-                  >
-                    <Typography>Sinh viên</Typography>
-                    <IconButton
-                      className="moreVertButton"
-                      onClick={handleOpenStudentOption}
-                      style={{ visibility: studentOptionOpen ? "visible" : "" }}
+        <>
+          <div className={classes.action}>
+            <Button size="large" onClick={handleDownloadGradeBoard}>
+              <DownloadIcon sx={{ fontSize: 35 }} />
+              Tải về bảng điểm
+            </Button>
+          </div>
+          <TableContainer>
+            <table className={classes.table} id="customers">
+              <thead>
+                <tr>
+                  <th>
+                    <div
+                      style={{ width: `${2 * WIDTH_CELL}px` }}
+                      className={classes.tableCell}
                     >
-                      <MoreVertIcon />
-                    </IconButton>
-                    <Menu
-                      open={studentOptionOpen}
-                      id="long-menu"
-                      onClose={handleCloseStudentOption}
-                      MenuListProps={{
-                        "aria-labelledby": "student-option-button",
-                      }}
-                      anchorEl={studentOptionAnchorEl}
-                      anchorOrigin={{
-                        vertical: "bottom",
-                        horizontal: "right",
-                      }}
-                      transformOrigin={{
-                        vertical: "top",
-                        horizontal: "right",
-                      }}
-                    >
-                      <div className={classes.studentOptions}>
-                        <MenuItem onClick={handleDownloadStudentListFile}>
-                          Download danh sách sinh viên
-                        </MenuItem>
-
-                        <MenuItem
-                          onClick={() => {
-                            inputStudentListRef.current.click();
-                          }}
-                        >
-                          Upload danh sách sinh viên
-                        </MenuItem>
-                      </div>
-                    </Menu>
-                  </div>
-                </th>
-
-                {gradeStructure.map((grade, index) => (
-                  <th key={grade._id}>
-                    <div className={classes.tableCell}>
-                      <div className={classes.tableCell_info}>
-                        {grade.title}
-                      </div>
+                      <Typography>Sinh viên</Typography>
                       <IconButton
-                        className={
-                          assignOptionOpenArray[index] ? "" : "moreVertButton"
-                        }
-                        onClick={(event) =>
-                          handleOpenAssignOption(event, index)
-                        }
+                        className="moreVertButton"
+                        onClick={handleOpenStudentOption}
+                        style={{
+                          visibility: studentOptionOpen ? "visible" : "",
+                        }}
                       >
                         <MoreVertIcon />
                       </IconButton>
                       <Menu
-                        open={assignOptionOpenArray[index]}
-                        onClose={() => handleCloseAssignAnchorEl(index)}
-                        anchorEl={assignAnchorEls[index]}
+                        open={studentOptionOpen}
+                        id="long-menu"
+                        onClose={handleCloseStudentOption}
+                        MenuListProps={{
+                          "aria-labelledby": "student-option-button",
+                        }}
+                        anchorEl={studentOptionAnchorEl}
                         anchorOrigin={{
                           vertical: "bottom",
                           horizontal: "right",
@@ -451,130 +525,209 @@ const GradeManagement = () => {
                         }}
                       >
                         <div className={classes.studentOptions}>
-                          <MenuItem
-                            onClick={() =>
-                              handleDownloadGradeForAnAssignment(
-                                grade._id,
-                                index
-                              )
-                            }
-                          >
-                            Download điểm
+                          <MenuItem onClick={handleDownloadStudentListFile}>
+                            Download danh sách sinh viên
                           </MenuItem>
+
                           <MenuItem
                             onClick={() => {
-                              setAssignmentIdToUpload(grade._id);
-                              setUploadGradeFileIndex(index);
-                              inputGradeForAnAssignmentRef.current.click();
+                              inputStudentListRef.current.click();
                             }}
                           >
-                            Upload điểm
-                          </MenuItem>
-                          <Divider />
-                          <MenuItem disabled={!canReturnAssign[index]}>
-                            Trả lại tất cả
+                            Upload danh sách sinh viên
                           </MenuItem>
                         </div>
                       </Menu>
                     </div>
                   </th>
-                ))}
 
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {studentArray.map((student, studentIndex) => (
-                <tr key={student._id}>
-                  <td>
-                    <div
-                      className={classes.tableCell}
-                      style={{ width: `${2 * WIDTH_CELL}px` }}
-                    >
-                      <div className={classes.studentInfo}>
-                        <AccountCircleIcon
-                          sx={{ mr: 2, fill: "cornflowerblue" }}
-                          fontSize="large"
-                        />
-                        <Typography
-                          sx={{ alignSelf: "center", fontWeight: "bold" }}
+                  {gradeStructure.map((grade, index) => (
+                    <th key={grade._id}>
+                      <div className={classes.tableCell}>
+                        <div>
+                          {grade.title}
+                          <Typography>Điểm: {grade.grade}</Typography>
+                        </div>
+                        <IconButton
+                          className={
+                            assignOptionOpenArray[index] ? "" : "moreVertButton"
+                          }
+                          onClick={(event) =>
+                            handleOpenAssignOption(event, index)
+                          }
                         >
-                          {student.studentName}
-                        </Typography>
-                      </div>
-                    </div>
-                  </td>
-
-                  {gradeStructure.map((grade, assignIndex) => (
-                    <td key={`${student._id}-${grade._id}`}>
-                      <div
-                        className={classes.tableCell}
-                        onClick={() => onClickGrade(studentIndex, assignIndex)}
-                        onBlur={() => {
-                          setFocusedCellIndex(defaultCellIndexState);
-                          handleBlurGradeCell(
-                            studentIndex,
-                            assignIndex,
-                            student.studentId,
-                            grade._id
-                          );
-                        }}
-                      >
-                        <div
-                          className="gradeInfo"
-                          style={{
-                            visibility:
-                              student.grades[assignIndex].grade ||
-                              (focusedCellIndex.studentIndex === studentIndex &&
-                                focusedCellIndex.assignIndex === assignIndex) ||
-                              student.grades[assignIndex].isUpdating
-                                ? "visible"
-                                : "",
+                          <MoreVertIcon />
+                        </IconButton>
+                        <Menu
+                          open={assignOptionOpenArray[index]}
+                          onClose={() => handleCloseAssignAnchorEl(index)}
+                          anchorEl={assignAnchorEls[index]}
+                          anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "right",
+                          }}
+                          transformOrigin={{
+                            vertical: "top",
+                            horizontal: "right",
                           }}
                         >
-                          <TextField
-                            sx={{ textAlign: "left" }}
-                            variant="standard"
-                            value={student.grades[assignIndex].grade}
-                            helperText={
-                              student.grades[assignIndex].isUpdating
-                                ? "Đang lưu..."
-                                : student.grades[assignIndex].grade &&
-                                  (focusedCellIndex.studentIndex !==
-                                    studentIndex ||
-                                    focusedCellIndex.assignIndex !==
-                                      assignIndex)
-                                ? "Bản nháp"
-                                : ""
-                            }
-                            InputProps={{
-                              inputMode: "numeric",
-                              pattern: "[0-9]*",
-                              endAdornment: (
-                                <InputAdornment position="end">
-                                  /100
-                                </InputAdornment>
-                              ),
-                            }}
-                            onChange={(event) =>
-                              handleChangeGrade(
-                                event,
-                                assignIndex,
-                                studentIndex
-                              )
-                            }
+                          <div className={classes.studentOptions}>
+                            <MenuItem
+                              onClick={() =>
+                                handleDownloadGradeForAnAssignment(
+                                  grade._id,
+                                  index
+                                )
+                              }
+                            >
+                              Download điểm
+                            </MenuItem>
+                            <MenuItem
+                              onClick={() => {
+                                setAssignmentIdToUpload(grade._id);
+                                setUploadGradeFileIndex(index);
+                                inputGradeForAnAssignmentRef.current.click();
+                              }}
+                            >
+                              Upload điểm
+                            </MenuItem>
+                            <Divider />
+                            <MenuItem
+                              onClick={() => handleReturnAGrade(index)}
+                              disabled={!canReturnAssign[index]}
+                            >
+                              Trả lại tất cả
+                            </MenuItem>
+                          </div>
+                        </Menu>
+                      </div>
+                    </th>
+                  ))}
+
+                  <th>
+                    <div
+                      className={classes.tableCell}
+                      style={{ justifyContent: "center" }}
+                    >
+                      <div>Tổng kết</div>
+                    </div>
+                  </th>
+
+                  <th />
+                </tr>
+              </thead>
+              <tbody>
+                {studentArray.map((student, studentIndex) => (
+                  <tr key={student._id}>
+                    <td>
+                      <div
+                        className={classes.tableCell}
+                        style={{ width: `${2 * WIDTH_CELL}px` }}
+                      >
+                        <div className={classes.studentInfo}>
+                          <AccountCircleIcon
+                            sx={{ mr: 2, fill: "cornflowerblue" }}
+                            fontSize="large"
                           />
+                          <Typography
+                            sx={{ alignSelf: "center", fontWeight: "bold" }}
+                          >
+                            {student.studentName}
+                          </Typography>
                         </div>
                       </div>
                     </td>
-                  ))}
 
-                  <td />
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </TableContainer>
+                    {gradeStructure.map((grade, assignIndex) => (
+                      <td key={`${student._id}-${grade._id}`}>
+                        <div
+                          className={classes.tableCell}
+                          onClick={() =>
+                            onClickGrade(studentIndex, assignIndex)
+                          }
+                          onBlur={() => {
+                            setFocusedCellIndex(defaultCellIndexState);
+                            handleBlurGradeCell(
+                              studentIndex,
+                              assignIndex,
+                              student.studentId,
+                              grade._id
+                            );
+                          }}
+                        >
+                          <div
+                            className="gradeInfo"
+                            style={{
+                              visibility:
+                                student.grades[assignIndex].grade ||
+                                (focusedCellIndex.studentIndex ===
+                                  studentIndex &&
+                                  focusedCellIndex.assignIndex ===
+                                    assignIndex) ||
+                                student.grades[assignIndex].isUpdating
+                                  ? "visible"
+                                  : "",
+                            }}
+                          >
+                            <TextField
+                              sx={{ textAlign: "left" }}
+                              variant="standard"
+                              value={student.grades[assignIndex].grade}
+                              helperText={
+                                !grade.isFinalized
+                                  ? student.grades[assignIndex].isUpdating
+                                    ? "Đang lưu..."
+                                    : student.grades[assignIndex].grade &&
+                                      (focusedCellIndex.studentIndex !==
+                                        studentIndex ||
+                                        focusedCellIndex.assignIndex !==
+                                          assignIndex)
+                                    ? "Bản nháp"
+                                    : ""
+                                  : ""
+                              }
+                              InputProps={{
+                                inputMode: "numeric",
+                                pattern: "[0-9]*",
+                                endAdornment: (
+                                  <InputAdornment position="end">
+                                    /100
+                                  </InputAdornment>
+                                ),
+                              }}
+                              onChange={(event) =>
+                                handleChangeGrade(
+                                  event,
+                                  assignIndex,
+                                  studentIndex
+                                )
+                              }
+                            />
+                          </div>
+                        </div>
+                      </td>
+                    ))}
+
+                    <td>
+                      <div
+                        className={classes.tableCell}
+                        style={{ justifyContent: "center" }}
+                      >
+                        <div className={classes.studentInfo}>
+                          <Typography sx={{ fontWeight: "bold" }}>
+                            {finalGrades[studentIndex]}
+                          </Typography>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td />
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </TableContainer>
+        </>
       )}
     </div>
   );

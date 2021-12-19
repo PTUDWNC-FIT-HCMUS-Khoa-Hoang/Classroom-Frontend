@@ -72,10 +72,7 @@ export const downloadStudentListService = (classroomId, token) => {
         "Content-Type": "text/csv",
       },
     })
-      .then((response) => {
-        console.log(response);
-        resolve(response.data);
-      })
+      .then((response) => resolve(response.data))
       .catch((error) => reject(error));
   });
 };
@@ -113,10 +110,7 @@ export const updateAGradeForAStudentService = (
       },
       data: { classroomId, studentId, gradeId, grade },
     })
-      .then((response) => {
-        console.log("success");
-        resolve(response.data);
-      })
+      .then((response) => resolve(response.data))
       .catch((error) => reject(error));
   });
 };
@@ -132,10 +126,7 @@ export const downloadAGradeColumnService = (classroomId, token, gradeId) => {
       },
     })
       .then((response) => resolve(response.data))
-      .catch((error) => {
-        console.log(error.response.data.message);
-        reject(error);
-      });
+      .catch((error) => reject(error));
   });
 };
 
@@ -156,10 +147,7 @@ export const uploadGradeForAnAssignmentService = (
       data: formData,
     })
       .then((response) => resolve(response.data))
-      .catch((error) => {
-        console.log(error.response.data.message);
-        reject(error);
-      });
+      .catch((error) => reject(error));
   });
 };
 
@@ -170,6 +158,7 @@ export const downloadGradeBoardByClassroomService = (classroomId, token) => {
       url: `/grade-detail/csv/${classroomId}`,
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "text/csv",
       },
     })
       .then((response) => resolve(response.data))
@@ -186,10 +175,7 @@ export const getGradesByClassroomService = (classroomId, token) => {
         Authorization: `Bearer ${token}`,
       },
     })
-      .then((response) => {
-        // console.log(response.data);
-        resolve(response.data);
-      })
+      .then((response) => resolve(response.data))
       .catch((error) => reject(error));
   });
 };

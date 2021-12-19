@@ -72,6 +72,7 @@ const GradeStructure = ({ gradeStructure }) => {
   const [gradeList, setGradeList] = useState([]);
   const [canSave, setCanSave] = useState(true);
   const history = useHistory();
+
   useEffect(() => {
     buildInitialGradeList();
     setId(gradeStructure.length);
