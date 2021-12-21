@@ -1,7 +1,7 @@
 import React from "react";
 import News from "./news";
 import Participants from "./participants";
-import GradeManagement from "./class-grade-management";
+import GradeManagement from "./grade-management";
 import TabPanel from "../../../utils/tab-panel";
 import { Box } from "@mui/system";
 
