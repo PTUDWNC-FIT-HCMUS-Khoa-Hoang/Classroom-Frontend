@@ -1,7 +1,7 @@
 import React from "react";
 import News from "./news";
 import Participants from "./participants";
-import GradeManagement from "../class-grade-management";
+import GradeManagement from "./grade-management";
 import TabPanel from "../../../utils/tab-panel";
 import { Box } from "@mui/system";
 
@@ -29,7 +29,13 @@ const Classroom = ({
         />
       </TabPanel>
       <TabPanel value={activeTab} index={2}>
-        <GradeManagement />
+        <GradeManagement
+          owner={classroom.owner}
+          user={user}
+          classroomId={classroom._id}
+          token={token}
+          isTeacher={isTeacher}
+        />
       </TabPanel>
     </Box>
   );

@@ -9,7 +9,6 @@ import TableContainer from "@mui/material/TableContainer";
 import InputAdornment from "@mui/material/InputAdornment";
 import Menu from "@mui/material/Menu";
 import Snackbar from "@mui/material/Snackbar";
-import CancelIcon from "@mui/icons-material/Cancel";
 import Divider from "@mui/material/Divider";
 import MuiAlert from "@mui/material/Alert";
 import { useSelector, useDispatch } from "react-redux";
@@ -18,7 +17,7 @@ import {
   downloadAGradeColumnService,
   updateAGradeForAStudentService,
   downloadGradeBoardByClassroomService,
-} from "../../../redux/classroom/classroom.services";
+} from "../../../../redux/classroom/classroom.services";
 import download from "downloadjs";
 import { useRef } from "react";
 import {
@@ -26,7 +25,7 @@ import {
   uploadGradeForAnAssignment,
   getGradesByClassroom,
   updateClassroom,
-} from "../../../redux/classroom/classroom.actions";
+} from "../../../../redux/classroom/classroom.actions";
 import { useEffect } from "react";
 import TextField from "@mui/material/TextField";
 
@@ -133,10 +132,9 @@ const defaultCellIndexState = {
   assignIndex: null,
 };
 
-const GradeManagement = () => {
+const GradeManagement = ({ classroomId, token, owner, user, isTeacher }) => {
   const classes = useStyles();
-  const token = useSelector(({ user }) => user.token);
-  const classroomId = useSelector(({ classroom }) => classroom.classroom.id);
+
   const studentList = useSelector(({ classroom }) => classroom.studentList);
   const gradeStructure = useSelector(
     ({ classroom }) => classroom.gradeStructure
@@ -176,7 +174,7 @@ const GradeManagement = () => {
       handleChangeGrade(null, index, null);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [studentList]);
 
   // when component did update
   useEffect(() => {
@@ -280,7 +278,7 @@ const GradeManagement = () => {
     };
     setFinalGrades(calculateFinalGrades(studentArray));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [studentArray]);
+  }, [studentArray, studentList]);
 
   const checkCanReturnAllAssign = (assignIndex) => {
     let result = true;
@@ -487,116 +485,74 @@ const GradeManagement = () => {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
   });
 
-  return (
-    <div className={classes.root}>
-      <input
-        type="file"
-        style={{ display: "none" }}
-        ref={inputStudentListRef}
-        accept="csv"
-        onChange={handleChangeStudentListInputFile}
-      />
-      <input
-        type="file"
-        style={{ display: "none" }}
-        ref={inputGradeForAnAssignmentRef}
-        accept="csv"
-        onChange={handleChangeGradeForAssignmentFile}
-      />
+  const renderStudentSide = () => <div>Giáo viên chưa trả điểm</div>;
 
-      {studentArray.length === 0 ? (
-        renderNoStudent()
-      ) : (
-        <>
-          <Snackbar
-            open={snackbarOpen}
-            autoHideDuration={10000}
-            onClose={handleCloseAlert}
-          >
-            <Alert severity="error" onClose={handleCloseAlert}>
-              Điểm phải là số!
-            </Alert>
-          </Snackbar>
-          <div className={classes.action}>
-            <Button size="large" onClick={handleDownloadGradeBoard}>
-              <DownloadIcon sx={{ fontSize: 35 }} />
-              Tải về bảng điểm
-            </Button>
-          </div>
-          <TableContainer>
-            <table className={classes.table} id="customers">
-              <thead>
-                <tr>
-                  <th>
-                    <div
-                      style={{ width: `${2 * WIDTH_CELL}px` }}
-                      className={classes.tableCell}
-                    >
-                      <Typography>Sinh viên</Typography>
-                      <IconButton
-                        className="moreVertButton"
-                        onClick={handleOpenStudentOption}
-                        style={{
-                          visibility: studentOptionOpen ? "visible" : "",
-                        }}
+  const isOwner = user._id === owner._id;
+
+  if (isTeacher)
+    return (
+      <div className={classes.root}>
+        <input
+          type="file"
+          style={{ display: "none" }}
+          ref={inputStudentListRef}
+          accept="csv"
+          onChange={handleChangeStudentListInputFile}
+        />
+        <input
+          type="file"
+          style={{ display: "none" }}
+          ref={inputGradeForAnAssignmentRef}
+          accept="csv"
+          onChange={handleChangeGradeForAssignmentFile}
+        />
+
+        {studentArray.length === 0 ? (
+          renderNoStudent()
+        ) : (
+          <>
+            <Snackbar
+              open={snackbarOpen}
+              autoHideDuration={10000}
+              onClose={handleCloseAlert}
+            >
+              <Alert severity="error" onClose={handleCloseAlert}>
+                Điểm phải là số!
+              </Alert>
+            </Snackbar>
+            <div className={classes.action}>
+              <Button size="large" onClick={handleDownloadGradeBoard}>
+                <DownloadIcon sx={{ fontSize: 35 }} />
+                Tải về bảng điểm
+              </Button>
+            </div>
+            <TableContainer>
+              <table className={classes.table} id="customers">
+                <thead>
+                  <tr>
+                    <th>
+                      <div
+                        style={{ width: `${2 * WIDTH_CELL}px` }}
+                        className={classes.tableCell}
                       >
-                        <MoreVertIcon />
-                      </IconButton>
-                      <Menu
-                        open={studentOptionOpen}
-                        id="long-menu"
-                        onClose={handleCloseStudentOption}
-                        MenuListProps={{
-                          "aria-labelledby": "student-option-button",
-                        }}
-                        anchorEl={studentOptionAnchorEl}
-                        anchorOrigin={{
-                          vertical: "bottom",
-                          horizontal: "right",
-                        }}
-                        transformOrigin={{
-                          vertical: "top",
-                          horizontal: "right",
-                        }}
-                      >
-                        <div className={classes.studentOptions}>
-                          <MenuItem onClick={handleDownloadStudentListFile}>
-                            Download danh sách sinh viên
-                          </MenuItem>
-
-                          <MenuItem
-                            onClick={() => {
-                              inputStudentListRef.current.click();
-                            }}
-                          >
-                            Upload danh sách sinh viên
-                          </MenuItem>
-                        </div>
-                      </Menu>
-                    </div>
-                  </th>
-
-                  {gradeStructure.map((grade, index) => (
-                    <th key={grade._id}>
-                      <div className={classes.tableCell}>
-                        <div>
-                          {grade.title}
-                          <Typography>Điểm: {grade.grade}</Typography>
-                        </div>
+                        <Typography>Sinh viên</Typography>
                         <IconButton
-                          className={
-                            assignOptionOpenArray[index] ? "" : "moreVertButton"
-                          }
-                          onClick={(event) =>
-                            handleOpenAssignOption(event, index)
-                          }
+                          className="moreVertButton"
+                          onClick={handleOpenStudentOption}
+                          style={{
+                            visibility: studentOptionOpen ? "visible" : "",
+                          }}
                         >
                           <MoreVertIcon />
                         </IconButton>
                         <Menu
-                          open={assignOptionOpenArray[index]}
-                          onClose={() => handleCloseAssignAnchorEl(index)}
-                          anchorEl={assignAnchorEls[index]}
+                          open={studentOptionOpen}
+                          id="long-menu"
+                          onClose={handleCloseStudentOption}
+                          MenuListProps={{
+                            "aria-labelledby": "student-option-button",
+                          }}
+                          anchorEl={studentOptionAnchorEl}
                           anchorOrigin={{
                             vertical: "bottom",
                             horizontal: "right",
@@ -607,163 +563,215 @@ const GradeManagement = () => {
                           }}
                         >
                           <div className={classes.studentOptions}>
-                            <MenuItem
-                              onClick={() =>
-                                handleDownloadGradeForAnAssignment(
-                                  grade._id,
-                                  index
-                                )
-                              }
-                            >
-                              Download điểm
+                            <MenuItem onClick={handleDownloadStudentListFile}>
+                              Download danh sách sinh viên
                             </MenuItem>
-                            <MenuItem
-                              onClick={() => {
-                                setAssignmentIdToUpload(grade._id);
-                                setUploadGradeFileIndex(index);
-                                inputGradeForAnAssignmentRef.current.click();
-                              }}
-                            >
-                              Upload điểm
-                            </MenuItem>
-                            <Divider />
-                            <MenuItem
-                              onClick={() => handleReturnAGrade(index)}
-                              disabled={!canReturnAssign[index]}
-                            >
-                              Trả lại tất cả
-                            </MenuItem>
+
+                            {isOwner && (
+                              <MenuItem
+                                onClick={() => {
+                                  inputStudentListRef.current.click();
+                                }}
+                              >
+                                Upload danh sách sinh viên
+                              </MenuItem>
+                            )}
                           </div>
                         </Menu>
                       </div>
                     </th>
-                  ))}
 
-                  <th>
-                    <div
-                      className={classes.tableCell}
-                      style={{ justifyContent: "center" }}
-                    >
-                      <div>Tổng kết</div>
-                    </div>
-                  </th>
-
-                  <th />
-                </tr>
-              </thead>
-              <tbody>
-                {studentArray.map((student, studentIndex) => (
-                  <tr key={student._id}>
-                    <td>
-                      <div
-                        className={classes.tableCell}
-                        style={{ width: `${2 * WIDTH_CELL}px` }}
-                      >
-                        <div className={classes.studentInfo}>
-                          <AccountCircleIcon
-                            sx={{ mr: 2, fill: "cornflowerblue" }}
-                            fontSize="large"
-                          />
-                          <Typography
-                            sx={{ alignSelf: "center", fontWeight: "bold" }}
+                    {gradeStructure.map((grade, index) => (
+                      <th key={grade._id}>
+                        <div className={classes.tableCell}>
+                          <div>
+                            {grade.title}
+                            <Typography>Điểm: {grade.grade}</Typography>
+                          </div>
+                          <IconButton
+                            className={
+                              assignOptionOpenArray[index]
+                                ? ""
+                                : "moreVertButton"
+                            }
+                            onClick={(event) =>
+                              handleOpenAssignOption(event, index)
+                            }
                           >
-                            {student.studentName}
-                          </Typography>
-                        </div>
-                      </div>
-                    </td>
-
-                    {gradeStructure.map((grade, assignIndex) => (
-                      <td key={`${student._id}-${grade._id}`}>
-                        <div
-                          className={classes.tableCell}
-                          onClick={() =>
-                            onClickGrade(studentIndex, assignIndex)
-                          }
-                          onBlur={() => {
-                            setFocusedCellIndex(defaultCellIndexState);
-                            handleBlurGradeCell(
-                              studentIndex,
-                              assignIndex,
-                              student.studentId,
-                              grade._id
-                            );
-                          }}
-                        >
-                          <div
-                            className="gradeInfo"
-                            style={{
-                              visibility:
-                                student.grades[assignIndex].grade ||
-                                (focusedCellIndex.studentIndex ===
-                                  studentIndex &&
-                                  focusedCellIndex.assignIndex ===
-                                    assignIndex) ||
-                                student.grades[assignIndex].isUpdating
-                                  ? "visible"
-                                  : "",
+                            <MoreVertIcon />
+                          </IconButton>
+                          <Menu
+                            open={assignOptionOpenArray[index]}
+                            onClose={() => handleCloseAssignAnchorEl(index)}
+                            anchorEl={assignAnchorEls[index]}
+                            anchorOrigin={{
+                              vertical: "bottom",
+                              horizontal: "right",
+                            }}
+                            transformOrigin={{
+                              vertical: "top",
+                              horizontal: "right",
                             }}
                           >
-                            <TextField
-                              sx={{ textAlign: "left" }}
-                              variant="standard"
-                              value={student.grades[assignIndex].grade}
-                              helperText={
-                                !grade.isFinalized
-                                  ? student.grades[assignIndex].isUpdating
-                                    ? "Đang lưu..."
-                                    : student.grades[assignIndex].grade &&
-                                      (focusedCellIndex.studentIndex !==
-                                        studentIndex ||
-                                        focusedCellIndex.assignIndex !==
-                                          assignIndex)
-                                    ? "Bản nháp"
-                                    : ""
-                                  : ""
-                              }
-                              InputProps={{
-                                endAdornment: (
-                                  <InputAdornment position="end">
-                                    /100
-                                  </InputAdornment>
-                                ),
-                              }}
-                              onChange={(event) =>
-                                handleChangeGrade(
-                                  event,
-                                  assignIndex,
-                                  studentIndex
-                                )
-                              }
-                            />
-                          </div>
+                            <div className={classes.studentOptions}>
+                              <MenuItem
+                                onClick={() =>
+                                  handleDownloadGradeForAnAssignment(
+                                    grade._id,
+                                    index
+                                  )
+                                }
+                              >
+                                Download điểm
+                              </MenuItem>
+                              <MenuItem
+                                onClick={() => {
+                                  setAssignmentIdToUpload(grade._id);
+                                  setUploadGradeFileIndex(index);
+                                  inputGradeForAnAssignmentRef.current.click();
+                                }}
+                              >
+                                Upload điểm
+                              </MenuItem>
+                              <Divider />
+                              <MenuItem
+                                onClick={() => handleReturnAGrade(index)}
+                                disabled={!canReturnAssign[index]}
+                              >
+                                Trả lại tất cả
+                              </MenuItem>
+                            </div>
+                          </Menu>
                         </div>
-                      </td>
+                      </th>
                     ))}
 
-                    <td>
+                    <th>
                       <div
                         className={classes.tableCell}
                         style={{ justifyContent: "center" }}
                       >
-                        <div className={classes.studentInfo}>
-                          <Typography sx={{ fontWeight: "bold" }}>
-                            {finalGrades[studentIndex]}
-                          </Typography>
-                        </div>
+                        <div>Tổng kết</div>
                       </div>
-                    </td>
+                    </th>
 
-                    <td />
+                    <th />
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </TableContainer>
-        </>
-      )}
-    </div>
-  );
+                </thead>
+                <tbody>
+                  {studentArray.map((student, studentIndex) => (
+                    <tr key={student._id}>
+                      <td>
+                        <div
+                          className={classes.tableCell}
+                          style={{ width: `${2 * WIDTH_CELL}px` }}
+                        >
+                          <div className={classes.studentInfo}>
+                            <AccountCircleIcon
+                              sx={{ mr: 2, fill: "cornflowerblue" }}
+                              fontSize="large"
+                            />
+                            <Typography
+                              sx={{ alignSelf: "center", fontWeight: "bold" }}
+                            >
+                              {student.studentName}
+                            </Typography>
+                          </div>
+                        </div>
+                      </td>
+
+                      {gradeStructure.map((grade, assignIndex) => (
+                        <td key={`${student._id}-${grade._id}`}>
+                          <div
+                            className={classes.tableCell}
+                            onClick={() =>
+                              onClickGrade(studentIndex, assignIndex)
+                            }
+                            onBlur={() => {
+                              setFocusedCellIndex(defaultCellIndexState);
+                              handleBlurGradeCell(
+                                studentIndex,
+                                assignIndex,
+                                student.studentId,
+                                grade._id
+                              );
+                            }}
+                          >
+                            <div
+                              className="gradeInfo"
+                              style={{
+                                visibility:
+                                  student.grades[assignIndex].grade ||
+                                  (focusedCellIndex.studentIndex ===
+                                    studentIndex &&
+                                    focusedCellIndex.assignIndex ===
+                                      assignIndex) ||
+                                  student.grades[assignIndex].isUpdating
+                                    ? "visible"
+                                    : "",
+                              }}
+                            >
+                              <TextField
+                                sx={{ textAlign: "left" }}
+                                variant="standard"
+                                value={student.grades[assignIndex].grade}
+                                helperText={
+                                  !grade.isFinalized
+                                    ? student.grades[assignIndex].isUpdating
+                                      ? "Đang lưu..."
+                                      : student.grades[assignIndex].grade &&
+                                        (focusedCellIndex.studentIndex !==
+                                          studentIndex ||
+                                          focusedCellIndex.assignIndex !==
+                                            assignIndex)
+                                      ? "Bản nháp"
+                                      : ""
+                                    : ""
+                                }
+                                InputProps={{
+                                  endAdornment: (
+                                    <InputAdornment position="end">
+                                      /100
+                                    </InputAdornment>
+                                  ),
+                                }}
+                                onChange={(event) =>
+                                  handleChangeGrade(
+                                    event,
+                                    assignIndex,
+                                    studentIndex
+                                  )
+                                }
+                              />
+                            </div>
+                          </div>
+                        </td>
+                      ))}
+
+                      <td>
+                        <div
+                          className={classes.tableCell}
+                          style={{ justifyContent: "center" }}
+                        >
+                          <div className={classes.studentInfo}>
+                            <Typography sx={{ fontWeight: "bold" }}>
+                              {finalGrades[studentIndex]}
+                            </Typography>
+                          </div>
+                        </div>
+                      </td>
+
+                      <td />
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </TableContainer>
+          </>
+        )}
+      </div>
+    );
+  else return renderStudentSide();
 };
 
 export default GradeManagement;
