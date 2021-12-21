@@ -174,7 +174,7 @@ const GradeManagement = ({ classroomId, token, owner, user, isTeacher }) => {
       handleChangeGrade(null, index, null);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [studentList]);
 
   // when component did update
   useEffect(() => {
@@ -278,7 +278,7 @@ const GradeManagement = ({ classroomId, token, owner, user, isTeacher }) => {
     };
     setFinalGrades(calculateFinalGrades(studentArray));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [studentArray]);
+  }, [studentArray, studentList]);
 
   const checkCanReturnAllAssign = (assignIndex) => {
     let result = true;

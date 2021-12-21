@@ -85,7 +85,7 @@ const classroomReducer = (state = INITIAL_STATE, { type, payload }) => {
       return {
         ...state,
         isUploading: false,
-        studentList: payload.studentList || state.studentList,
+        studentList: payload.studentList,
       };
     case ClassroomActionTypes.UPLOAD_STUDENT_LIST_FAILURE:
     case ClassroomActionTypes.UPLOAD_GRADE_FOR_AN_ASSIGNMENT_FAILURE:
