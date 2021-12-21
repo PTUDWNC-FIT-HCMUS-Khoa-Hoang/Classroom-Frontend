@@ -8,7 +8,10 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import TableContainer from "@mui/material/TableContainer";
 import InputAdornment from "@mui/material/InputAdornment";
 import Menu from "@mui/material/Menu";
+import Snackbar from "@mui/material/Snackbar";
+import CancelIcon from "@mui/icons-material/Cancel";
 import Divider from "@mui/material/Divider";
+import MuiAlert from "@mui/material/Alert";
 import { useSelector, useDispatch } from "react-redux";
 import {
   downloadStudentListService,
@@ -161,8 +164,11 @@ const GradeManagement = () => {
     Array.from(studentList).fill(null)
   );
 
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
   const dispatch = useDispatch();
 
+  // first load
   useEffect(() => {
     const dispatchGetGradesByClassroom = () => dispatch(getGradesByClassroom());
     dispatchGetGradesByClassroom();
@@ -172,6 +178,7 @@ const GradeManagement = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // when component did update
   useEffect(() => {
     const buildStudentArray = (studentList, gradeStructure, gradesArray) => {
       const result = studentList.map((student) => ({
@@ -416,11 +423,13 @@ const GradeManagement = () => {
         assignIndex,
         studentIndex
       );
+      handleAlert();
       return;
     }
 
     result[studentIndex].grades[assignIndex].isUpdating = true;
     result[studentIndex].grades[assignIndex].isChange = false;
+    changeCanReturnAll(assignIndex);
     setStudentArray(result);
     updateAGradeForAStudentService(
       classroomId,
@@ -446,6 +455,17 @@ const GradeManagement = () => {
     dispatchReturnAll({ gradeStructure: result });
   };
 
+  const handleAlert = () => {
+    setSnackbarOpen(true);
+  };
+
+  const handleCloseAlert = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
+
   const renderNoStudent = () => (
     <div>
       <Typography>Hiện tại bạn chưa có sinh viên nào</Typography>
@@ -462,6 +482,11 @@ const GradeManagement = () => {
       </Button>
     </div>
   );
+
+  const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  });
+
   return (
     <div className={classes.root}>
       <input
@@ -478,10 +503,20 @@ const GradeManagement = () => {
         accept="csv"
         onChange={handleChangeGradeForAssignmentFile}
       />
+
       {studentArray.length === 0 ? (
         renderNoStudent()
       ) : (
         <>
+          <Snackbar
+            open={snackbarOpen}
+            autoHideDuration={10000}
+            onClose={handleCloseAlert}
+          >
+            <Alert severity="error" onClose={handleCloseAlert}>
+              Điểm phải là số!
+            </Alert>
+          </Snackbar>
           <div className={classes.action}>
             <Button size="large" onClick={handleDownloadGradeBoard}>
               <DownloadIcon sx={{ fontSize: 35 }} />
@@ -687,8 +722,6 @@ const GradeManagement = () => {
                                   : ""
                               }
                               InputProps={{
-                                inputMode: "numeric",
-                                pattern: "[0-9]*",
                                 endAdornment: (
                                   <InputAdornment position="end">
                                     /100
