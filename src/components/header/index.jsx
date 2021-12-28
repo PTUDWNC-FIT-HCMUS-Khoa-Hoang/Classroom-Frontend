@@ -16,6 +16,7 @@ import { userLogout } from "../../redux/user/user.action";
 import DialogAddClass from "../dialog-add-class";
 import DialogJoinClass from "../dialog-join-class";
 import HeaderDrawer from "../header-drawer";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 
 const PopupOptionsWrapper = styled.div`
   display: flex;
@@ -174,7 +175,7 @@ const Header = ({ user, activeTab, handleChangeTab }) => {
           {isOnHomePage && (
             <IconButton
               sx={{
-                marginRight: "1rem",
+                marginRight: "5px",
                 fontSize: "35px",
                 width: "60px",
               }}
@@ -217,7 +218,15 @@ const Header = ({ user, activeTab, handleChangeTab }) => {
             handleCloseDialog={handleCloseCreateClassDialog}
             isOpenDialog={isOpenCreateClassDialog}
           />
-
+          <IconButton
+            sx={{
+              marginRight: "5px",
+              fontSize: "35px",
+              width: "60px",
+            }}
+          >
+            <NotificationsIcon />
+          </IconButton>
           <IconButton
             aria-describedby={idUserOptions}
             variant="outlined"
