@@ -12,6 +12,7 @@ import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
 import WithSpinner from "../with-spinner";
 import GoogleLogin from "react-google-login";
+import Divider from "@mui/material/Divider";
 
 const useStyles = makeStyles({
   loginForm: {
@@ -162,6 +163,10 @@ const Login = () => {
           />
           <Link href="/register" variant="body2" sx={{ mt: 2 }}>
             Bạn chưa có tài khoản? Nhấn vào đây để đăng ký
+          </Link>
+          <Divider sx={{ mt: 2 }} />
+          <Link href="#" variant="body2" sx={{ mt: 2 }}>
+            Bạn quên mật khẩu?
           </Link>
         </form>
       </CardContent>

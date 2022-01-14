@@ -127,3 +127,29 @@ export const updateProfile = (data) => {
       .catch((error) => dispatch(updateProfileFailure(error)));
   };
 };
+
+//----------------------------------------------------------------------//
+
+export const fetchNotificationRequest = () => ({
+  type: UserActionTypes.FETCH_NOTIFICATION_REQUEST,
+});
+
+export const fetchNotificationSuccess = (data) => ({
+  type: UserActionTypes.FETCH_NOTIFICATION_SUCCESS,
+  payload: data,
+});
+
+export const fetchNotificationFailure = (error) => ({
+  type: UserActionTypes.FETCH_NOTIFICATION_FAILURE,
+  payload: error,
+});
+
+export const fetchNotification = () => {
+  return (dispatch, getState) => {
+    dispatch(fetchNotificationRequest());
+    const token = getState().user.token;
+    updateProfileService(token)
+      .then((data) => dispatch(fetchNotificationSuccess(data)))
+      .catch((error) => dispatch(fetchNotificationFailure(error)));
+  };
+};
