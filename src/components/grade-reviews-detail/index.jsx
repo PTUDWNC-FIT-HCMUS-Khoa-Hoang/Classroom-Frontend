@@ -39,7 +39,7 @@ const useStyles = makeStyles({
   },
 });
 
-const GradeReview = () => {
+const GradeReviewDetail = () => {
   const classes = useStyles();
   const [isKeepGrade, setIsKeepGrade] = useState(true);
   const handleCheckKeepGrade = () => {
@@ -153,4 +153,4 @@ const GradeReview = () => {
   );
 };
 
-export default GradeReview;
+export default GradeReviewDetail;

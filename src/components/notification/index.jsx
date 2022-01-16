@@ -80,7 +80,7 @@ const Notification = ({ anchorEl, handleClose }) => {
             variant="text"
             sx={{ mb: 1 }}
             onClick={() => {
-              history.push("/inboxs");
+              history.push("/grade-reviews");
               handleClose();
             }}
           >
@@ -98,7 +98,7 @@ const Notification = ({ anchorEl, handleClose }) => {
           <button
             className={classes.notification}
             onClick={() => {
-              history.push("inboxs/1");
+              history.push("/grade-reviews/1");
               handleClose();
             }}
           >
