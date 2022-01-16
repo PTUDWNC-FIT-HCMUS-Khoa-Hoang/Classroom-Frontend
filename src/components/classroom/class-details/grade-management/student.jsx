@@ -5,6 +5,7 @@ import IconButton from "@mui/material/IconButton";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import TableContainer from "@mui/material/TableContainer";
 import Menu from "@mui/material/Menu";
+import WithSpinner from "../../../with-spinner";
 
 import { useSelector, useDispatch } from "react-redux";
 
@@ -266,4 +267,4 @@ const StudentGradeManagement = ({ user, token }) => {
   );
 };
 
-export default StudentGradeManagement;
+export default WithSpinner(StudentGradeManagement);

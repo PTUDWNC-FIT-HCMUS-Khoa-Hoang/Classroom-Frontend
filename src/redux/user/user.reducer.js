@@ -20,6 +20,7 @@ const userReducer = (state = INITIAL_STATE, { type, payload }) => {
         isLoading: true,
       };
     case UserActionTypes.EMAIL_LOGIN_REQUEST:
+    case UserActionTypes.NOTIFY_GRADE_REVIEW_REQUEST:
     case UserActionTypes.GOOGLE_LOGIN_REQUEST:
       return {
         ...INITIAL_STATE,
@@ -29,6 +30,7 @@ const userReducer = (state = INITIAL_STATE, { type, payload }) => {
       return {
         ...INITIAL_STATE,
       };
+    case UserActionTypes.NOTIFY_GRADE_REVIEW_SUCCESS:
     case UserActionTypes.EMAIL_LOGIN_SUCCESS:
     case UserActionTypes.GOOGLE_LOGIN_SUCCESS:
       return {
@@ -36,6 +38,7 @@ const userReducer = (state = INITIAL_STATE, { type, payload }) => {
         user: payload.user,
         token: payload.token,
       };
+    case UserActionTypes.NOTIFY_GRADE_REVIEW_FAILURE:
     case UserActionTypes.EMAIL_LOGIN_FAILURE:
     case UserActionTypes.GOOGLE_LOGIN_FAILURE:
       return {
