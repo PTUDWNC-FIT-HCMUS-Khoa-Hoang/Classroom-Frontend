@@ -39,3 +39,27 @@ export const updateProfileService = (data, token) => {
       .catch((error) => reject(error));
   });
 };
+
+export const fetchNotificationService = (token) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: "/users/me",
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((response) => resolve(response.data))
+      .catch((error) => reject(error));
+  });
+};
+
+export const notifyGradeReviewService = (token) => {
+  return new Promise((resolve, reject) => {
+    axios({
+      method: "get",
+      url: "/users/me",
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((response) => resolve(response.data))
+      .catch((error) => reject(error));
+  });
+};

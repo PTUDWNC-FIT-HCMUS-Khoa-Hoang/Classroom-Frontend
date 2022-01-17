@@ -1,15 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MenuItem, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import IconButton from "@mui/material/IconButton";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import TableContainer from "@mui/material/TableContainer";
 import Menu from "@mui/material/Menu";
-
+import GradeReviewDialog from "./dialog-grade-review";
 import { useSelector, useDispatch } from "react-redux";
-
 import { getGradesByClassroom } from "../../../../redux/classroom/classroom.actions";
-import { useEffect } from "react";
 
 const WIDTH_CELL = 130;
 const HEIGHT_CELL = 65;
@@ -118,6 +116,16 @@ const StudentGradeManagement = ({ user, token }) => {
   const gradesArray = useSelector(({ classroom }) => classroom.gradesArray);
   const [gradeFinal, setGradeFinal] = useState([{}]);
   const [canViewGrade, setCanViewGrade] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [isAllFinalized, setIsAllFinalized] = useState(false);
+  const [finalGrade, setFinalGrade] = useState(NaN);
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
 
   const [gradeAnchorEls, setGradeAnchorEls] = useState(
     Array.from(gradeStructure).fill(null)
@@ -125,7 +133,6 @@ const StudentGradeManagement = ({ user, token }) => {
   const gradeOptionOpenArray = gradeAnchorEls.map((item) => Boolean(item));
 
   const dispatch = useDispatch();
-
   // first load
   useEffect(() => {
     const dispatchGetGradesByClassroom = () => dispatch(getGradesByClassroom());
@@ -137,19 +144,28 @@ const StudentGradeManagement = ({ user, token }) => {
   useEffect(() => {
     let canViewGradeResult = false;
     const gradeFinalResult = Array.from(gradeStructure).fill({});
+    let isAllFinalizedTemp = true;
+    let finalGradeTemp = 0;
+    let allComposition = 1;
     gradeStructure.forEach((grade, index) => {
       const found = gradesArray.find(
         (gradeItem) => gradeItem.gradeId === grade._id
       );
-      if (found) gradeFinalResult[index]["grade"] = found.grade;
+      if (found) {
+        gradeFinalResult[index]["grade"] = found.grade;
+        finalGradeTemp += found.grade * grade.grade;
+        allComposition += grade.grade;
+      }
       if (grade.isFinalized) {
         canViewGradeResult = true;
         gradeFinalResult[index]["canView"] = true;
-      }
+      } else isAllFinalizedTemp = false;
     });
+    if (isAllFinalizedTemp) setIsAllFinalized(true);
     if (canViewGrade !== canViewGradeResult)
       setCanViewGrade(canViewGradeResult);
     setGradeFinal(gradeFinalResult);
+    setFinalGrade(finalGradeTemp / allComposition);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gradesArray, gradeStructure]);
 
@@ -171,6 +187,10 @@ const StudentGradeManagement = ({ user, token }) => {
     <>
       {canViewGrade ? (
         <div className={classes.root}>
+          <GradeReviewDialog
+            open={openDialog}
+            handleClose={handleCloseDialog}
+          />
           <TableContainer>
             <table className={classes.table} id="customers">
               <thead>
@@ -193,6 +213,7 @@ const StudentGradeManagement = ({ user, token }) => {
                       </div>
                     </th>
                   ))}
+
                   <th>
                     <div
                       className={classes.tableCell}
@@ -241,7 +262,14 @@ const StudentGradeManagement = ({ user, token }) => {
                               }}
                             >
                               <div className={classes.studentOptions}>
-                                <MenuItem>Yêu cầu phúc khảo</MenuItem>
+                                <MenuItem
+                                  onClick={() => {
+                                    handleOpenDialog();
+                                    handleCloseGradeOption(index);
+                                  }}
+                                >
+                                  Yêu cầu phúc khảo
+                                </MenuItem>
                               </div>
                             </Menu>
                           </>
@@ -252,7 +280,16 @@ const StudentGradeManagement = ({ user, token }) => {
                     </td>
                   ))}
 
-                  <td />
+                  <td>
+                    <div
+                      className={classes.tableCell}
+                      style={{ justifyContent: "center" }}
+                    >
+                      {isAllFinalized
+                        ? finalGrade
+                        : "Giáo viên chưa nhập hết điểm"}
+                    </div>
+                  </td>
                   <td />
                 </tr>
               </tbody>

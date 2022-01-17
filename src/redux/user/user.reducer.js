@@ -1,60 +1,66 @@
 import UserActionTypes from "./user.types";
 
-const INITAL_STATE = {
+const INITIAL_STATE = {
   token: null,
   user: null,
   error: null,
   isInvalidEmail: false,
   isLoading: false,
   isUpdating: false,
+  isFetchingNotification: false,
+  notificationError: null,
+  notifications: [],
 };
 
-const userReducer = (state = INITAL_STATE, { type, payload }) => {
+const userReducer = (state = INITIAL_STATE, { type, payload }) => {
   switch (type) {
     case UserActionTypes.REGISTER_REQUEST:
       return {
-        ...INITAL_STATE,
+        ...INITIAL_STATE,
         isLoading: true,
       };
     case UserActionTypes.EMAIL_LOGIN_REQUEST:
+    case UserActionTypes.NOTIFY_GRADE_REVIEW_REQUEST:
     case UserActionTypes.GOOGLE_LOGIN_REQUEST:
       return {
-        ...INITAL_STATE,
+        ...INITIAL_STATE,
         isLoading: true,
       };
     case UserActionTypes.REGISTER_SUCCESS:
       return {
-        ...INITAL_STATE,
+        ...INITIAL_STATE,
       };
+    case UserActionTypes.NOTIFY_GRADE_REVIEW_SUCCESS:
     case UserActionTypes.EMAIL_LOGIN_SUCCESS:
     case UserActionTypes.GOOGLE_LOGIN_SUCCESS:
       return {
-        ...INITAL_STATE,
+        ...INITIAL_STATE,
         user: payload.user,
         token: payload.token,
       };
+    case UserActionTypes.NOTIFY_GRADE_REVIEW_FAILURE:
     case UserActionTypes.EMAIL_LOGIN_FAILURE:
     case UserActionTypes.GOOGLE_LOGIN_FAILURE:
       return {
-        ...INITAL_STATE,
+        ...INITIAL_STATE,
         error: payload.response.data.message,
       };
 
     case UserActionTypes.REGISTER_FAILURE:
       if (payload.response.status === 400)
         return {
-          ...INITAL_STATE,
+          ...INITIAL_STATE,
           isInvalidEmail: true,
         };
       else {
         return {
-          ...INITAL_STATE,
+          ...INITIAL_STATE,
           error: payload,
         };
       }
     case UserActionTypes.LOGOUT:
       return {
-        ...INITAL_STATE,
+        ...INITIAL_STATE,
       };
     case UserActionTypes.UPDATE_PROFILE_REQUEST:
       return {
@@ -79,6 +85,23 @@ const userReducer = (state = INITAL_STATE, { type, payload }) => {
       return {
         ...state,
         error: null,
+      };
+    case UserActionTypes.FETCH_A_USER_REQUEST:
+      return {
+        ...state,
+        isFetchingNotification: true,
+      };
+    case UserActionTypes.FETCH_A_USER_SUCCESS:
+      return {
+        ...state,
+        isFetchingNotification: false,
+        notifications: payload,
+      };
+    case UserActionTypes.FETCH_A_USER_FAILURE:
+      return {
+        ...state,
+        isFetchingNotification: false,
+        notificationError: payload.response.data.message,
       };
     default:
       return state;

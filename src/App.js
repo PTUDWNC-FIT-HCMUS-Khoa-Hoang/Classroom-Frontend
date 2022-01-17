@@ -8,6 +8,8 @@ import Header from "./components/header";
 import LoginPage from "./components/login-page";
 import RegisterPage from "./components/register-page";
 import JoinClassroomPage from "./components/join-classroom-page";
+import GradeReviews from "./components/grade-reviews";
+import GradeReviewDetail from "./components/grade-reviews-detail";
 import PrivateRoute from "./utils/private-route";
 import { useSelector } from "react-redux";
 
@@ -71,6 +73,17 @@ const App = () => {
           <PrivateRoute
             path="/join"
             component={JoinClassroomPage}
+            authed={user}
+          />
+          <PrivateRoute
+            path="/grade-reviews"
+            component={GradeReviews}
+            authed={user}
+            exact
+          />
+          <PrivateRoute
+            path="/grade-reviews/1"
+            component={GradeReviewDetail}
             authed={user}
           />
           <Route path="/" render={() => <Redirect to="/classrooms" />} />
