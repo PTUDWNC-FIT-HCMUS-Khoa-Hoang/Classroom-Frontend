@@ -585,58 +585,65 @@ const TeacherGradeManagement = ({ classroomId, token, owner, user }) => {
                           {grade.title}
                           <Typography>Điểm: {grade.grade}</Typography>
                         </div>
-                        <IconButton
-                          className={
-                            assignOptionOpenArray[index] ? "" : "moreVertButton"
-                          }
-                          onClick={(event) =>
-                            handleOpenAssignOption(event, index)
-                          }
-                        >
-                          <MoreVertIcon />
-                        </IconButton>
-                        <Menu
-                          open={assignOptionOpenArray[index]}
-                          onClose={() => handleCloseAssignAnchorEl(index)}
-                          anchorEl={assignAnchorEls[index]}
-                          anchorOrigin={{
-                            vertical: "bottom",
-                            horizontal: "right",
-                          }}
-                          transformOrigin={{
-                            vertical: "top",
-                            horizontal: "right",
-                          }}
-                        >
-                          <div className={classes.studentOptions}>
-                            <MenuItem
-                              onClick={() =>
-                                handleDownloadGradeForAnAssignment(
-                                  grade._id,
-                                  index
-                                )
+
+                        {!grade.isFinalized && (
+                          <>
+                            <IconButton
+                              className={
+                                assignOptionOpenArray[index]
+                                  ? ""
+                                  : "moreVertButton"
+                              }
+                              onClick={(event) =>
+                                handleOpenAssignOption(event, index)
                               }
                             >
-                              Download điểm
-                            </MenuItem>
-                            <MenuItem
-                              onClick={() => {
-                                setAssignmentIdToUpload(grade._id);
-                                setUploadGradeFileIndex(index);
-                                inputGradeForAnAssignmentRef.current.click();
+                              <MoreVertIcon />
+                            </IconButton>
+                            <Menu
+                              open={assignOptionOpenArray[index]}
+                              onClose={() => handleCloseAssignAnchorEl(index)}
+                              anchorEl={assignAnchorEls[index]}
+                              anchorOrigin={{
+                                vertical: "bottom",
+                                horizontal: "right",
+                              }}
+                              transformOrigin={{
+                                vertical: "top",
+                                horizontal: "right",
                               }}
                             >
-                              Upload điểm
-                            </MenuItem>
-                            <Divider />
-                            <MenuItem
-                              onClick={() => handleReturnAGrade(index)}
-                              disabled={!canReturnAssign[index]}
-                            >
-                              Trả lại tất cả
-                            </MenuItem>
-                          </div>
-                        </Menu>
+                              <div className={classes.studentOptions}>
+                                <MenuItem
+                                  onClick={() =>
+                                    handleDownloadGradeForAnAssignment(
+                                      grade._id,
+                                      index
+                                    )
+                                  }
+                                >
+                                  Download điểm
+                                </MenuItem>
+                                <MenuItem
+                                  onClick={() => {
+                                    setAssignmentIdToUpload(grade._id);
+                                    setUploadGradeFileIndex(index);
+                                    inputGradeForAnAssignmentRef.current.click();
+                                  }}
+                                >
+                                  Upload điểm
+                                </MenuItem>
+                                <Divider />
+                                <MenuItem
+                                  onClick={() => handleReturnAGrade(index)}
+                                  disabled={!canReturnAssign[index]}
+                                >
+                                  Trả lại tất cả
+                                </MenuItem>
+                              </div>
+                            </Menu>
+                          </>
+                        )}
                       </div>
                     </th>
                   ))}
@@ -709,6 +716,7 @@ const TeacherGradeManagement = ({ classroomId, token, owner, user }) => {
                             <TextField
                               sx={{ textAlign: "left" }}
                               variant="standard"
+                              disabled={grade.isFinalized}
                               value={student.grades[assignIndex].grade}
                               helperText={
                                 !grade.isFinalized
@@ -721,7 +729,7 @@ const TeacherGradeManagement = ({ classroomId, token, owner, user }) => {
                                           assignIndex)
                                     ? "Bản nháp"
                                     : ""
-                                  : ""
+                                  : "Đã gửi điểm"
                               }
                               InputProps={{
                                 endAdornment: (
