@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import Card from "@mui/material/Card";
@@ -13,7 +13,13 @@ import Button from "@mui/material/Button";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import Divider from "@mui/material/Divider";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchAGradeReviewService,
+  readNotificationService,
+} from "../../redux/user/user.services";
+import { useParams } from "react-router";
+
 const useStyles = makeStyles({
   root: {
     display: "flex",
@@ -42,9 +48,26 @@ const useStyles = makeStyles({
 const GradeReviewDetail = () => {
   const classes = useStyles();
   const [isKeepGrade, setIsKeepGrade] = useState(true);
+  const [isFinalDecision, setIsFinalDecision] = useState(false);
+  const token = useSelector(({ user }) => user.token);
+  const { id } = useParams();
+  useEffect(() => {
+    readNotificationService(token, id)
+      .then(() => console.log("ok"))
+      .catch(() => console.log("not ok"));
+    fetchAGradeReviewService(token, id)
+      .then((data) => console.log(data))
+      .catch((error) => console.log(error));
+  }, []);
+
   const handleCheckKeepGrade = () => {
     setIsKeepGrade(!isKeepGrade);
   };
+
+  const handleCheckIsFinalDecision = () => {
+    setIsFinalDecision(!isFinalDecision);
+  };
+
   return (
     <div className={classes.root}>
       <Card className={classes.body}>
@@ -120,17 +143,37 @@ const GradeReviewDetail = () => {
                       control={
                         <Checkbox
                           defaultChecked
-                          checked={isKeepGrade}
-                          onChange={handleCheckKeepGrade}
+                          checked={isFinalDecision}
+                          onChange={handleCheckIsFinalDecision}
                         />
                       }
-                      label="Giữ nguyên điểm"
+                      label="Quyết định cuối cùng"
                     />
                   </FormGroup>
                 </TableCell>
                 <TableCell />
               </TableRow>
-              {!isKeepGrade && (
+              {isFinalDecision && (
+                <TableRow>
+                  <TableCell component="th" scope="row">
+                    <FormGroup sx={{ "& span": { fontSize: "0.875rem" } }}>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            defaultChecked
+                            checked={isKeepGrade}
+                            onChange={handleCheckKeepGrade}
+                          />
+                        }
+                        label="Giữ nguyên điểm"
+                      />
+                    </FormGroup>
+                  </TableCell>
+                  <TableCell />
+                </TableRow>
+              )}
+
+              {!isKeepGrade && isFinalDecision && (
                 <TableRow>
                   <TableCell component="th" scope="row">
                     Nhập điểm:

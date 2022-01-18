@@ -12,7 +12,13 @@ const GradeManagement = ({ classroomId, token, owner, user, isTeacher }) => {
         user={user}
       />
     );
-  return <StudentGradeManagement user={user} token={token} />;
+  return (
+    <StudentGradeManagement
+      user={user}
+      token={token}
+      classroomId={classroomId}
+    />
+  );
 };
 
 export default GradeManagement;

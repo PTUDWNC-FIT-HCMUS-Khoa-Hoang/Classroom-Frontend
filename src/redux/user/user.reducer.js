@@ -20,7 +20,6 @@ const userReducer = (state = INITIAL_STATE, { type, payload }) => {
         isLoading: true,
       };
     case UserActionTypes.EMAIL_LOGIN_REQUEST:
-    case UserActionTypes.NOTIFY_GRADE_REVIEW_REQUEST:
     case UserActionTypes.GOOGLE_LOGIN_REQUEST:
       return {
         ...INITIAL_STATE,
@@ -30,7 +29,6 @@ const userReducer = (state = INITIAL_STATE, { type, payload }) => {
       return {
         ...INITIAL_STATE,
       };
-    case UserActionTypes.NOTIFY_GRADE_REVIEW_SUCCESS:
     case UserActionTypes.EMAIL_LOGIN_SUCCESS:
     case UserActionTypes.GOOGLE_LOGIN_SUCCESS:
       return {
@@ -38,7 +36,7 @@ const userReducer = (state = INITIAL_STATE, { type, payload }) => {
         user: payload.user,
         token: payload.token,
       };
-    case UserActionTypes.NOTIFY_GRADE_REVIEW_FAILURE:
+
     case UserActionTypes.EMAIL_LOGIN_FAILURE:
     case UserActionTypes.GOOGLE_LOGIN_FAILURE:
       return {
@@ -86,22 +84,41 @@ const userReducer = (state = INITIAL_STATE, { type, payload }) => {
         ...state,
         error: null,
       };
-    case UserActionTypes.FETCH_A_USER_REQUEST:
+    case UserActionTypes.FETCH_NOTIFICATION_REQUEST:
       return {
         ...state,
         isFetchingNotification: true,
       };
-    case UserActionTypes.FETCH_A_USER_SUCCESS:
+    case UserActionTypes.FETCH_NOTIFICATION_SUCCESS:
       return {
         ...state,
         isFetchingNotification: false,
         notifications: payload,
+        notificationError: null,
       };
-    case UserActionTypes.FETCH_A_USER_FAILURE:
+    case UserActionTypes.FETCH_NOTIFICATION_FAILURE:
       return {
         ...state,
         isFetchingNotification: false,
         notificationError: payload.response.data.message,
+      };
+    case UserActionTypes.NOTIFY_GRADE_REVIEW_REQUEST:
+      return {
+        ...state,
+        isLoading: true,
+        error: null,
+      };
+    case UserActionTypes.NOTIFY_GRADE_REVIEW_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        error: null,
+      };
+    case UserActionTypes.NOTIFY_GRADE_REVIEW_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
+        error: payload.response.data.message,
       };
     default:
       return state;

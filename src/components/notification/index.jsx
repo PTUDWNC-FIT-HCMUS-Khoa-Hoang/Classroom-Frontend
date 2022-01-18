@@ -1,12 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Popover from "@mui/material/Popover";
-import Divider from "@mui/material/Divider";
 import WithSpinner from "../with-spinner";
-import { fetchNotification } from "../../redux/user/user.action";
+import { fetchNotifications } from "../../redux/user/user.action";
 import { useDispatch, useSelector } from "react-redux";
 import { makeStyles } from "@mui/styles";
-import Button from "@mui/material/Button";
 import { useHistory } from "react-router-dom";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import IconButton from "@mui/material/IconButton";
 
 const useStyles = makeStyles({
   notificationPopup: {
@@ -29,11 +29,16 @@ const useStyles = makeStyles({
     height: "50px",
     backgroundColor: "white",
     cursor: "pointer",
-    border: "none",
     textAlign: "left",
+    border: "1px solid lightgray",
     "&:hover": {
-      backgroundColor: "lightgray",
+      borderColor: "#132f4c",
     },
+  },
+  isNotRead: {
+    // eslint-disable-next-line no-undef
+    backgroundColor: "#66b2ff",
+    color: "whitesmoke",
   },
 });
 
@@ -42,72 +47,84 @@ const Notification = ({ anchorEl, handleClose }) => {
   const dispatch = useDispatch();
   const classes = useStyles();
   const history = useHistory();
-  const dispatchFetchNotification = () => dispatch(fetchNotification());
+  const dispatchFetchNotifications = () => dispatch(fetchNotifications());
+  const [anchorElNotification, setAnchorElNotification] = useState(null);
 
+  // const isFetchingNotification = useSelector(
+  //   ({ user }) => user.isFetchingNotification
+  // );
   // fetch every minute when component did mouth
   useEffect(() => {
     const intervalId = setInterval(() => {
-      // dispatchFetchNotification()
+      dispatchFetchNotifications();
     }, 1000 * 60);
     return () => {
       clearInterval(intervalId);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // re-fetch when ever open the notification
   useEffect(() => {
-    // dispatchFetchNotification();
+    dispatchFetchNotifications();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [anchorEl]);
+  const handleClickNotification = (event) => {
+    setAnchorElNotification(event.currentTarget);
+  };
 
+  const handleCloseNotification = () => {
+    setAnchorElNotification(null);
+  };
   return (
-    <Popover
-      open={Boolean(anchorEl)}
-      anchorEl={anchorEl}
-      onClose={handleClose}
-      anchorOrigin={{
-        vertical: "bottom",
-        horizontal: "right",
-      }}
-      transformOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-    >
-      <div className={classes.notificationPopup} sx={{ p: 2 }}>
-        <div className={classes.header}>
-          <Button
-            variant="text"
-            sx={{ mb: 1 }}
-            onClick={() => {
-              history.push("/grade-reviews");
-              handleClose();
-            }}
-          >
-            Tất cả thông báo
-          </Button>
+    <div>
+      <IconButton
+        sx={{
+          marginRight: "5px",
+          fontSize: "35px",
+          width: "60px",
+        }}
+        onClick={handleClickNotification}
+      >
+        <NotificationsIcon />
+      </IconButton>
+      <Notification
+        anchorEl={anchorElNotification}
+        handleClose={handleCloseNotification}
+      />
+
+      <Popover
+        open={Boolean(anchorElNotification)}
+        anchorEl={anchorElNotification}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+      >
+        <div className={classes.notificationPopup} sx={{ p: 2 }}>
+          <div className={classes.body}>
+            {notifications.map((nt) => (
+              <button
+                className={`${classes.notification} ${
+                  !nt.isRead ? classes.isNotRead : ""
+                }`}
+                onClick={() => {
+                  history.push(`/grade-reviews/${nt._id}`);
+                  handleClose();
+                }}
+              >
+                {nt.message}
+              </button>
+            ))}
+          </div>
         </div>
-        <Divider />
-        <div className={classes.body}>
-          {notifications.map((nt) => (
-            <>
-              <button className={classes.notification}>{nt}</button>
-              <Divider />
-            </>
-          ))}
-          <button
-            className={classes.notification}
-            onClick={() => {
-              history.push("/grade-reviews/1");
-              handleClose();
-            }}
-          >
-            Thong bao 1 hoc sinh muon phuc khao diem
-          </button>
-          <Divider />
-        </div>
-      </div>
-    </Popover>
+      </Popover>
+    </div>
   );
 };
 

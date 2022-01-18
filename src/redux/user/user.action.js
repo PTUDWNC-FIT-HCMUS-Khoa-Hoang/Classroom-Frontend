@@ -4,6 +4,10 @@ import {
   userRegisterService,
   updateProfileService,
   googleLoginService,
+  fetchNotificationsService,
+  readNotificationService,
+  replyAGradeReviewByIDService,
+  notifyGradeReviewService,
 } from "./user.services";
 import {
   clearClassrooms,
@@ -130,26 +134,79 @@ export const updateProfile = (data) => {
 
 //----------------------------------------------------------------------//
 
-export const fetchNotificationRequest = () => ({
+export const fetchNotificationsRequest = () => ({
   type: UserActionTypes.FETCH_NOTIFICATION_REQUEST,
 });
 
-export const fetchNotificationSuccess = (data) => ({
+export const fetchNotificationsSuccess = (data) => ({
   type: UserActionTypes.FETCH_NOTIFICATION_SUCCESS,
   payload: data,
 });
 
-export const fetchNotificationFailure = (error) => ({
+export const fetchNotificationsFailure = (error) => ({
   type: UserActionTypes.FETCH_NOTIFICATION_FAILURE,
   payload: error,
 });
 
-export const fetchNotification = () => {
+export const fetchNotifications = () => {
   return (dispatch, getState) => {
-    dispatch(fetchNotificationRequest());
+    dispatch(fetchNotificationsRequest());
     const token = getState().user.token;
-    updateProfileService(token)
-      .then((data) => dispatch(fetchNotificationSuccess(data)))
-      .catch((error) => dispatch(fetchNotificationFailure(error)));
+    fetchNotificationsService(token)
+      .then((data) => dispatch(fetchNotificationsSuccess(data)))
+      .catch((error) => dispatch(fetchNotificationsFailure(error)));
+  };
+};
+
+export const readNotification = (id) => {
+  return (dispatch, getState) => {
+    const token = getState().user.token;
+    dispatch(readNotificationService(token, id));
+  };
+};
+
+export const replyAGradeReviewRequest = () => ({
+  type: UserActionTypes.REPLY_A_GRADE_REVIEW_REQUEST,
+});
+
+export const replyAGradeReviewSuccess = () => ({
+  type: UserActionTypes.REPLY_A_GRADE_REVIEW_SUCCESS,
+});
+
+export const replyAGradeReviewFailure = (error) => ({
+  type: UserActionTypes.REPLY_A_GRADE_REVIEW_FAILURE,
+  payload: error,
+});
+
+export const replyAGradeReview = (data, id) => {
+  return (dispatch, getState) => {
+    dispatch(replyAGradeReviewRequest());
+    const token = getState().user.token;
+    replyAGradeReviewByIDService(token, id, data)
+      .then(() => dispatch(replyAGradeReviewSuccess()))
+      .catch((error) => dispatch(replyAGradeReviewFailure(error)));
+  };
+};
+
+export const notifyGradeReviewRequest = () => ({
+  type: UserActionTypes.NOTIFY_GRADE_REVIEW_REQUEST,
+});
+
+export const notifyGradeReviewSuccess = () => ({
+  type: UserActionTypes.NOTIFY_GRADE_REVIEW_SUCCESS,
+});
+
+export const notifyGradeReviewFailure = (error) => ({
+  type: UserActionTypes.NOTIFY_GRADE_REVIEW_FAILURE,
+  payload: error,
+});
+
+export const notifyGradeReview = (data) => {
+  return (dispatch, getState) => {
+    dispatch(notifyGradeReviewRequest());
+    const token = getState().user.token;
+    notifyGradeReviewService(token, data)
+      .then(() => dispatch(notifyGradeReviewSuccess()))
+      .catch((error) => dispatch(notifyGradeReviewFailure(error)));
   };
 };
