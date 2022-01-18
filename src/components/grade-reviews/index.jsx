@@ -39,6 +39,7 @@ const GradeReviews = () => {
   useEffect(() => {
     const dispatchFetchNotifications = () => dispatch(fetchNotifications());
     dispatchFetchNotifications();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
