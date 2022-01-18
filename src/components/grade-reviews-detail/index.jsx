@@ -56,6 +56,7 @@ const GradeReviewDetail = () => {
   const [isKeepGrade, setIsKeepGrade] = useState(true);
   const [isFinalDecision, setIsFinalDecision] = useState(false);
   const [fetchData, setFetchData] = useState({});
+  const [canComment, setCanComment] = useState(false);
 
   const commentRef = useRef(null);
   const gradeRef = useRef(null);
@@ -70,6 +71,8 @@ const GradeReviewDetail = () => {
       .catch(() => console.log("not ok"));
     fetchAGradeReviewService(token, id)
       .then((data) => {
+        if (!data.gradeDetail?.studentId === user.studentId)
+          setCanComment(true);
         setFetchData(data);
       })
       .catch((error) => console.log(error));
@@ -141,7 +144,7 @@ const GradeReviewDetail = () => {
               </TableRow>
             </TableBody>
           </Table>
-          {!fetchData?.gradeDetail?.studentId === user.studentId && (
+          {canComment && (
             <>
               <Typography variant="h4" sx={{ textAlign: "center", mt: 4 }}>
                 Nhập phúc khảo
@@ -212,7 +215,7 @@ const GradeReviewDetail = () => {
             </>
           )}
         </CardContent>
-        {!fetchData?.gradeDetail?.studentId === user.studentId && (
+        {canComment && (
           <CardActions className={classes.actions}>
             <Button
               onClick={handleSubmit}
