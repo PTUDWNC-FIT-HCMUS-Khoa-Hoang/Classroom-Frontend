@@ -10,6 +10,7 @@ import { useHistory, useLocation } from "react-router-dom";
 const News = ({ classroom, isTeacher }) => {
   const history = useHistory();
   const location = useLocation();
+
   if (!classroom) return null;
   return (
     <Box sx={{ display: "flex", justifyContent: "center" }}>
@@ -115,39 +116,10 @@ const News = ({ classroom, isTeacher }) => {
           >
             <CardContent
               sx={{
-                textAlign: "left",
+                textAlign: "center",
               }}
             >
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
-              <p>Bảng tin 2</p>
+              <h4>Bảng tin trống</h4>
             </CardContent>
           </Card>
         </Box>

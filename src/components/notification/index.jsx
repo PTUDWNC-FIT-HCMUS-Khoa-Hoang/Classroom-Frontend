@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Popover from "@mui/material/Popover";
-import WithSpinner from "../with-spinner";
 import { fetchNotifications } from "../../redux/user/user.action";
 import { useDispatch, useSelector } from "react-redux";
 import { makeStyles } from "@mui/styles";
 import { useHistory } from "react-router-dom";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import IconButton from "@mui/material/IconButton";
+import { readNotificationService } from "../../redux/user/user.services";
 
 const useStyles = makeStyles({
   notificationPopup: {
@@ -24,6 +24,7 @@ const useStyles = makeStyles({
   body: {
     display: "flex",
     flexDirection: "column",
+    height: "400px",
   },
   notification: {
     height: "50px",
@@ -42,18 +43,17 @@ const useStyles = makeStyles({
   },
 });
 
-const Notification = ({ anchorEl, handleClose }) => {
+const Notification = () => {
   const notifications = useSelector(({ user }) => user.notifications);
   const dispatch = useDispatch();
   const classes = useStyles();
   const history = useHistory();
   const dispatchFetchNotifications = () => dispatch(fetchNotifications());
   const [anchorElNotification, setAnchorElNotification] = useState(null);
-
-  // const isFetchingNotification = useSelector(
-  //   ({ user }) => user.isFetchingNotification
-  // );
-  // fetch every minute when component did mouth
+  const token = useSelector(({ user }) => user.token);
+  const isFetchingNotification = useSelector(
+    ({ user }) => user.isFetchingNotification
+  );
   useEffect(() => {
     const intervalId = setInterval(() => {
       dispatchFetchNotifications();
@@ -68,7 +68,7 @@ const Notification = ({ anchorEl, handleClose }) => {
   useEffect(() => {
     dispatchFetchNotifications();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [anchorEl]);
+  }, [anchorElNotification]);
   const handleClickNotification = (event) => {
     setAnchorElNotification(event.currentTarget);
   };
@@ -77,7 +77,7 @@ const Notification = ({ anchorEl, handleClose }) => {
     setAnchorElNotification(null);
   };
   return (
-    <div>
+    <>
       <IconButton
         sx={{
           marginRight: "5px",
@@ -88,15 +88,11 @@ const Notification = ({ anchorEl, handleClose }) => {
       >
         <NotificationsIcon />
       </IconButton>
-      <Notification
-        anchorEl={anchorElNotification}
-        handleClose={handleCloseNotification}
-      />
 
       <Popover
         open={Boolean(anchorElNotification)}
         anchorEl={anchorElNotification}
-        onClose={handleClose}
+        onClose={handleCloseNotification}
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "right",
@@ -108,24 +104,28 @@ const Notification = ({ anchorEl, handleClose }) => {
       >
         <div className={classes.notificationPopup} sx={{ p: 2 }}>
           <div className={classes.body}>
-            {notifications.map((nt) => (
-              <button
-                className={`${classes.notification} ${
-                  !nt.isRead ? classes.isNotRead : ""
-                }`}
-                onClick={() => {
-                  history.push(`/grade-reviews/${nt._id}`);
-                  handleClose();
-                }}
-              >
-                {nt.message}
-              </button>
-            ))}
+            {!isFetchingNotification &&
+              notifications?.reverse().map((nt) => (
+                <button
+                  className={`${classes.notification} ${
+                    !nt.isRead ? classes.isNotRead : ""
+                  }`}
+                  onClick={() => {
+                    if (nt.objectName === "grade-review")
+                      history.push(`/grade-reviews/${nt.objectId}`);
+                    else history.push(`/${nt.objectName}/${nt.objectId}`);
+                    readNotificationService(token, nt._id);
+                    handleCloseNotification();
+                  }}
+                >
+                  {nt.message}
+                </button>
+              ))}
           </div>
         </div>
       </Popover>
-    </div>
+    </>
   );
 };
 
-export default WithSpinner(Notification);
+export default Notification;

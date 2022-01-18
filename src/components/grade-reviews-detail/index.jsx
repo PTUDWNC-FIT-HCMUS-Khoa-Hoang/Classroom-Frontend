@@ -19,6 +19,9 @@ import {
   readNotificationService,
 } from "../../redux/user/user.services";
 import { useParams } from "react-router";
+import { replyAGradeReview } from "../../redux/user/user.action";
+import { useRef } from "react";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles({
   root: {
@@ -43,22 +46,48 @@ const useStyles = makeStyles({
     justifyContent: "flex-end",
     width: "100%",
   },
+  explanation: {
+    width: "100%",
+  },
 });
 
 const GradeReviewDetail = () => {
   const classes = useStyles();
   const [isKeepGrade, setIsKeepGrade] = useState(true);
   const [isFinalDecision, setIsFinalDecision] = useState(false);
+  const [fetchData, setFetchData] = useState({});
+
+  const commentRef = useRef(null);
+  const gradeRef = useRef(null);
+  const dispatch = useDispatch();
   const token = useSelector(({ user }) => user.token);
   const { id } = useParams();
+  const history = useHistory();
+  const user = useSelector(({ user }) => user.user);
   useEffect(() => {
     readNotificationService(token, id)
       .then(() => console.log("ok"))
       .catch(() => console.log("not ok"));
     fetchAGradeReviewService(token, id)
-      .then((data) => console.log(data))
+      .then((data) => {
+        setFetchData(data);
+      })
       .catch((error) => console.log(error));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const dispatchReply = (data, id) => dispatch(replyAGradeReview(data, id));
+  const handleSubmit = () => {
+    const data2Send = {
+      teacherComment: commentRef?.current.target,
+      isFinalDecision,
+    };
+    if (!isKeepGrade) {
+      data2Send["upgradedGrade"] = gradeRef?.current.value;
+    }
+    dispatchReply(data2Send, id);
+    history.goBack();
+  };
 
   const handleCheckKeepGrade = () => {
     setIsKeepGrade(!isKeepGrade);
@@ -71,7 +100,7 @@ const GradeReviewDetail = () => {
   return (
     <div className={classes.root}>
       <Card className={classes.body}>
-        <CardContent>
+        <CardContent className={classes.explanation}>
           <Typography variant="h4" sx={{ textAlign: "center" }}>
             Đơn phúc khảo điểm
           </Typography>
@@ -82,115 +111,119 @@ const GradeReviewDetail = () => {
                 <TableCell component="th" scope="row">
                   Học sinh:
                 </TableCell>
-                <TableCell>18120388</TableCell>
+                <TableCell>{fetchData?.gradeDetail?.studentId}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell component="th" scope="row">
                   Điểm thành phần:
                 </TableCell>
-                <TableCell>Giữa kì</TableCell>
+                <TableCell>{fetchData?.gradeComposition?.title}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell component="th" scope="row">
                   Điểm hiện tại:
                 </TableCell>
-                <TableCell>5</TableCell>
+                <TableCell>{fetchData?.gradeDetail?.grade}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell component="th" scope="row">
                   Điểm mong muốn:
                 </TableCell>
-                <TableCell>10</TableCell>
+                <TableCell>{fetchData?.studentExpectation}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell component="th" scope="row">
                   Lý do:
                 </TableCell>
                 <TableCell>
-                  <Typography>
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industry's
-                    standard dummy text ever since the 1500s, when an unknown
-                    printer took a galley of type and scrambled it to make a
-                    type specimen book. It has survived not only five centuries,
-                    but also the leap into electronic typesetting, remaining
-                    essentially unchanged. It was popularised in the 1960s with
-                    the release of Letraset sheets containing Lorem Ipsum
-                    passages, and more recently with desktop publishing software
-                    like Aldus PageMaker including versions of Lorem Ipsum.
-                  </Typography>
+                  <Typography>{fetchData?.studentExplanation}</Typography>
                 </TableCell>
               </TableRow>
             </TableBody>
           </Table>
-          <Typography variant="h4" sx={{ textAlign: "center", mt: 4 }}>
-            Nhập phúc khảo
-          </Typography>
-          <Table className={classes.table}>
-            <TableBody>
-              <TableRow>
-                <TableCell component="th" scope="row">
-                  Nhập bình luận:
-                </TableCell>
-                <TableCell>
-                  <TextField multiline sx={{ width: "100%" }} />
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell component="th" scope="row">
-                  <FormGroup sx={{ "& span": { fontSize: "0.875rem" } }}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          defaultChecked
-                          checked={isFinalDecision}
-                          onChange={handleCheckIsFinalDecision}
-                        />
-                      }
-                      label="Quyết định cuối cùng"
-                    />
-                  </FormGroup>
-                </TableCell>
-                <TableCell />
-              </TableRow>
-              {isFinalDecision && (
-                <TableRow>
-                  <TableCell component="th" scope="row">
-                    <FormGroup sx={{ "& span": { fontSize: "0.875rem" } }}>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            defaultChecked
-                            checked={isKeepGrade}
-                            onChange={handleCheckKeepGrade}
-                          />
-                        }
-                        label="Giữ nguyên điểm"
+          {!fetchData?.gradeDetail?.studentId === user.studentId && (
+            <>
+              <Typography variant="h4" sx={{ textAlign: "center", mt: 4 }}>
+                Nhập phúc khảo
+              </Typography>
+              <Table className={classes.table}>
+                <TableBody>
+                  <TableRow>
+                    <TableCell component="th" scope="row">
+                      Nhập bình luận:
+                    </TableCell>
+                    <TableCell>
+                      <TextField
+                        inputRef={commentRef}
+                        multiline
+                        sx={{ width: "100%" }}
                       />
-                    </FormGroup>
-                  </TableCell>
-                  <TableCell />
-                </TableRow>
-              )}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th" scope="row">
+                      <FormGroup sx={{ "& span": { fontSize: "0.875rem" } }}>
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              defaultChecked
+                              checked={isFinalDecision}
+                              onChange={handleCheckIsFinalDecision}
+                            />
+                          }
+                          label="Quyết định cuối cùng"
+                        />
+                      </FormGroup>
+                    </TableCell>
+                    <TableCell />
+                  </TableRow>
+                  {isFinalDecision && (
+                    <TableRow>
+                      <TableCell component="th" scope="row">
+                        <FormGroup sx={{ "& span": { fontSize: "0.875rem" } }}>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                defaultChecked
+                                checked={isKeepGrade}
+                                onChange={handleCheckKeepGrade}
+                              />
+                            }
+                            label="Giữ nguyên điểm"
+                          />
+                        </FormGroup>
+                      </TableCell>
+                      <TableCell />
+                    </TableRow>
+                  )}
 
-              {!isKeepGrade && isFinalDecision && (
-                <TableRow>
-                  <TableCell component="th" scope="row">
-                    Nhập điểm:
-                  </TableCell>
-                  <TableCell>
-                    <TextField />
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                  {!isKeepGrade && isFinalDecision && (
+                    <TableRow>
+                      <TableCell component="th" scope="row">
+                        Nhập điểm:
+                      </TableCell>
+                      <TableCell>
+                        <TextField inputRef={gradeRef} />
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </>
+          )}
         </CardContent>
-        <CardActions className={classes.actions}>
-          <Button variant="contained" color="success" sx={{ mr: 4, mb: 2 }}>
-            Gửi
-          </Button>
-        </CardActions>
+        {!fetchData?.gradeDetail?.studentId === user.studentId && (
+          <CardActions className={classes.actions}>
+            <Button
+              onClick={handleSubmit}
+              variant="contained"
+              color="success"
+              sx={{ mr: 4, mb: 2 }}
+            >
+              Gửi
+            </Button>
+          </CardActions>
+        )}
       </Card>
     </div>
   );

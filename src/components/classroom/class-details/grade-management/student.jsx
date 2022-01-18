@@ -154,6 +154,7 @@ const StudentGradeManagement = ({ user, classroomId }) => {
   const dispatch = useDispatch();
   // first load
   useEffect(() => {
+    setOpenSnackbar(false);
     const dispatchGetGradesByClassroom = () => dispatch(getGradesByClassroom());
     dispatchGetGradesByClassroom();
 
@@ -166,20 +167,23 @@ const StudentGradeManagement = ({ user, classroomId }) => {
     let isAllFinalizedTemp = true;
     let finalGradeTemp = 0;
     let allComposition = 1;
-    gradeStructure.forEach((grade, index) => {
+    for (let i = 0; i < gradeStructure.length; i++) {
       const found = gradesArray.find(
-        (gradeItem) => gradeItem.gradeId === grade._id
+        (gradeItem) => gradeItem.gradeId === gradeStructure[i]._id
       );
+
       if (found) {
-        gradeFinalResult[index]["grade"] = found.grade;
-        finalGradeTemp += found.grade * grade.grade;
-        allComposition += grade.grade;
+        gradeFinalResult[i]["grade"] = found.grade;
+        finalGradeTemp += found.grade * gradeStructure[i].grade;
+        allComposition += gradeStructure[i].grade;
+      } else {
+        gradeFinalResult[i]["canView"] = false;
       }
-      if (grade.isFinalized) {
+      if (gradeStructure[i].isFinalized) {
         canViewGradeResult = true;
-        gradeFinalResult[index]["canView"] = true;
+        gradeFinalResult[i]["canView"] = true;
       } else isAllFinalizedTemp = false;
-    });
+    }
     if (isAllFinalizedTemp) setIsAllFinalized(true);
     if (canViewGrade !== canViewGradeResult)
       setCanViewGrade(canViewGradeResult);
@@ -187,6 +191,13 @@ const StudentGradeManagement = ({ user, classroomId }) => {
     setFinalGrade(finalGradeTemp / allComposition);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gradesArray, gradeStructure]);
+
+  const findGrade = (grade) => {
+    const found = gradesArray.find(
+      (gradeItem) => gradeItem.gradeId === grade._id
+    );
+    return found?.grade;
+  };
 
   const handleOpenGradeOption = (event, index) => {
     const result = Array.from(gradeAnchorEls);
@@ -262,12 +273,12 @@ const StudentGradeManagement = ({ user, classroomId }) => {
                 <tr>
                   <td>{user.fullname}</td>
 
-                  {gradeFinal.map((gradeFinalItem, index) => (
+                  {gradeStructure.map((gradeItem, index) => (
                     <td>
                       <div className={classes.tableCell}>
-                        {gradeFinalItem.canView ? (
+                        {gradeItem.isFinalized ? (
                           <>
-                            <div>{gradeFinalItem.grade} /100</div>
+                            <div>{findGrade(gradeItem)} /100</div>
                             <IconButton
                               className={
                                 gradeOptionOpenArray[index]

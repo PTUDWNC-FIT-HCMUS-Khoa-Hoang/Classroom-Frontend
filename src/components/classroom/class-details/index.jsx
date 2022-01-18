@@ -16,7 +16,12 @@ const Classroom = ({
   return (
     <Box>
       <TabPanel value={activeTab} index={0}>
-        <News classroom={classroom} isTeacher={isTeacher} />
+        <News
+          classroom={classroom}
+          isTeacher={isTeacher}
+          classroomId={classroom._id}
+          token={token}
+        />
       </TabPanel>
       <TabPanel value={activeTab} index={1}>
         <Participants
