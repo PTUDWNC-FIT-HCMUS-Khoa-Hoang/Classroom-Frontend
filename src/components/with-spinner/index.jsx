@@ -5,9 +5,7 @@ import { useSelector } from "react-redux";
 const WithSpinner = (WrappedComponent) => {
   const Spinner = ({ ...otherProps }) => {
     const isLoading = useSelector(({ user }) => user.isLoading);
-    const isFetchingNotification = useSelector(
-      ({ user }) => user.isFetchingNotification
-    );
+
     const isFetchingClassrooms = useSelector(
       ({ classrooms }) => classrooms.isFetchingClassrooms
     );
@@ -33,8 +31,7 @@ const WithSpinner = (WrappedComponent) => {
       isUpdating ||
       isUpdatingClassroom ||
       isUploading ||
-      isFetchingAClassroom ||
-      isFetchingNotification;
+      isFetchingAClassroom;
     return (
       <>
         {isProcessing && (

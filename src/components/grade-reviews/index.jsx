@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { makeStyles } from "@mui/styles";
 import { useHistory } from "react-router-dom";
 import List from "@mui/material/List";
@@ -6,6 +6,8 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
+import { useDispatch } from "react-redux";
+import { fetchNotifications } from "../../redux/user/user.action";
 
 const useStyles = makeStyles({
   root: {
@@ -32,6 +34,13 @@ const useStyles = makeStyles({
 const GradeReviews = () => {
   const history = useHistory();
   const classes = useStyles();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const dispatchFetchNotifications = () => dispatch(fetchNotifications());
+    dispatchFetchNotifications();
+  }, []);
+
   return (
     <div className={classes.root}>
       <h1>Danh sách các thông báo</h1>

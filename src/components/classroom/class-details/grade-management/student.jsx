@@ -9,9 +9,14 @@ import GradeReviewDialog from "./dialog-grade-review";
 import { useSelector, useDispatch } from "react-redux";
 import { getGradesByClassroom } from "../../../../redux/classroom/classroom.actions";
 
+import Snackbar from "@mui/material/Snackbar";
+
+import MuiAlert from "@mui/material/Alert";
 const WIDTH_CELL = 130;
 const HEIGHT_CELL = 65;
-
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 const useStyles = makeStyles({
   root: {
     display: "flex",
@@ -107,7 +112,7 @@ const useStyles = makeStyles({
   },
 });
 
-const StudentGradeManagement = ({ user, token }) => {
+const StudentGradeManagement = ({ user, classroomId }) => {
   const classes = useStyles();
 
   const gradeStructure = useSelector(
@@ -119,9 +124,23 @@ const StudentGradeManagement = ({ user, token }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [isAllFinalized, setIsAllFinalized] = useState(false);
   const [finalGrade, setFinalGrade] = useState(NaN);
+  const [gradeStructureReviewID, setGradeStructureReviewID] = useState(null);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const error = useSelector(({ user }) => user.error);
   const handleOpenDialog = () => {
     setOpenDialog(true);
   };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (error) {
+      setOpenSnackbar(true);
+    }
+  }, [error]);
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -135,6 +154,7 @@ const StudentGradeManagement = ({ user, token }) => {
   const dispatch = useDispatch();
   // first load
   useEffect(() => {
+    setOpenSnackbar(false);
     const dispatchGetGradesByClassroom = () => dispatch(getGradesByClassroom());
     dispatchGetGradesByClassroom();
 
@@ -147,20 +167,23 @@ const StudentGradeManagement = ({ user, token }) => {
     let isAllFinalizedTemp = true;
     let finalGradeTemp = 0;
     let allComposition = 1;
-    gradeStructure.forEach((grade, index) => {
+    for (let i = 0; i < gradeStructure.length; i++) {
       const found = gradesArray.find(
-        (gradeItem) => gradeItem.gradeId === grade._id
+        (gradeItem) => gradeItem.gradeId === gradeStructure[i]._id
       );
+
       if (found) {
-        gradeFinalResult[index]["grade"] = found.grade;
-        finalGradeTemp += found.grade * grade.grade;
-        allComposition += grade.grade;
+        gradeFinalResult[i]["grade"] = found.grade;
+        finalGradeTemp += found.grade * gradeStructure[i].grade;
+        allComposition += gradeStructure[i].grade;
+      } else {
+        gradeFinalResult[i]["canView"] = false;
       }
-      if (grade.isFinalized) {
+      if (gradeStructure[i].isFinalized) {
         canViewGradeResult = true;
-        gradeFinalResult[index]["canView"] = true;
+        gradeFinalResult[i]["canView"] = true;
       } else isAllFinalizedTemp = false;
-    });
+    }
     if (isAllFinalizedTemp) setIsAllFinalized(true);
     if (canViewGrade !== canViewGradeResult)
       setCanViewGrade(canViewGradeResult);
@@ -168,6 +191,13 @@ const StudentGradeManagement = ({ user, token }) => {
     setFinalGrade(finalGradeTemp / allComposition);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gradesArray, gradeStructure]);
+
+  const findGrade = (grade) => {
+    const found = gradesArray.find(
+      (gradeItem) => gradeItem.gradeId === grade._id
+    );
+    return found?.grade;
+  };
 
   const handleOpenGradeOption = (event, index) => {
     const result = Array.from(gradeAnchorEls);
@@ -179,10 +209,9 @@ const StudentGradeManagement = ({ user, token }) => {
     const result = Array.from(gradeAnchorEls);
     result[index] = null;
     setGradeAnchorEls(result);
+    setGradeStructureReviewID(gradesArray[index]?._id);
   };
-
   const renderNoGrade = () => <div>Xin lỗi, giáo viên chưa up điểm</div>;
-
   return (
     <>
       {canViewGrade ? (
@@ -190,7 +219,21 @@ const StudentGradeManagement = ({ user, token }) => {
           <GradeReviewDialog
             open={openDialog}
             handleClose={handleCloseDialog}
+            gradeId={gradeStructureReviewID}
           />
+          <Snackbar
+            open={openSnackbar}
+            autoHideDuration={6000}
+            onClose={handleCloseSnackbar}
+          >
+            <Alert
+              onClose={handleCloseSnackbar}
+              severity="error"
+              sx={{ width: "100%" }}
+            >
+              {error}
+            </Alert>
+          </Snackbar>
           <TableContainer>
             <table className={classes.table} id="customers">
               <thead>
@@ -230,12 +273,12 @@ const StudentGradeManagement = ({ user, token }) => {
                 <tr>
                   <td>{user.fullname}</td>
 
-                  {gradeFinal.map((gradeFinalItem, index) => (
+                  {gradeStructure.map((gradeItem, index) => (
                     <td>
                       <div className={classes.tableCell}>
-                        {gradeFinalItem.canView ? (
+                        {gradeItem.isFinalized ? (
                           <>
-                            <div>{gradeFinalItem.grade}</div>
+                            <div>{findGrade(gradeItem)} /100</div>
                             <IconButton
                               className={
                                 gradeOptionOpenArray[index]

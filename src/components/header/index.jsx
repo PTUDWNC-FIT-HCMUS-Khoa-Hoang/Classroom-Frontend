@@ -16,7 +16,6 @@ import { userLogout } from "../../redux/user/user.action";
 import DialogAddClass from "../dialog-add-class";
 import DialogJoinClass from "../dialog-join-class";
 import HeaderDrawer from "../header-drawer";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import Notification from "../notification";
 
 const PopupOptionsWrapper = styled.div`
@@ -64,7 +63,6 @@ const Header = ({ user, activeTab, handleChangeTab }) => {
   const [isOpenJoinClassDialog, setIsOpenJoinClassDialog] = useState(false);
   const [anchorElUserOptions, setAnchorElUserOptions] = useState(null);
   const [anchorElAddOptions, setAnchorElAddOptions] = useState(null);
-  const [anchorElNotification, setAnchorElNotification] = useState(null);
 
   const handleCloseCreateClassDialog = () => {
     setIsOpenCreateClassDialog(false);
@@ -98,14 +96,6 @@ const Header = ({ user, activeTab, handleChangeTab }) => {
 
   const handleCloseAddOptions = () => {
     setAnchorElAddOptions(null);
-  };
-
-  const handleClickNotification = (event) => {
-    setAnchorElNotification(event.currentTarget);
-  };
-
-  const handleCloseNotification = () => {
-    setAnchorElNotification(null);
   };
 
   const handleLogout = () => {
@@ -228,20 +218,8 @@ const Header = ({ user, activeTab, handleChangeTab }) => {
             handleCloseDialog={handleCloseCreateClassDialog}
             isOpenDialog={isOpenCreateClassDialog}
           />
-          <IconButton
-            sx={{
-              marginRight: "5px",
-              fontSize: "35px",
-              width: "60px",
-            }}
-            onClick={handleClickNotification}
-          >
-            <NotificationsIcon />
-          </IconButton>
-          <Notification
-            anchorEl={anchorElNotification}
-            handleClose={handleCloseNotification}
-          />
+
+          <Notification />
           <IconButton
             aria-describedby={idUserOptions}
             variant="outlined"

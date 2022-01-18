@@ -82,7 +82,7 @@ const App = () => {
             exact
           />
           <PrivateRoute
-            path="/grade-reviews/1"
+            path="/grade-reviews/:id"
             component={GradeReviewDetail}
             authed={user}
           />
