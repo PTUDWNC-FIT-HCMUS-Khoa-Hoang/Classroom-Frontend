@@ -119,7 +119,6 @@ const StudentGradeManagement = ({ user, classroomId }) => {
     ({ classroom }) => classroom.gradeStructure
   );
   const gradesArray = useSelector(({ classroom }) => classroom.gradesArray);
-  const [gradeFinal, setGradeFinal] = useState([{}]);
   const [canViewGrade, setCanViewGrade] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [isAllFinalized, setIsAllFinalized] = useState(false);
@@ -187,7 +186,6 @@ const StudentGradeManagement = ({ user, classroomId }) => {
     if (isAllFinalizedTemp) setIsAllFinalized(true);
     if (canViewGrade !== canViewGradeResult)
       setCanViewGrade(canViewGradeResult);
-    setGradeFinal(gradeFinalResult);
     setFinalGrade(finalGradeTemp / allComposition);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gradesArray, gradeStructure]);
