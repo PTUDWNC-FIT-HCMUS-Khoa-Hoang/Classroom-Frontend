@@ -71,8 +71,7 @@ const GradeReviewDetail = () => {
       .catch(() => console.log("not ok"));
     fetchAGradeReviewService(token, id)
       .then((data) => {
-        if (!data.gradeDetail?.studentId === user.studentId)
-          setCanComment(true);
+        if (data.gradeDetail?.studentId !== user.studentId) setCanComment(true);
         setFetchData(data);
       })
       .catch((error) => console.log(error));
