@@ -81,7 +81,7 @@ const GradeReviewDetail = () => {
   const dispatchReply = (data, id) => dispatch(replyAGradeReview(data, id));
   const handleSubmit = () => {
     const data2Send = {
-      teacherComment: commentRef?.current.target,
+      teacherComment: commentRef?.current.value,
       isFinalDecision,
     };
     if (!isKeepGrade) {
