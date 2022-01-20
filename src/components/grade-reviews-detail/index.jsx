@@ -203,18 +203,16 @@ const GradeReviewDetail = () => {
                 </TableRow>
               )}
 
-              {!isKeepGrade &&
-                isFinalDecision &&
-                canComment(
-                  <TableRow>
-                    <TableCell component="th" scope="row">
-                      Nhập điểm:
-                    </TableCell>
-                    <TableCell>
-                      <TextField inputRef={gradeRef} />
-                    </TableCell>
-                  </TableRow>
-                )}
+              {!isKeepGrade && isFinalDecision && canComment && (
+                <TableRow>
+                  <TableCell component="th" scope="row">
+                    Nhập điểm:
+                  </TableCell>
+                  <TableCell>
+                    <TextField inputRef={gradeRef} />
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </CardContent>
