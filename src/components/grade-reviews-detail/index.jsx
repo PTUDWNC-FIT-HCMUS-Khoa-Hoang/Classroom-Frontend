@@ -73,6 +73,7 @@ const GradeReviewDetail = () => {
       .then((data) => {
         if (data.gradeDetail?.studentId !== user.studentId) setCanComment(true);
         setFetchData(data);
+        console.log(data);
       })
       .catch((error) => console.log(error));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -143,76 +144,79 @@ const GradeReviewDetail = () => {
               </TableRow>
             </TableBody>
           </Table>
-          {canComment && (
-            <>
-              <Typography variant="h4" sx={{ textAlign: "center", mt: 4 }}>
-                Nhập phúc khảo
-              </Typography>
-              <Table className={classes.table}>
-                <TableBody>
+
+          <Typography variant="h4" sx={{ textAlign: "center", mt: 4 }}>
+            {canComment ? "Nhập phúc khảo" : "Giáo viên trả lời"}
+          </Typography>
+          <Table className={classes.table}>
+            <TableBody>
+              <TableRow>
+                <TableCell component="th" scope="row">
+                  Nhập bình luận:
+                </TableCell>
+                <TableCell>
+                  <TextField
+                    inputRef={commentRef}
+                    multiline
+                    value={fetchData?.teacherComment}
+                    sx={{ width: "100%" }}
+                    disabled={!canComment}
+                  />
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell component="th" scope="row">
+                  <FormGroup sx={{ "& span": { fontSize: "0.875rem" } }}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          defaultChecked
+                          checked={isFinalDecision}
+                          disabled={!canComment}
+                          onChange={handleCheckIsFinalDecision}
+                        />
+                      }
+                      label="Quyết định cuối cùng"
+                    />
+                  </FormGroup>
+                </TableCell>
+                <TableCell />
+              </TableRow>
+              {isFinalDecision && (
+                <TableRow>
+                  <TableCell component="th" scope="row">
+                    <FormGroup sx={{ "& span": { fontSize: "0.875rem" } }}>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            defaultChecked
+                            checked={isKeepGrade}
+                            disabled={!canComment}
+                            onChange={handleCheckKeepGrade}
+                          />
+                        }
+                        label="Giữ nguyên điểm"
+                      />
+                    </FormGroup>
+                  </TableCell>
+                  <TableCell />
+                </TableRow>
+              )}
+
+              {!isKeepGrade &&
+                isFinalDecision &&
+                canComment(
                   <TableRow>
                     <TableCell component="th" scope="row">
-                      Nhập bình luận:
+                      Nhập điểm:
                     </TableCell>
                     <TableCell>
-                      <TextField
-                        inputRef={commentRef}
-                        multiline
-                        sx={{ width: "100%" }}
-                      />
+                      <TextField inputRef={gradeRef} />
                     </TableCell>
                   </TableRow>
-                  <TableRow>
-                    <TableCell component="th" scope="row">
-                      <FormGroup sx={{ "& span": { fontSize: "0.875rem" } }}>
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              defaultChecked
-                              checked={isFinalDecision}
-                              onChange={handleCheckIsFinalDecision}
-                            />
-                          }
-                          label="Quyết định cuối cùng"
-                        />
-                      </FormGroup>
-                    </TableCell>
-                    <TableCell />
-                  </TableRow>
-                  {isFinalDecision && (
-                    <TableRow>
-                      <TableCell component="th" scope="row">
-                        <FormGroup sx={{ "& span": { fontSize: "0.875rem" } }}>
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                defaultChecked
-                                checked={isKeepGrade}
-                                onChange={handleCheckKeepGrade}
-                              />
-                            }
-                            label="Giữ nguyên điểm"
-                          />
-                        </FormGroup>
-                      </TableCell>
-                      <TableCell />
-                    </TableRow>
-                  )}
-
-                  {!isKeepGrade && isFinalDecision && (
-                    <TableRow>
-                      <TableCell component="th" scope="row">
-                        Nhập điểm:
-                      </TableCell>
-                      <TableCell>
-                        <TextField inputRef={gradeRef} />
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </>
-          )}
+                )}
+            </TableBody>
+          </Table>
         </CardContent>
         {canComment && (
           <CardActions className={classes.actions}>
