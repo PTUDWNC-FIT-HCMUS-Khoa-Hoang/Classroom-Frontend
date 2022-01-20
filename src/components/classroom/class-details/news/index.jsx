@@ -52,10 +52,10 @@ const News = ({ classroom, isTeacher }) => {
   const renderGradeReviewList = () => {
     return gradeReviews.map((review) => {
       const gradeDetail = gradeDetails.find(
-        (detail) => detail._id === review.gradeDetail
+        (detail) => detail?._id === review?.gradeDetail
       );
       const gradeComposition = classroom?.gradeStructure?.find(
-        (grade) => grade._id === gradeDetail.gradeId
+        (grade) => grade?._id === gradeDetail?.gradeId
       );
       return (
         <li>
