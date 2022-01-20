@@ -207,7 +207,10 @@ const StudentGradeManagement = ({ user, classroomId }) => {
     const result = Array.from(gradeAnchorEls);
     result[index] = null;
     setGradeAnchorEls(result);
-    setGradeStructureReviewID(gradesArray[index]?._id);
+    setGradeStructureReviewID(
+      gradesArray.find((grade) => grade.gradeId === gradeStructure[index]._id)
+        ._id
+    );
   };
   const renderNoGrade = () => <div>Xin lỗi, giáo viên chưa up điểm</div>;
   return (
